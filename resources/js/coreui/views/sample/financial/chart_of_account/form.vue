@@ -138,13 +138,8 @@
                 axios.get('/api/utils/get_typical_balance'),
             ]).then(axios.spread(function (acct_category, posting_type, typical_balance) {
                 component.acct_category_opt = acct_category.data;
-                console.log(acct_category);
-
                 component.posting_type_opt = posting_type.data;
-                console.log(posting_type);
-
                 component.typical_balance_opt = typical_balance.data;
-                console.log(typical_balance);
             }));
 
             this.$root.$on('edit', (id) => {
@@ -160,14 +155,10 @@
                     .then(function (response) {
                         component.form.fill(response.data);
                         component.$root.$emit('bv::show::modal', 'form_modal');
-                        console.log(response);
                     })
                     .catch(function (error) {
-                        // handle error
-                        console.log(error);
                     })
                     .finally(function () {
-                        // always executed
                     })
             },
             formSubmit: async function () {

@@ -63,7 +63,7 @@
                 const component = this;
                 component.id = id;
 
-                axios.get(`/api/financial/account-category/${id}`)
+                axios.get(`/api/requisition/supplier-classification/${id}`)
                     .then(function (response) {
                         component.form.fill(response.data);
                         component.$root.$emit('bv::show::modal', 'form_modal');
@@ -88,7 +88,7 @@
 
                 if (result.value) {
                     const response = is_update ?
-                        await this.form.patch(`/api/financial/account-category/${this.id}`) : await this.form.post('/api/financial/account-category');
+                        await this.form.patch(`/api/requisition/supplier-classification/${this.id}`) : await this.form.post('/api/requisition/supplier-classification');
 
                     if (response.data.success) {
                         this.$swal.fire(
@@ -99,7 +99,7 @@
                             this.formClose();
                             this.formReset();
 
-                            const table = $('#tbl-account-category');
+                            const table = $('#tbl-supplier-classification');
                             table.DataTable().draw(true);
                         });
                     }
@@ -115,7 +115,7 @@
             },
             formTitle() {
                 const form_modal = $('#form_modal').find('.modal-title');
-                this.id ? form_modal.text('Edit Account Category') : form_modal.text('Add New Account Category');
+                this.id ? form_modal.text('Edit Supplier Classification') : form_modal.text('Add New Supplier Classification');
             }
         }
     }

@@ -108,7 +108,7 @@
 
             $(document).on('click', '#btn-bank-account', function () {
                 const id = $(this).data('id');
-                component.$router.push({name: 'Bank Accounts', params: {bank_id: id}});
+                component.$router.push({name: 'Bank Account', params: {bank_id: id}});
 
                 // var table = $('#tbl-bank').DataTable();
                 // var node = table.row(`#row-${id}`).data();
@@ -159,13 +159,10 @@
                                     table.DataTable().draw(false);
                                 });
                             }
-                            console.log(response);
                         })
                         .catch(function (error) {
-                            // handle error
                         })
                         .finally(function () {
-                            // always executed
                         });
                 }
             },
@@ -196,13 +193,10 @@
                                     table.DataTable().draw(false);
                                 });
                             }
-                            console.log(response);
                         })
                         .catch(function (error) {
-                            // handle error
                         })
                         .finally(function () {
-                            // always executed
                         });
                 }
             }

@@ -3,6 +3,7 @@
 namespace App\Models\Ap;
 
 use App\Models\BaseModel;
+use App\Models\Requisition\Currency;
 
 /**
  * @property integer $id
@@ -42,7 +43,7 @@ class BankAccount extends BaseModel
     /**
      * @var array
      */
-    protected $fillable = ['bank_id', 'bank_address', 'acct_code', 'acct_no', 'acct_type', 'currency', 'beginning_balance', 'as_of', 'disabled', 'date_disabled', 'disabled_by', 'logs', 'last_modified', 'created_at', 'updated_at'];
+    protected $fillable = ['bank_id', 'bank_address', 'acct_code', 'acct_no', 'acct_type', 'currency_id', 'beginning_balance', 'as_of', 'disabled', 'date_disabled', 'disabled_by', 'logs', 'last_modified', 'created_at', 'updated_at'];
 
     protected $dates = ['created_at', 'updated_at', 'date_disabled'];
 
@@ -52,6 +53,14 @@ class BankAccount extends BaseModel
     public function bank()
     {
         return $this->belongsTo(Bank::class);
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function currency()
+    {
+        return $this->belongsTo(Currency::class);
     }
 
     /**

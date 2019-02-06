@@ -12,11 +12,13 @@ import Select2 from './components/Select'
 import App from './App'
 import router from './router'
 import store from './store'
+import LoadScript from 'vue-plugin-load-script';
 
 Vue.use(BootstrapVue)
 Vue.use(Notifications)
 Vue.use(Sweetalert)
 Vue.use(Vuelidate)
+Vue.use(LoadScript);
 
 Vue.filter('state', (value, dirtyOnly = true) => {
     if (dirtyOnly) {

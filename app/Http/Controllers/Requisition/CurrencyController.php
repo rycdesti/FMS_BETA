@@ -1,44 +1,43 @@
 <?php
 
-namespace App\Http\Controllers\Financial;
+namespace App\Http\Controllers\Requisition;
 
-use App\Models\Financial\AccountCategory;
+use App\Models\Requisition\Currency;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Yajra\DataTables\Facades\DataTables;
 
-class AccountCategoryController extends Controller
+class CurrencyController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
-     * @throws \Exception
      */
     public function index()
     {
         if ($this->isRequestTypeDatatable(request())) {
-            $accountCategories = AccountCategory::all();
-            return DataTables::of($accountCategories)
-                ->editColumn('status', function (AccountCategory $accountCategory) {
-                    if ($accountCategory->disabled == 'N') {
+            $currencies = Currency::all();
+            return DataTables::of($currencies)
+                ->editColumn('status', function (Currency $currency) {
+                    if ($currency->disabled == 'N') {
                         return '<div><span class="badge-primary p-1">Enabled</span></div>';
                     } else {
                         return '<div><span class="badge-danger p-1">Disabled</span></div><br>
-                                <div>' . $accountCategory->disabled_by . '</div>
-                                <div><i class="fa fa-clock-o pr-1"></i>' . $accountCategory->date_disabled->diffForHumans() . '</div>';
+                                <div>' . $currency->disabled_by . '</div>
+                                <div><i class="fa fa-clock-o pr-1"></i>' . $currency->date_disabled->diffForHumans() . '</div>';
                     }
                 })
-                ->editColumn('logs', function (AccountCategory $accountCategory) {
-                    return '<div>' . $accountCategory->logs . '</div>
-                            <div><i class="fa fa-clock-o pr-1"></i>' . $accountCategory->created_at->diffForHumans() . '</div><br>' .
-                        ($accountCategory->last_modified ? '<div>' . $accountCategory->last_modified . '</div>
-                            <div><i class="fa fa-clock-o pr-1"></i>' . $accountCategory->updated_at->diffForHumans() . '</div>' : '');
+                ->editColumn('logs', function (Currency $currency) {
+                    return '<div>' . $currency->logs . '</div>
+                            <div><i class="fa fa-clock-o pr-1"></i>' . $currency->created_at->diffForHumans() . '</div><br>' .
+                        ($currency->last_modified ? '<div>' . $currency->last_modified . '</div>
+                            <div><i class="fa fa-clock-o pr-1"></i>' . $currency->updated_at->diffForHumans() . '</div>' : '');
                 })
-                ->editColumn('actions', function (AccountCategory $accountCategory) {
-                    return '<button id="btn-edit" data-id="' . $accountCategory->id . '" title="Edit Record" type="button" class="btn btn-outline-secondary"><i class="fa fa-edit"></i></button>' .
-                        ($accountCategory->chartOfAccounts->count() ? '<hr>' : '<button id="btn-delete" data-id="' . $accountCategory->id . '" title="Delete Record" type="button" class="btn btn-outline-danger"><i class="fa fa-trash-o"></i></button><hr>') .
-                        '<button id="btn-update-status" data-id="' . $accountCategory->id . '" type="button" class="btn btn-link">' . ($accountCategory->disabled == 'N' ? 'Disable' : 'Enable') . '</button>';
+                ->editColumn('actions', function (Currency $currency) {
+                    return '<button id="btn-edit" data-id="' . $currency->id . '" title="Edit Record" type="button" class="btn btn-outline-secondary"><i class="fa fa-edit"></i></button>' .
+                        ($currency->suppliers->count() ? '<hr>' : '<button id="btn-delete" data-id="' . $currency->id . '" title="Delete Record" type="button" class="btn btn-outline-danger"><i class="fa fa-trash-o"></i></button><hr>') .
+                        '<button id="btn-update-status" data-id="' . $currency->id . '" type="button" class="btn btn-link">' . ($currency->disabled == 'N' ? 'Disable' : 'Enable') . '</button>';
                 })
                 ->rawColumns(['status', 'logs', 'actions'])
                 ->make(true);
@@ -58,19 +57,21 @@ class AccountCategoryController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request $request
+     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
     {
         $request->validate([
             'description' => 'required',
+            'currency_code' => 'required',
+            'symbol' => 'required',
         ]);
 
         $request['logs'] = 'Created by: Test';
         $data = $request->all();
 
-        $result = AccountCategory::create($data);
+        $result = Currency::create($data);
         if ($result) {
             /**
              * check for failure of event tag when insert try to rollback (DB rollback)
@@ -84,12 +85,12 @@ class AccountCategoryController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int $id
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function show($id)
     {
-        $data = AccountCategory::find($id);
+        $data = Currency::find($id);
 
         return $data;
     }
@@ -97,7 +98,7 @@ class AccountCategoryController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int $id
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function edit($id)
@@ -109,19 +110,21 @@ class AccountCategoryController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request $request
-     * @param AccountCategory $accountCategory
+     * @param Currency $currency
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, AccountCategory $accountCategory)
+    public function update(Request $request, Currency $currency)
     {
         $request->validate([
             'description' => 'required',
+            'currency_code' => 'required',
+            'symbol' => 'required',
         ]);
 
         $request['last_modified'] = 'Last modified by: Test';
         $data = $request->all();
 
-        $result = $accountCategory->update($data);
+        $result = $currency->update($data);
         if ($result) {
             /**
              * check for failure of event tag when insert try to rollback (DB rollback)
@@ -135,13 +138,13 @@ class AccountCategoryController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param AccountCategory $accountCategory
+     * @param Currency $currency
      * @return \Illuminate\Http\Response
      * @throws \Exception
      */
-    public function destroy(AccountCategory $accountCategory)
+    public function destroy(Currency $currency)
     {
-        $result = $accountCategory->delete();
+        $result = $currency->delete();
         if ($result) {
             return response()->json(['success' => true, 'message' => 'The record was deleted successfully!']);
         }
@@ -151,22 +154,22 @@ class AccountCategoryController extends Controller
     /**
      * Update the status of specified resource from storage
      *
-     * @param AccountCategory $accountCategory
+     * @param Currency $currency
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
-    public function update_status(AccountCategory $accountCategory)
+    public function update_status(Currency $currency)
     {
-        $status = $accountCategory->disabled == 'N' ? 'Y' : 'N';
+        $status = $currency->disabled == 'N' ? 'Y' : 'N';
 
         if ($status == 'Y') {
-            $result = $accountCategory->update([
+            $result = $currency->update([
                 'disabled' => $status,
                 'date_disabled' => now(),
                 'disabled_by' => 'Disabled by: Test',
                 'last_modified' => 'Last modified by: Test',
             ]);
         } else {
-            $result = $accountCategory->update([
+            $result = $currency->update([
                 'disabled' => $status,
                 'last_modified' => 'Last modified by: Test',
             ]);

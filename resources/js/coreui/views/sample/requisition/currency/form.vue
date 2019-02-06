@@ -6,13 +6,13 @@
             <!-- start: title -->
             <!--label="Title"-->
             <b-form-fieldset
-                    label="Bank Address"
-                    description="Please enter bank address.">
-                <b-form-input v-model="form.bank_address"
+                    label="Description"
+                    description="Please enter description.">
+                <b-form-input v-model="form.description"
                               autocomplete="off"
-                              :class="{ 'is-invalid': form.errors.has('bank_address') }"
+                              :class="{ 'is-invalid': form.errors.has('description') }"
                               type="text"
-                              name="bank_address"
+                              name="description"
                               class="input-container"
                               :maxlength="50"></b-form-input>
                 <has-error :form="form" field="name"/>
@@ -22,13 +22,13 @@
             <!-- start: title -->
             <!--label="Title"-->
             <b-form-fieldset
-                    label="Account Code"
-                    description="Please enter account code.">
-                <b-form-input v-model="form.acct_code"
+                    label="Currency Code"
+                    description="Please enter currency code.">
+                <b-form-input v-model="form.currency_code"
                               autocomplete="off"
-                              :class="{ 'is-invalid': form.errors.has('acct_code') }"
+                              :class="{ 'is-invalid': form.errors.has('currency_code') }"
                               type="text"
-                              name="acct_code"
+                              name="currency_code"
                               class="input-container"
                               :maxlength="50"></b-form-input>
                 <has-error :form="form" field="name"/>
@@ -38,54 +38,15 @@
             <!-- start: title -->
             <!--label="Title"-->
             <b-form-fieldset
-                    label="Account Number"
-                    description="Please enter account number.">
-                <b-form-input v-model="form.acct_no"
+                    label="Currency Symbol"
+                    description="Please enter currency symbol.">
+                <b-form-input v-model="form.symbol"
                               autocomplete="off"
-                              :class="{ 'is-invalid': form.errors.has('acct_no') }"
+                              :class="{ 'is-invalid': form.errors.has('symbol') }"
                               type="text"
-                              name="acct_no"
+                              name="symbol"
                               class="input-container"
                               :maxlength="50"></b-form-input>
-                <has-error :form="form" field="name"/>
-            </b-form-fieldset>
-            <!-- end: title -->
-
-            <!-- start: title -->
-            <!--label="Title"-->
-            <b-form-fieldset
-                    label="Account Type"
-                    description="Please enter account type.">
-                <b-form-select v-model="form.acct_type"
-                               :options="acct_type_opt"
-                               :class="{ 'is-invalid': form.errors.has('acct_type') }"
-                               name="acct_type"
-                               class="input-container"
-                               :maxlength="50">
-                    <template slot="first">
-                        <option value selected disabled>-- Please select an option --</option>
-                    </template>
-                </b-form-select>
-                <has-error :form="form" field="name"/>
-
-            </b-form-fieldset>
-            <!-- end: title -->
-
-            <!-- start: title -->
-            <!--label="Title"-->
-            <b-form-fieldset
-                    label="Currency"
-                    description="Please enter currency.">
-                <b-form-select v-model="form.currency_id"
-                               :options="currency_opt"
-                               :class="{ 'is-invalid': form.errors.has('currency_id') }"
-                               name="currency_id"
-                               class="input-container"
-                               :maxlength="50">
-                    <template slot="first">
-                        <option value selected disabled>-- Please select an option --</option>
-                    </template>
-                </b-form-select>
                 <has-error :form="form" field="name"/>
             </b-form-fieldset>
             <!-- end: title -->
@@ -110,36 +71,22 @@
     export default {
         name: "form",
         props: [
-            'data',
-            'bank_id',
+            'data'
         ],
         data() {
             return {
                 form: new Form({
                     id: 0,
-                    bank_id: this.bank_id,
-                    bank_address: '',
-                    acct_code: '',
-                    acct_no: '',
-                    acct_type: '',
-                    currency_id: '',
+                    description: '',
+                    currency_code: '',
+                    symbol: '',
                 }),
-                acct_type_opt: [{}],
-                currency_opt: [{}],
             }
         },
         created() {
         },
         mounted() {
             const component = this;
-
-            axios.all([
-                axios.get('/api/utils/get_acct_type'),
-                axios.get('/api/utils/get_currency'),
-            ]).then(axios.spread(function (acct_type, currency) {
-                component.acct_type_opt = acct_type.data;
-                component.currency_opt = currency.data;
-            }));
 
             this.$root.$on('edit', (id) => {
                 component.fetchData(id);
@@ -150,7 +97,7 @@
                 const component = this;
                 component.id = id;
 
-                axios.get(`/api/ap/bank-account/${id}`)
+                axios.get(`/api/requisition/currency/${id}`)
                     .then(function (response) {
                         component.form.fill(response.data);
                         component.$root.$emit('bv::show::modal', 'form_modal');
@@ -175,7 +122,7 @@
 
                 if (result.value) {
                     const response = is_update ?
-                        await this.form.patch(`/api/ap/bank-account/${this.id}`) : await this.form.post('/api/ap/bank-account');
+                        await this.form.patch(`/api/requisition/currency/${this.id}`) : await this.form.post('/api/requisition/currency');
 
                     if (response.data.success) {
                         this.$swal.fire(
@@ -186,7 +133,7 @@
                             this.formClose();
                             this.formReset();
 
-                            const table = $('#tbl-bank-account');
+                            const table = $('#tbl-currency');
                             table.DataTable().draw(true);
                         });
                     }
@@ -202,7 +149,7 @@
             },
             formTitle() {
                 const form_modal = $('#form_modal').find('.modal-title');
-                this.id ? form_modal.text('Edit Bank Account') : form_modal.text('Add New Bank Account');
+                this.id ? form_modal.text('Edit Currency') : form_modal.text('Add New Currency');
             }
         }
     }

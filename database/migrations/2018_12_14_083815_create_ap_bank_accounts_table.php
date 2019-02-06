@@ -20,7 +20,7 @@ class CreateApbankAccountsTable extends Migration {
 			$table->string('acct_code', 20);
 			$table->string('acct_no', 20);
 			$table->char('acct_type', 1);
-			$table->string('currency', 10)->nullable();
+			$table->bigInteger('currency_id');
 			$table->decimal('beginning_balance', 18)->nullable();
 			$table->date('as_of')->nullable();
 			$table->char('disabled', 1)->default('N');
@@ -32,8 +32,11 @@ class CreateApbankAccountsTable extends Migration {
 
             $table->foreign('bank_id')
                 ->references('id')
-                ->on('ap.banks')
-                ->onDelete('cascade');
+                ->on('ap.banks');
+
+            $table->foreign('currency_id')
+                ->references('id')
+                ->on('requisition.currencies');
 		});
 	}
 

@@ -77,6 +77,14 @@ export default {
             icon: 'fa fa-circle',
             children: [
                 {
+                    name: 'Currency',
+                    url: '/requisition/currency',
+                },
+                {
+                    name: 'Supplier Classification',
+                    url: '/requisition/supplier-classification',
+                },
+                {
                     name: 'Supplier',
                     url: '/requisition/supplier',
                 },

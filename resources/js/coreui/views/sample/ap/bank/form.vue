@@ -67,14 +67,10 @@
                     .then(function (response) {
                         component.form.fill(response.data);
                         component.$root.$emit('bv::show::modal', 'form_modal');
-                        console.log(response);
                     })
                     .catch(function (error) {
-                        // handle error
-                        console.log(error);
                     })
                     .finally(function () {
-                        // always executed
                     })
             },
             formSubmit: async function () {

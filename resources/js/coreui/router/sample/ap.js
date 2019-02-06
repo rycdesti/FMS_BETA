@@ -1,16 +1,16 @@
 // Views - Components
-import Bank from '@/views/sample/ap/bank/index'
-import BankAccount from '@/views/sample/ap/bank_account/index'
-import Check from '@/views/sample/ap/check/index'
+import Bank from '@/views/sample/ap/bank'
+import BankAccount from '@/views/sample/ap/bank_account'
+import Check from '@/views/sample/ap/check'
 
 export default {
     path: 'ap',
-    redirect: '/ap/monthly-payment',
+    redirect: '/dashboard',
     name: 'Accounts Payable',
     component: {
         render(c) {
             return c('router-view')
-        }
+        },
     },
     children: [
         // {
@@ -25,20 +25,20 @@ export default {
         // },
         {
             path: 'bank',
-            name: 'Banks',
+            name: 'Bank',
             component: Bank,
         },
         {
             path: 'bank-account/:bank_id',
-            name: 'Bank Accounts',
+            name: 'Bank Account',
             component: BankAccount,
             props: true,
         },
         {
             path: 'check/:bank_account_id',
-            name: 'Checks',
+            name: 'Check',
             component: Check,
-            props: true
+            props: true,
         },
 
     ],

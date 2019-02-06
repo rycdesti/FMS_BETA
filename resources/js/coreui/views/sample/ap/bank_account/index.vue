@@ -124,7 +124,7 @@
 
             $(document).on('click', '#btn-check-booklet', function () {
                 const id = $(this).data('id');
-                component.$router.push({name: 'Checks', params: {bank_account_id: id}});
+                component.$router.push({name: 'Check', params: {bank_account_id: id}});
             });
         },
         beforeDestroy() {
@@ -165,13 +165,10 @@
                                     table.DataTable().draw(false);
                                 });
                             }
-                            console.log(response);
                         })
                         .catch(function (error) {
-                            // handle error
                         })
                         .finally(function () {
-                            // always executed
                         });
                 }
             },
@@ -202,13 +199,10 @@
                                     table.DataTable().draw(false);
                                 });
                             }
-                            console.log(response);
                         })
                         .catch(function (error) {
-                            // handle error
                         })
                         .finally(function () {
-                            // always executed
                         });
                 }
             }

@@ -4,6 +4,7 @@ import Loading from '@/views/sample/Loading'
 import base from './base'
 import ap from './ap'
 import financial from './financial'
+import requisition from './requisition'
 import buttons from './buttons'
 import icons from './icons'
 import notifications from './notifications'
@@ -13,6 +14,7 @@ export default [
     base,
     ap,
     financial,
+    requisition,
     buttons,
     icons,
     notifications,

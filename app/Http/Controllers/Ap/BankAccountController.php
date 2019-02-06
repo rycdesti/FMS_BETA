@@ -43,7 +43,7 @@ class BankAccountController extends Controller
             'acct_code' => 'required',
             'acct_no' => 'required',
             'acct_type' => 'required',
-            'currency' => 'required',
+            'currency_id' => 'required',
         ]);
 
         $request['logs'] = 'Created by: Test';
@@ -76,7 +76,7 @@ class BankAccountController extends Controller
                     return '<div>Account Code: ' . $bankAccount->acct_code . '</div>
                             <div>Account Number: ' . $bankAccount->acct_no . '</div>
                             <div>Account Type: ' . $this->get_acct_type($bankAccount->acct_type) . '</div>
-                            <div>Currency: ' . $this->get_currency($bankAccount->currency) . '</div>
+                            <div>Currency: ' . $bankAccount->currency->description . '</div>
                             <div>Beginning Balance: ' . ($bankAccount->beginning_balance ? number_format($bankAccount->beginning_balance,2) : '0.00') . '</div>';
                 })
                 ->editColumn('status', function (BankAccount $bankAccount) {
@@ -135,7 +135,7 @@ class BankAccountController extends Controller
             'acct_code' => 'required',
             'acct_no' => 'required',
             'acct_type' => 'required',
-            'currency' => 'required',
+            'currency_id' => 'required',
         ]);
 
         $request['last_modified'] = 'Last modified by: Test';
@@ -253,22 +253,6 @@ class BankAccountController extends Controller
             return $acctType[$value];
         } else {
             return $acctType;
-        }
-    }
-
-    /**
-     * Get currencies
-     *
-     * @param null $value
-     * @return array|mixed
-     */
-    public function get_currency($value = null)
-    {
-        $currency = array('PHP' => 'Philippine Peso');
-        if ($value) {
-            return $currency[$value];
-        } else {
-            return $currency;
         }
     }
 }

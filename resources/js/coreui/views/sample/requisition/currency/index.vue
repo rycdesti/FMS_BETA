@@ -10,7 +10,7 @@
                             footer-tag="footer"
                     >
                         <div slot="header">
-                            <i class="fa fa-align-justify"/> <strong>List of Account Category</strong>
+                            <i class="fa fa-align-justify"/> <strong>List of Currencies</strong>
                             <div class="card-actions">
                                 <a
                                         href="https://bootstrap-vue.js.org/docs/components/breadcrumb"
@@ -69,23 +69,24 @@
 </template>
 
 <script>
-    import CallOutForm from '@/views/sample/financial/account_category/form'
+    import CallOutForm from '@/views/sample/requisition/currency/form'
 
     export default {
-        name: 'AccountCategory',
+        name: 'Currency',
         components: {
             'call_out_form': CallOutForm,
         },
         data() {
             return {
-                table_id: 'tbl-account-category',
+                table_id: 'tbl-currency',
                 table_columns: [
                     {data: 'description'},
+                    {data: 'currency_code'},
                     {data: 'status', bSortable: false, bSearchable: false},
                     {data: 'logs', bSortable: false, bSearchable: false},
                     {data: 'actions', bSortable: false, bSearchable: false}
                 ],
-                table_headers: ['Description', 'Status', 'Logs', 'Actions'],
+                table_headers: ['Description', 'Currency Code', 'Status', 'Logs', 'Actions'],
                 table_url: '',
                 data: '',
             }
@@ -109,7 +110,7 @@
                 const status = $(this).text();
                 component.updateStatus(id, status);
 
-                // var table = $('#tbl-account-category').DataTable();
+                // var table = $('#tbl-currency').DataTable();
                 // var node = table.row(`#row-${id}`).data();
             });
         },
@@ -122,7 +123,7 @@
         },
         methods: {
             fetchData() {
-                this.table_url = '/api/financial/account-category';
+                this.table_url = '/api/requisition/currency';
             },
             async deleteData(id) {
                 const component = this;
@@ -139,7 +140,7 @@
                 });
 
                 if (result.value) {
-                    axios.delete(`/api/financial/account-category/${id}`)
+                    axios.delete(`/api/requisition/currency/${id}`)
                         .then(function (response) {
                             if (response.data.success) {
                                 component.$swal.fire(
@@ -147,7 +148,7 @@
                                     response.data.message,
                                     'success'
                                 ).then(() => {
-                                    const table = $('#tbl-account-category');
+                                    const table = $('#tbl-currency');
                                     table.DataTable().draw(false);
                                 });
                             }
@@ -173,7 +174,7 @@
                 });
 
                 if (result.value) {
-                    axios.patch(`/api/financial/account-category/${id}/update_status`)
+                    axios.patch(`/api/requisition/currency/${id}/update_status`)
                         .then(function (response) {
                             if (response.data.success) {
                                 component.$swal.fire(
@@ -181,7 +182,7 @@
                                     response.data.message,
                                     'success'
                                 ).then(() => {
-                                    const table = $('#tbl-account-category');
+                                    const table = $('#tbl-currency');
                                     table.DataTable().draw(false);
                                 });
                             }
