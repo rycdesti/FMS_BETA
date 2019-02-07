@@ -18,7 +18,7 @@ Vue.use(BootstrapVue)
 Vue.use(Notifications)
 Vue.use(Sweetalert)
 Vue.use(Vuelidate)
-Vue.use(LoadScript);
+Vue.use(LoadScript)
 
 Vue.filter('state', (value, dirtyOnly = true) => {
     if (dirtyOnly) {
@@ -80,5 +80,14 @@ Vue.prototype.$listener = {
         functions.forEach(function (func) {
             root.$off(func);
         });
+    }
+};
+
+Vue.prototype.$country_state_city = {
+    load: function(component) {
+        component.$loadScript("https://geodata.solutions/includes/countrystatecity.js");
+    },
+    unload: function(component) {
+        component.$unloadScript("https://geodata.solutions/includes/countrystatecity.js");
     }
 };

@@ -106,13 +106,10 @@
                                     table.DataTable().draw(false);
                                 });
                             }
-                            console.log(response);
                         })
                         .catch(function (error) {
-                            // handle error
                         })
                         .finally(function () {
-                            // always executed
                         });
                 }
             },

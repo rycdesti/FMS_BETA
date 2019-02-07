@@ -16,11 +16,11 @@ class CreateApbankAccountsTable extends Migration {
 		{
             $table->bigInteger('id', true);
 			$table->bigInteger('bank_id');
+            $table->bigInteger('currency_id');
 			$table->string('bank_address', 70);
 			$table->string('acct_code', 20);
 			$table->string('acct_no', 20);
 			$table->char('acct_type', 1);
-			$table->bigInteger('currency_id');
 			$table->decimal('beginning_balance', 18)->nullable();
 			$table->date('as_of')->nullable();
 			$table->char('disabled', 1)->default('N');

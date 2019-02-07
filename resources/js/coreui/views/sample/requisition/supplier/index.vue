@@ -80,13 +80,13 @@
             return {
                 table_id: 'tbl-supplier',
                 table_columns: [
-                    {data: 'supplier_name'},
-                    {data: 'address'},
+                    {data: 'name'},
+                    {data: 'supplier_information', bSortable: false, bSearchable: false},
                     {data: 'status', bSortable: false, bSearchable: false},
                     {data: 'logs', bSortable: false, bSearchable: false},
                     {data: 'actions', bSortable: false, bSearchable: false}
                 ],
-                table_headers: ['Supplier Information', 'Address', 'Status', 'Logs', 'Actions'],
+                table_headers: ['Supplier Name', 'Supplier Information', 'Status', 'Logs', 'Actions'],
                 table_url: '',
                 data: '',
             }

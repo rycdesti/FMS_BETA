@@ -87,61 +87,69 @@
             </b-form-fieldset>
             <!-- end: title -->
 
-            <!-- start: title -->
-            <!--label="Title"-->
-            <b-form-fieldset
-                    label="Country"
-                    description="Please select country.">
-                <b-form-select v-model="form.country"
-                        :class="{ 'is-invalid': form.errors.has('country') }"
-                        name="country"
-                        id="countryId"
-                        class="input-container countries order-alpha">
-                    <template slot="first">
-                        <option value selected disabled>-- Please select an option --</option>
-                    </template>
-                </b-form-select>
-                <has-error :form="form" field="name"/>
-            </b-form-fieldset>
-            <!-- end: title -->
+            <div class="row">
+                <div class="col-lg-4">
+                    <!-- start: title -->
+                    <!--label="Title"-->
+                    <b-form-fieldset
+                            label="Country"
+                            description="Please select country.">
+                        <b-form-select v-model="form.country"
+                                       :class="{ 'is-invalid': form.errors.has('country') }"
+                                       name="country"
+                                       id="countryId"
+                                       class="input-container countries order-alpha">
+                            <template slot="first">
+                                <option value selected disabled>-- Please select an option --</option>
+                            </template>
+                        </b-form-select>
+                        <has-error :form="form" field="name"/>
+                    </b-form-fieldset>
+                    <!-- end: title -->
+                </div>
 
-            <!-- start: title -->
-            <!--label="Title"-->
-            <b-form-fieldset
-                    label="State"
-                    description="Please select state.">
-                <b-form-select v-model="form.state"
-                               :class="{ 'is-invalid': form.errors.has('state') }"
-                               name="state"
-                               id="stateId"
-                               class="input-container states order-alpha"
-                               :maxlength="50">
-                    <template slot="first">
-                        <option value selected disabled>-- Please select an option --</option>
-                    </template>
-                </b-form-select>
-                <has-error :form="form" field="name"/>
-            </b-form-fieldset>
-            <!-- end: title -->
+                <div class="col-lg-4">
+                    <!-- start: title -->
+                    <!--label="Title"-->
+                    <b-form-fieldset
+                            label="State"
+                            description="Please select state.">
+                        <b-form-select v-model="form.state"
+                                       :class="{ 'is-invalid': form.errors.has('state') }"
+                                       name="state"
+                                       id="stateId"
+                                       class="input-container states order-alpha"
+                                       :maxlength="50">
+                            <template slot="first">
+                                <option value selected disabled>-- Please select an option --</option>
+                            </template>
+                        </b-form-select>
+                        <has-error :form="form" field="name"/>
+                    </b-form-fieldset>
+                    <!-- end: title -->
+                </div>
 
-            <!-- start: title -->
-            <!--label="Title"-->
-            <b-form-fieldset
-                    label="City"
-                    description="Please select city.">
-                <b-form-select v-model="form.city"
-                               :class="{ 'is-invalid': form.errors.has('city') }"
-                               name="city"
-                               id="cityId"
-                               class="input-container cities order-alpha"
-                               :maxlength="50">
-                    <template slot="first">
-                        <option value selected disabled>-- Please select an option --</option>
-                    </template>
-                </b-form-select>
-                <has-error :form="form" field="name"/>
-            </b-form-fieldset>
-            <!-- end: title -->
+                <div class="col-lg-4">
+                    <!-- start: title -->
+                    <!--label="Title"-->
+                    <b-form-fieldset
+                            label="City"
+                            description="Please select city.">
+                        <b-form-select v-model="form.city"
+                                       :class="{ 'is-invalid': form.errors.has('city') }"
+                                       name="city"
+                                       id="cityId"
+                                       class="input-container cities order-alpha"
+                                       :maxlength="50">
+                            <template slot="first">
+                                <option value selected disabled>-- Please select an option --</option>
+                            </template>
+                        </b-form-select>
+                        <has-error :form="form" field="name"/>
+                    </b-form-fieldset>
+                    <!-- end: title -->
+                </div>
+            </div>
 
             <!-- start: title -->
             <!--label="Title"-->
@@ -202,20 +210,7 @@
         created() {
         },
         mounted() {
-            // this.$root.$country_state_city.append(document);
             const component = this;
-
-            // let googleapis = document.createElement('script');
-            // googleapis.setAttribute('src', 'https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js');
-            // googleapis.async = true;
-            //
-            // document.head.appendChild(googleapis);
-            //
-            // let geodata_solutions = document.createElement('script');
-            // geodata_solutions.setAttribute('src', 'https://geodata.solutions/includes/countrystatecity.js');
-            // geodata_solutions.async = true;
-
-            // document.head.appendChild(geodata_solutions);
 
             axios.all([
                 axios.get('/api/utils/get_supplier_classification'),
@@ -229,12 +224,18 @@
                 component.fetchData(id);
             });
         },
+        updated() {
+            this.$root.$country_state_city.load(this);
+        },
+        beforeDestroy() {
+            this.$root.$country_state_city.unload(this);
+        },
         methods: {
             fetchData(id) {
                 const component = this;
                 component.id = id;
 
-                axios.get(`/api/financial/chart-of-account/${id}`)
+                axios.get(`/api/requisition/supplier/${id}`)
                     .then(function (response) {
                         component.form.fill(response.data);
                         component.$root.$emit('bv::show::modal', 'form_modal');
@@ -259,7 +260,7 @@
 
                 if (result.value) {
                     const response = is_update ?
-                        await this.form.patch(`/api/financial/chart-of-account/${this.id}`) : await this.form.post('/api/financial/chart-of-account');
+                        await this.form.patch(`/api/requisition/supplier/${this.id}`) : await this.form.post('/api/requisition/supplier');
 
                     if (response.data.success) {
                         this.$swal.fire(
@@ -270,7 +271,7 @@
                             this.formClose();
                             this.formReset();
 
-                            const table = $('#tbl-chart-of-account');
+                            const table = $('#tbl-supplier');
                             table.DataTable().draw(true);
                         });
                     }

@@ -87,12 +87,8 @@ class BankController extends Controller
                 }
             }
         }
-
         $bank_prefix = str_pad($bank_initials, 3, $bank_initials[0], STR_PAD_RIGHT);
-        $latest_code = Bank::select('bank_code')->where('bank_prefix', '=', $bank_prefix)->orderBy('created_at', 'desc')->first();
-
-        $code = sprintf("%03d", preg_replace("/[^0-9.]/", '', $latest_code ? $latest_code->bank_code : 0) + 1);
-        $bank_code = $bank_prefix . $code;
+        $bank_code = substr($bank_prefix, 0, 3) . date('ymdHis');
 
         $request['bank_code'] = $bank_code;
         $request['bank_prefix'] = $bank_prefix;
@@ -138,7 +134,7 @@ class BankController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request $request
-     * @param  int $id
+     * @param Bank $bank
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, Bank $bank)

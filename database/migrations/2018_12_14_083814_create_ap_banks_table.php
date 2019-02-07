@@ -15,7 +15,7 @@ class CreateApbanksTable extends Migration {
 		Schema::create('ap.banks', function(Blueprint $table)
 		{
             $table->bigInteger('id', true);
-			$table->string('bank_code', 10);
+			$table->string('bank_code', 15);
 			$table->string('bank_name', 70);
             $table->string('bank_prefix', 20)->nullable();
 			$table->char('disabled', 1)->default('N');
