@@ -2,7 +2,7 @@
 
 namespace App\Models\Requisition;
 
-use Illuminate\Database\Eloquent\Model;
+use App\Models\BaseModel;
 
 /**
  * @property integer $id
@@ -14,9 +14,11 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $fax_number
  * @property string $logs
  * @property string $last_modified
+ * @property string $created_at
+ * @property string $updated_at
  * @property Supplier $supplier
  */
-class SupplierContact extends Model
+class SupplierContact extends BaseModel
 {
     /**
      * The table associated with the model.
@@ -35,7 +37,7 @@ class SupplierContact extends Model
     /**
      * @var array
      */
-    protected $fillable = ['supplier_id', 'contact_person', 'phone_number1', 'phone_number2', 'phone_number3', 'fax_number', 'logs', 'last_modified'];
+    protected $fillable = ['supplier_id', 'contact_person', 'phone_number1', 'phone_number2', 'phone_number3', 'fax_number', 'logs', 'last_modified', 'created_at', 'updated_at'];
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo

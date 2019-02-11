@@ -2,7 +2,7 @@
 
 namespace App\Models\Requisition;
 
-use Illuminate\Database\Eloquent\Model;
+use App\Models\BaseModel;
 
 /**
  * @property integer $id
@@ -26,7 +26,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property SupplierClassification $supplierClassification
  * @property Currency $currency
  */
-class Supplier extends Model
+class Supplier extends BaseModel
 {
     /**
      * The table associated with the model.
@@ -46,8 +46,6 @@ class Supplier extends Model
      * @var array
      */
     protected $fillable = ['supplier_classification_id', 'currency_id', 'supplier_code', 'name', 'check_name', 'address', 'city', 'state', 'zip_code', 'country', 'disabled', 'date_disabled', 'disabled_by', 'logs', 'last_modified', 'created_at', 'updated_at'];
-
-    protected $dates = ['created_at', 'updated_at', 'date_disabled'];
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo

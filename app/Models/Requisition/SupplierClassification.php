@@ -37,8 +37,6 @@ class SupplierClassification extends BaseModel
      */
     protected $fillable = ['classification_code', 'description', 'disabled', 'date_disabled', 'disabled_by', 'logs', 'last_modified', 'created_at', 'updated_at'];
 
-    protected $dates = ['created_at', 'updated_at', 'date_disabled'];
-
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */

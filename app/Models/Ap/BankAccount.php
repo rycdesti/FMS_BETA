@@ -45,8 +45,6 @@ class BankAccount extends BaseModel
      */
     protected $fillable = ['bank_id', 'bank_address', 'acct_code', 'acct_no', 'acct_type', 'currency_id', 'beginning_balance', 'as_of', 'disabled', 'date_disabled', 'disabled_by', 'logs', 'last_modified', 'created_at', 'updated_at'];
 
-    protected $dates = ['created_at', 'updated_at', 'date_disabled'];
-
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */

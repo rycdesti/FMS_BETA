@@ -13,4 +13,5 @@ use Illuminate\Database\Eloquent\Model;
 class BaseModel extends Model
 {
 //    protected $dateFormat = 'Y-m-d H:i:s';
+    protected $dates = ['created_at', 'updated_at', 'date_disabled', 'date_voided'];
 }

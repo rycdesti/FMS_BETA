@@ -2,9 +2,8 @@
 
 namespace App\Models\Requisition;
 
-use App\Models\Ap\Bank;
 use App\Models\Ap\BankAccount;
-use Illuminate\Database\Eloquent\Model;
+use App\Models\BaseModel;
 
 /**
  * @property integer $id
@@ -19,7 +18,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $created_at
  * @property string $updated_at
  */
-class Currency extends Model
+class Currency extends BaseModel
 {
     /**
      * The table associated with the model.
@@ -39,8 +38,6 @@ class Currency extends Model
      * @var array
      */
     protected $fillable = ['description', 'currency_code', 'symbol', 'disabled', 'date_disabled', 'disabled_by', 'logs', 'last_modified', 'created_at', 'updated_at'];
-
-    protected $dates = ['created_at', 'updated_at', 'date_disabled'];
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany

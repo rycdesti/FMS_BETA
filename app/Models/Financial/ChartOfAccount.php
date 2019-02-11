@@ -41,8 +41,6 @@ class ChartOfAccount extends BaseModel
      */
     protected $fillable = ['account_category_id', 'acct_code', 'description', 'posting_type', 'typical_balance', 'disabled', 'date_disabled', 'disabled_by', 'logs', 'last_modified', 'created_at', 'updated_at'];
 
-    protected $dates = ['created_at', 'updated_at', 'date_disabled'];
-
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
