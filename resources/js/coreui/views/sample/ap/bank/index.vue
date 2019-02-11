@@ -73,7 +73,7 @@
     import CallOutForm from '@/views/sample/ap/bank/form'
 
     export default {
-        name: 'Banks',
+        name: 'Bank',
         components: {
             'call_out_form': CallOutForm,
         },

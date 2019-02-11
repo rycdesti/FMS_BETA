@@ -74,7 +74,7 @@
     import CallOutForm2 from '@/views/sample/ap/bank_account/form2'
 
     export default {
-        name: 'BankAccounts',
+        name: 'BankAccount',
         props: ['bank_id'],
         components: {
             'call_out_form': CallOutForm,

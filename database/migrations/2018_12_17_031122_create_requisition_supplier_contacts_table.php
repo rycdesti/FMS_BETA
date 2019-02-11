@@ -23,6 +23,7 @@ class CreateRequisitionsupplierContactsTable extends Migration {
 			$table->string('fax_number', 15)->nullable();
 			$table->string('logs', 60)->nullable();
 			$table->string('last_modified', 60)->nullable();
+			$table->timestamps();
 
             $table->foreign('supplier_id')
                 ->references('id')

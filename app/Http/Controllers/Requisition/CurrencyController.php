@@ -13,6 +13,7 @@ class CurrencyController extends Controller
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
+     * @throws \Exception
      */
     public function index()
     {
@@ -36,7 +37,7 @@ class CurrencyController extends Controller
                 })
                 ->editColumn('actions', function (Currency $currency) {
                     return '<button id="btn-edit" data-id="' . $currency->id . '" title="Edit Record" type="button" class="btn btn-outline-secondary"><i class="fa fa-edit"></i></button>' .
-                        ($currency->suppliers->count() ? '<hr>' : '<button id="btn-delete" data-id="' . $currency->id . '" title="Delete Record" type="button" class="btn btn-outline-danger"><i class="fa fa-trash-o"></i></button><hr>') .
+                        ($currency->suppliers->count() || $currency->bankAccounts->count() ? '<hr>' : '<button id="btn-delete" data-id="' . $currency->id . '" title="Delete Record" type="button" class="btn btn-outline-danger"><i class="fa fa-trash-o"></i></button><hr>') .
                         '<button id="btn-update-status" data-id="' . $currency->id . '" type="button" class="btn btn-link">' . ($currency->disabled == 'N' ? 'Disable' : 'Enable') . '</button>';
                 })
                 ->rawColumns(['status', 'logs', 'actions'])

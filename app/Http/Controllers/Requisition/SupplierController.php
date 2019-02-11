@@ -23,7 +23,7 @@ class SupplierController extends Controller
             $suppliers = Supplier::all();
             return DataTables::of($suppliers)
                 ->editColumn('supplier_information', function (Supplier $supplier) {
-                    return '<div>Code: ' . $supplier->supplier_code . '</div>
+                    return '<div>Supplier Code: ' . $supplier->supplier_code . '</div>
                             <div>Classification: ' . $supplier->supplierClassification->description . '</div>
                             <div>Address: ' . $supplier->address . ' ' . $supplier->city . ', ' . $supplier->state . ', ' . $supplier->country . '</div>
                             <div>Currency: ' . $supplier->currency->description . '</div>';
@@ -46,7 +46,8 @@ class SupplierController extends Controller
                 ->editColumn('actions', function (Supplier $supplier) {
                     return '<button id="btn-edit" data-id="' . $supplier->id . '" title="Edit Record" type="button" class="btn btn-outline-secondary"><i class="fa fa-edit"></i></button>' .
                         '<button id="btn-delete" data-id="' . $supplier->id . '" title="Delete Record" type="button" class="btn btn-outline-danger"><i class="fa fa-trash-o"></i></button><hr>' .
-                        '<button id="btn-update-status" data-id="' . $supplier->id . '" type="button" class="btn btn-link">' . ($supplier->disabled == 'N' ? 'Disable' : 'Enable') . '</button>';
+                        '<button id="btn-contact" data-id="' . $supplier->id . '" type="button" class="btn btn-link">Manage Contacts</button><br>
+                         <button id="btn-update-status" data-id="' . $supplier->id . '" type="button" class="btn btn-link">' . ($supplier->disabled == 'N' ? 'Disable' : 'Enable') . '</button>';
                 })
                 ->rawColumns(['supplier_information', 'status', 'logs', 'actions'])
                 ->make(true);

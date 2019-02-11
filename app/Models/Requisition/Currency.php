@@ -3,6 +3,7 @@
 namespace App\Models\Requisition;
 
 use App\Models\Ap\Bank;
+use App\Models\Ap\BankAccount;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -44,8 +45,8 @@ class Currency extends Model
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function banks() {
-        return $this->hasMany(Bank::class);
+    public function bankAccounts() {
+        return $this->hasMany(BankAccount::class);
     }
 
     /**

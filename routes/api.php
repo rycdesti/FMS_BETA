@@ -46,6 +46,8 @@ Route::group(['prefix' => '/requisition'], function () {
 
     Route::resource('/supplier', 'Requisition\SupplierController');
     Route::patch('/supplier/{supplier}/update_status', 'Requisition\SupplierController@update_status');
+
+    Route::resource('/supplier-contact', 'Requisition\SupplierContactController');
 });
 
 Route::group(['prefix' => '/utils'], function () {

@@ -30,7 +30,7 @@ export default {
             component: Supplier,
         },
         {
-            path: 'supplier',
+            path: 'supplier-contact/:supplier_id',
             name: 'Supplier Contact',
             component: SupplierContact,
             props: true,

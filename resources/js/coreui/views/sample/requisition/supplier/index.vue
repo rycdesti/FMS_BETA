@@ -72,7 +72,7 @@
     import CallOutForm from '@/views/sample/requisition/supplier/form'
 
     export default {
-        name: 'Currency',
+        name: 'Supplier',
         components: {
             'call_out_form': CallOutForm,
         },
@@ -105,6 +105,11 @@
                 component.deleteData($(this).data('id'));
             });
 
+            $(document).on('click', '#btn-contact', function () {
+                const id = $(this).data('id');
+                component.$router.push({name: 'Supplier Contact', params: {supplier_id: id}});
+            });
+
             $(document).on('click', '#btn-update-status', function () {
                 const id = $(this).data('id');
                 const status = $(this).text();
@@ -116,7 +121,7 @@
         },
         beforeDestroy() {
             this.$root.$listener.destroy(
-                ['#btn-edit', '#btn-delete', '#btn-update-status'],
+                ['#btn-edit', '#btn-delete', '#btn-contact', '#btn-update-status'],
                 ['edit'],
                 this.$root
             );
