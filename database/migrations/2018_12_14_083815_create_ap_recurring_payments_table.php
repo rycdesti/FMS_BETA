@@ -15,7 +15,7 @@ class CreateAprecurringPaymentsTable extends Migration {
 		Schema::create('ap.recurring_payments', function(Blueprint $table)
 		{
             $table->bigInteger('id', true);
-			$table->string('supplier_id', 15)->nullable();
+			$table->bigInteger('supplier_id');
 			$table->string('document_no', 30)->nullable();
 			$table->dateTime('duration_from')->nullable();
 			$table->dateTime('duration_to')->nullable();
@@ -29,6 +29,11 @@ class CreateAprecurringPaymentsTable extends Migration {
 			$table->string('logs', 60)->nullable();
 			$table->string('last_modified', 60)->nullable();
 			$table->timestamps();
+
+            $table->foreign('supplier_id')
+                ->references('id')
+                ->on('requisition.suppliers')
+                ->onDelete('cascade');
 		});
 	}
 

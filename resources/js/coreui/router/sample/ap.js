@@ -2,6 +2,7 @@
 import Bank from '@/views/sample/ap/bank'
 import BankAccount from '@/views/sample/ap/bank_account'
 import Check from '@/views/sample/ap/check'
+import RecurringPayment from '@/views/sample/ap/recurring_payment'
 
 export default {
     path: 'ap',
@@ -18,11 +19,11 @@ export default {
         //     name     : 'Manage Monthly Payments',
         //     component: AccountCategory,
         // },
-        // {
-        //     path     : 'recurring-payment',
-        //     name     : 'Manage Recurring Payments',
-        //     component: ChartOfAccount,
-        // },
+        {
+            path: 'recurring-payment',
+            name: 'Recurring Payment',
+            component: RecurringPayment,
+        },
         {
             path: 'bank',
             name: 'Bank',

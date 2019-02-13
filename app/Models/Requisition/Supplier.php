@@ -2,6 +2,7 @@
 
 namespace App\Models\Requisition;
 
+use App\Models\Ap\RecurringPayment;
 use App\Models\BaseModel;
 
 /**
@@ -46,6 +47,13 @@ class Supplier extends BaseModel
      * @var array
      */
     protected $fillable = ['supplier_classification_id', 'currency_id', 'supplier_code', 'name', 'check_name', 'address', 'city', 'state', 'zip_code', 'country', 'disabled', 'date_disabled', 'disabled_by', 'logs', 'last_modified', 'created_at', 'updated_at'];
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function recurringPayments() {
+        return $this->hasMany(RecurringPayment::class);
+    }
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo

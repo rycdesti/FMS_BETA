@@ -56,7 +56,9 @@
             buttons: {
                 type: Array,
                 default: function () {
-                    return []
+                    return [
+                       'excel', 'pdf'
+                    ]
                 }
             },
         },

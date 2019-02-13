@@ -35,6 +35,9 @@ Route::group(['prefix' => '/ap'], function () {
 
     Route::resource('/check', 'Ap\CheckController');
     Route::get('/check/{sequence}/get_check_list', 'Ap\CheckController@get_check_list');
+
+    Route::resource('/recurring-payment', 'Ap\RecurringPaymentController');
+    Route::patch('/recurring-payment/{recurring_payment}/update_status', 'Ap\RecurringPaymentController@update_status');
 });
 
 Route::group(['prefix' => '/requisition'], function () {
