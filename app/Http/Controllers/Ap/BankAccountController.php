@@ -78,7 +78,7 @@ class BankAccountController extends Controller
                             <div>Account Number: ' . $bankAccount->acct_no . '</div>
                             <div>Account Type: ' . $this->get_acct_type($bankAccount->acct_type) . '</div>
                             <div>Currency: ' . $bankAccount->currency->description . '</div>
-                            <div>Beginning Balance: ' . ($bankAccount->beginning_balance ? number_format($bankAccount->beginning_balance,2) : '0.00') . '</div>';
+                            <div>Beginning Balance: ' . ($bankAccount->beginning_balance ? number_format($bankAccount->beginning_balance, 2) : '0.00') . '</div>';
                 })
                 ->editColumn('status', function (BankAccount $bankAccount) {
                     if ($bankAccount->disabled == 'N') {

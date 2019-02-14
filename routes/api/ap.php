@@ -22,9 +22,13 @@ Route::group(['prefix' => '/ap'], function () {
 
     // utils
     Route::group(['prefix' => '/utils'], function () {
-        Route::get('/get_bank/{bank}', 'Ap\BankAccountController@get_bank');
         Route::get('/get_bank_account/{bank_account}', 'Ap\CheckController@get_bank_account');
+
+        Route::get('/get_bank/{bank}', 'Ap\BankAccountController@get_bank');
         Route::get('/get_acct_type', 'Ap\BankAccountController@get_acct_type');
         Route::get('/get_currency', 'Ap\BankAccountController@get_currency');
+
+        Route::get('/get_supplier', 'Ap\RecurringPaymentController@get_supplier');
+        Route::get('/get_frequency', 'Ap\RecurringPaymentController@get_frequency');
     });
 });

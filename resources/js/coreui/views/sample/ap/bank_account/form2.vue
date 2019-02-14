@@ -53,8 +53,6 @@
 
             <!-- start: title -->
             <!--label="Title"-->
-            <!--:max-date="maxDate"-->
-            <!--:min-date="minDate"-->
             <b-form-fieldset
                     label="Beginning Balance as of"
                     description="Please enter as of.">
@@ -91,8 +89,6 @@
             'data'
         ],
         data() {
-            // const today = new Date();
-
             return {
                 form: new Form({
                     id: 0,
@@ -101,9 +97,6 @@
                     beginning_balance: '',
                     as_of: '',
                 }),
-                // date: new Date(),
-                // minDate: new Date(today.getFullYear(), today.getMonth(), today.getDate() - 5),
-                // maxDate: new Date(today.getFullYear(), today.getMonth(), today.getDate() + 5)
             }
         },
         created() {

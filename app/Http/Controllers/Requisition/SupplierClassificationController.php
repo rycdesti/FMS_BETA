@@ -58,7 +58,7 @@ class SupplierClassificationController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
@@ -71,13 +71,13 @@ class SupplierClassificationController extends Controller
         $supplier_initials = '';
         $array_supplier_name = explode(' ', trim(strtoupper($description)));
 
-        if (count($array_supplier_name) > 1){
-            foreach($array_supplier_name as $key => $value){
-                if(strlen(trim($value)) >= 1){
+        if (count($array_supplier_name) > 1) {
+            foreach ($array_supplier_name as $key => $value) {
+                if (strlen(trim($value)) >= 1) {
                     $supplier_initials .= $value[0];
                 }
             }
-        }else{
+        } else {
             $supplier_initials = trim(strtoupper($description));
         }
         $code = substr($supplier_initials, 0, 3) . date('ymdHis');
@@ -100,7 +100,7 @@ class SupplierClassificationController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param  int $id
      * @return \Illuminate\Http\Response
      */
     public function show($id)
@@ -113,7 +113,7 @@ class SupplierClassificationController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
+     * @param  int $id
      * @return \Illuminate\Http\Response
      */
     public function edit($id)

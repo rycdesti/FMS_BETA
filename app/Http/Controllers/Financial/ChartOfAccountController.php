@@ -217,9 +217,10 @@ class ChartOfAccountController extends Controller
      * @param null $value
      * @return array|mixed
      */
-    public function get_posting_type($value = null) {
+    public function get_posting_type($value = null)
+    {
         $postingType = array('B' => 'Balance Sheet', 'P' => 'Profit And Loss');
-        if($value) {
+        if ($value) {
             return $postingType[$value];
         } else {
             return $postingType;
@@ -232,9 +233,10 @@ class ChartOfAccountController extends Controller
      * @param null $value
      * @return array|mixed
      */
-    public function get_typical_balance($value = null) {
+    public function get_typical_balance($value = null)
+    {
         $typicalBalance = array('C' => 'Credit', 'D' => 'Debit');
-        if($value) {
+        if ($value) {
             return $typicalBalance[$value];
         } else {
             return $typicalBalance;

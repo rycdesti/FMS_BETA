@@ -3,7 +3,7 @@
 import Vue from 'vue'
 import BootstrapVue from 'bootstrap-vue'
 import Datepicker from 'vuejs-datepicker'
-import {id} from 'vuejs-datepicker/dist/locale'
+import {en} from 'vuejs-datepicker/dist/locale'
 import Notifications from 'vue-notification'
 import Sweetalert from 'vue-sweetalert2'
 import Vuelidate from 'vuelidate'
@@ -12,13 +12,13 @@ import Select2 from './components/Select'
 import App from './App'
 import router from './router'
 import store from './store'
-import LoadScript from 'vue-plugin-load-script';
+import LoadScript from 'vue-plugin-load-script'
 
-Vue.use(BootstrapVue)
-Vue.use(Notifications)
-Vue.use(Sweetalert)
-Vue.use(Vuelidate)
-Vue.use(LoadScript)
+Vue.use(BootstrapVue);
+Vue.use(Notifications);
+Vue.use(Sweetalert);
+Vue.use(Vuelidate);
+Vue.use(LoadScript);
 
 Vue.filter('state', (value, dirtyOnly = true) => {
     if (dirtyOnly) {
@@ -27,11 +27,11 @@ Vue.filter('state', (value, dirtyOnly = true) => {
     }
 
     return !value.$invalid ? 'valid' : 'invalid'
-})
+});
 
-Vue.component('vform', require('vform'))
-Vue.component('b-loading', Loading)
-Vue.component('b-select-2', Select2)
+Vue.component('vform', require('vform'));
+Vue.component('b-loading', Loading);
+Vue.component('b-select-2', Select2);
 Vue.component('b-datepicker', {
     extends: Datepicker,
     props: {
@@ -41,10 +41,10 @@ Vue.component('b-datepicker', {
         },
         language: {
             type: Object,
-            default: () => id,
+            default: () => en,
         },
     },
-})
+});
 
 // Vue.prototype.$swal = {
 //     success: function (message) {

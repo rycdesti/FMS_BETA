@@ -55,7 +55,7 @@
             <!--label="Title"-->
             <b-form-fieldset
                     label="Account Type"
-                    description="Please enter account type.">
+                    description="Please select account type.">
                 <b-form-select v-model="form.acct_type"
                                :options="acct_type_opt"
                                :class="{ 'is-invalid': form.errors.has('acct_type') }"
@@ -75,7 +75,7 @@
             <!--label="Title"-->
             <b-form-fieldset
                     label="Currency"
-                    description="Please enter currency.">
+                    description="Please select currency.">
                 <b-form-select v-model="form.currency_id"
                                :options="currency_opt"
                                :class="{ 'is-invalid': form.errors.has('currency_id') }"
