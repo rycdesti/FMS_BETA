@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Ap;
 
 use App\Models\Ap\Bank;
 use App\Models\Ap\BankAccount;
+use App\Models\Requisition\Currency;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Yajra\DataTables\Facades\DataTables;
@@ -254,5 +255,22 @@ class BankAccountController extends Controller
         } else {
             return $acctType;
         }
+    }
+
+    /**
+     * Get all currencies from storage
+     *
+     * @return mixed
+     */
+    public function get_currency()
+    {
+        $currencies = Currency::where('disabled', '=', 'N')
+            ->orderBy('description')
+            ->get([
+                'id as value',
+                'description as text'
+            ]);
+
+        return $currencies;
     }
 }

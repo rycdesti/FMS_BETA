@@ -12,17 +12,17 @@ class SupplierClassificationSeeder extends Seeder
     public function run()
     {
         \App\Models\Requisition\SupplierClassification::create([
-            'classification_code' => 'TC1111111111',
+            'classification_code' => 'TC' . date('ymdHis'),
             'description' => 'Test Classification 1',
             'logs' => 'Created by: Test'
         ]);
         \App\Models\Requisition\SupplierClassification::create([
-            'classification_code' => 'TC2222222222',
+            'classification_code' => 'TT' . date('ymdHis'),
             'description' => 'Test Classification 2',
             'logs' => 'Created by: Test'
         ]);
         \App\Models\Requisition\SupplierClassification::create([
-            'classification_code' => 'TC3333333333',
+            'classification_code' => 'CC' . date('ymdHis'),
             'description' => 'Test Classification 3',
             'logs' => 'Created by: Test'
         ]);

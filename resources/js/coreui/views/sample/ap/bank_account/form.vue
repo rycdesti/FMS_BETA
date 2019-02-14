@@ -134,8 +134,8 @@
             const component = this;
 
             axios.all([
-                axios.get('/api/utils/get_acct_type'),
-                axios.get('/api/utils/get_currency'),
+                axios.get('/api/ap/utils/get_acct_type'),
+                axios.get('/api/ap/utils/get_currency'),
             ]).then(axios.spread(function (acct_type, currency) {
                 component.acct_type_opt = acct_type.data;
                 component.currency_opt = currency.data;

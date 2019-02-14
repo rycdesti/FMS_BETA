@@ -133,9 +133,9 @@
             const component = this;
 
             axios.all([
-                axios.get('/api/utils/get_acct_category'),
-                axios.get('/api/utils/get_posting_type'),
-                axios.get('/api/utils/get_typical_balance'),
+                axios.get('/api/financial/utils/get_acct_category'),
+                axios.get('/api/financial/utils/get_posting_type'),
+                axios.get('/api/financial/utils/get_typical_balance'),
             ]).then(axios.spread(function (acct_category, posting_type, typical_balance) {
                 component.acct_category_opt = acct_category.data;
                 component.posting_type_opt = posting_type.data;

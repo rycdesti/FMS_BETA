@@ -14,7 +14,7 @@ class SupplierSeeder extends Seeder
         \App\Models\Requisition\Supplier::create([
             'supplier_classification_id' => '1',
             'currency_id' => '1',
-            'supplier_code' => 'PTI091287391234',
+            'supplier_code' => 'PTI' . date('ymdHis'),
             'name' => 'Pamco Trade Industry',
             'check_name' => 'Pamco Trade Industry',
             'address' => 'Sta Mesa',
@@ -27,7 +27,7 @@ class SupplierSeeder extends Seeder
         \App\Models\Requisition\Supplier::create([
             'supplier_classification_id' => '2',
             'currency_id' => '2',
-            'supplier_code' => 'SSS981273891231',
+            'supplier_code' => 'SSS' . date('ymdHis'),
             'name' => 'Social Security System',
             'check_name' => 'Social Security System',
             'address' => 'Farmers Cubao',
@@ -40,7 +40,7 @@ class SupplierSeeder extends Seeder
         \App\Models\Requisition\Supplier::create([
             'supplier_classification_id' => '3',
             'currency_id' => '3',
-            'supplier_code' => 'TIP981236871621',
+            'supplier_code' => 'TIP' . date('ymdHis'),
             'name' => 'Technological Institute of the Philippines',
             'check_name' => 'Technological Institute of the Philippines',
             'address' => '938 Aurora Blvd',

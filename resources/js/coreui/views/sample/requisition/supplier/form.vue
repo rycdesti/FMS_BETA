@@ -213,8 +213,8 @@
             const component = this;
 
             axios.all([
-                axios.get('/api/utils/get_supplier_classification'),
-                axios.get('/api/utils/get_currency')
+                axios.get('/api/requisition/utils/get_supplier_classification'),
+                axios.get('/api/requisition/utils/get_currency')
             ]).then(axios.spread(function (supplier_classification, currency) {
                 component.supplier_classification_opt = supplier_classification.data;
                 component.currency_opt = currency.data;
