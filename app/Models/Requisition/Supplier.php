@@ -56,6 +56,13 @@ class Supplier extends BaseModel
     }
 
     /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function supplierContacts() {
+        return $this->hasMany(SupplierContact::class);
+    }
+
+    /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function supplierClassification()

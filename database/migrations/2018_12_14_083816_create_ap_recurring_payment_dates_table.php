@@ -22,6 +22,7 @@ class CreateAprecurringPaymentDatesTable extends Migration {
 			$table->char('is_current', 1)->nullable();
 			$table->string('frequency_type', 50)->nullable();
 			$table->string('logs', 50)->nullable();
+            $table->timestamps();
 
             $table->foreign('recurring_payment_id')
                 ->references('id')

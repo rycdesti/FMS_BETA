@@ -46,6 +46,14 @@ class RecurringPayment extends BaseModel
     protected $fillable = ['supplier_id', 'document_no', 'duration_from', 'duration_to', 'is_duration', 'frequency', 'remarks', 'amount', 'disabled', 'date_disabled', 'disabled_by', 'logs', 'last_modified', 'created_at', 'updated_at'];
 
     /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function recurringPayment()
+    {
+        return $this->hasMany(RecurringPaymentDates::class);
+    }
+
+    /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function supplier()

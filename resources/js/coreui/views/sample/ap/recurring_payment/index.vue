@@ -83,12 +83,13 @@
                 table_columns: [
                     {data: 'supplier_name'},
                     {data: 'supplier_info', bSortable: false, bSearchable: false},
+                    {data: 'duration', bSortable: false, bSearchable: false},
                     {data: 'frequency', bSortable: false, bSearchable: false},
                     {data: 'status', bSortable: false, bSearchable: false},
                     {data: 'logs', bSortable: false, bSearchable: false},
                     {data: 'actions', bSortable: false, bSearchable: false}
                 ],
-                table_headers: ['Supplier Name', 'Supplier Information', 'Frequency', 'Status', 'Logs', 'Actions'],
+                table_headers: ['Supplier Name', 'Supplier Information', 'Duration', 'Frequency', 'Status', 'Logs', 'Actions'],
                 table_url: '',
                 data: '',
             }
@@ -115,7 +116,6 @@
                 const id = $(this).data('id');
                 const status = $(this).text();
                 component.updateStatus(id, status);
-
             });
         },
         beforeDestroy() {

@@ -131,6 +131,7 @@
                             description="Please select day of the week.">
                         <b-form-radio-group v-model="form.frequency_type.W.weekday"
                                             :options="week_opt"
+                                            :class="{ 'is-invalid': form.errors.has('frequency_type.W.weekday') }"
                                             stacked>
                         </b-form-radio-group>
                     </b-form-group>
@@ -146,7 +147,8 @@
                             label="Day of the Month"
                             description="Please select day of the month.">
                         <b-form-select v-model="form.frequency_type.M.day"
-                                       :options="days_opt">
+                                       :options="days_opt"
+                                       :class="{ 'is-invalid': form.errors.has('frequency_type.M.day') }">
                             <template slot="first">
                                 <option value selected disabled></option>
                             </template>
@@ -165,6 +167,7 @@
                                 :label="quarter"
                                 :description="'Please enter ' + quarter.toLowerCase() + '.'">
                             <b-datepicker v-model="form.frequency_type.Q[key]"
+                                          :class="{ 'is-invalid': form.errors.has('frequency_type.Q.' + key) }"
                                           placeholder="Click to select...">
                             </b-datepicker>
                             <has-error :form="form" field="name"/>
@@ -182,6 +185,7 @@
                                 :label="semester"
                                 :description="'Please enter ' + semester.toLowerCase() + '.'">
                             <b-datepicker v-model="form.frequency_type.S[key]"
+                                          :class="{ 'is-invalid': form.errors.has('frequency_type.S.' + key) }"
                                           placeholder="Click to select...">
                             </b-datepicker>
                             <has-error :form="form" field="name"/>
@@ -200,7 +204,8 @@
                                     label="Month"
                                     description="Please select month.">
                                 <b-form-select v-model="form.frequency_type.A.month"
-                                               :options="month_opt">
+                                               :options="month_opt"
+                                               :class="{ 'is-invalid': form.errors.has('frequency_type.A.month') }">
                                     <template slot="first">
                                         <option value selected disabled></option>
                                     </template>
@@ -217,7 +222,8 @@
                                     label="Day of the Month"
                                     description="Please select day of the month.">
                                 <b-form-select v-model="form.frequency_type.A.day"
-                                               :options="days_opt">
+                                               :options="days_opt"
+                                               :class="{ 'is-invalid': form.errors.has('frequency_type.A.day') }">
                                     <template slot="first">
                                         <option value selected disabled></option>
                                     </template>

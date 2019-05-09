@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Ap;
 
 use App\Models\Ap\RecurringPayment;
+use App\Models\Ap\RecurringPaymentDates;
 use App\Models\Requisition\Supplier;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -25,8 +26,54 @@ class RecurringPaymentController extends Controller
                     return $recurringPayment->supplier->name;
                 })
                 ->editColumn('supplier_info', function (RecurringPayment $recurringPayment) {
+                    $s_contact = '';
+
+                    foreach ($recurringPayment->supplier->supplierContacts as $value) {
+                        $s_contact .= '<div class="mb-3">';
+                        $s_contact .= '<div>Contact Person: ' . $value['contact_person'] . '</div>';
+                        $s_contact .= '<div>Phone Number 1: ' . $value['phone_number1'] . '</div>';
+                        $s_contact .= $value['phone_number2'] ? '<div>Phone Number 2: ' . $value['phone_number2'] . '</div>' : '';
+                        $s_contact .= $value['phone_number3'] ? '<div>Phone Number 3: ' . $value['phone_number3'] . '</div>' : '';
+                        $s_contact .= $value['fax_number'] ? '<div>Fax Number: ' . $value['fax_number'] . '</div>' : '';
+                        $s_contact .= '</div>';
+                    }
+                    $s_contact .= '<div>Amount: ' . $recurringPayment->amount . '</div>';
+
+                    return $s_contact;
+                })
+                ->editColumn('duration', function (RecurringPayment $recurringPayment) {
+                    if ($recurringPayment->is_duration == 'N') {
+                        return '<div>Continuous</div>';
+                    } else {
+                        return '<div>From: ' . date('F d, Y', strtotime($recurringPayment->duration_from)) . '</div>' .
+                            '<div>To: ' . date('F d, Y', strtotime($recurringPayment->duration_to)) . '</div>';
+                    }
                 })
                 ->editColumn('frequency', function (RecurringPayment $recurringPayment) {
+                    $s_frequency = '<fieldset class="border p-2"><legend class="w-auto" style="font-size: 12pt"><span class="text-primary font-weight-bold">' . $this->get_frequency('frequency', $recurringPayment->frequency) . '</span></legend>';
+
+                    foreach ($recurringPayment->recurringPayment as $value) {
+                        $month = $value['month'];
+                        $day = $value['day'];
+                        $weekday = $value['weekday'];
+
+                        if ($recurringPayment->frequency == 'W') {
+                            $s_frequency .= '<div class="text-center font-weight-bold">Every ' . $this->get_frequency('week', $weekday) . '</div><br>';
+                        } else if ($recurringPayment->frequency == 'M') {
+                            $s_frequency .= '<div class="text-center font-weight-bold">' . $this->ConvertToOrdinal($day) . ' of the Month</div><br>';
+                        } else if ($recurringPayment->frequency == 'Q') {
+                            $frequency_type_desc = $this->get_frequency('quarter', $value['frequency_type']);
+                            $s_frequency .= '<div class="text-center">' . $frequency_type_desc . ':</div><div class="text-center font-weight-bold">' . $this->ConvertToOrdinal($day) . ' of ' . $this->get_frequency('month', $month) . '</div><br/>';
+                        } else if ($recurringPayment->frequency == 'S') {
+                            $frequency_type_desc = $this->get_frequency('semester', $value['frequency_type']);
+                            $s_frequency .= '<div class="text-center">' . $frequency_type_desc . ':<br/></div><div class="text-center font-weight-bold">' . $this->ConvertToOrdinal($day) . ' of ' . $this->get_frequency('month', $month) . '</div><br/>';
+                        } else if ($recurringPayment->frequency == 'A') {
+                            $s_frequency .= '<div class="text-center font-weight-bold">' . $this->ConvertToOrdinal($day) . ' of ' . $this->get_frequency('month', $month) . '</div><br>';
+                        }
+                    }
+
+                    $s_frequency .= "<br></fieldset>";
+                    return $s_frequency;
                 })
                 ->editColumn('status', function (RecurringPayment $recurringPayment) {
                     if ($recurringPayment->disabled == 'N') {
@@ -44,12 +91,11 @@ class RecurringPaymentController extends Controller
                             <div><i class="fa fa-clock-o pr-1"></i>' . $recurringPayment->updated_at->diffForHumans() . '</div>' : '');
                 })
                 ->editColumn('actions', function (RecurringPayment $recurringPayment) {
-                    return '<button id="btn-edit" data-id="' . $recurringPayment->id . '" title="Edit Record" type="button" class="btn btn-outline-secondary"><i class="fa fa-edit"></i></button>
-                            <button id="btn-delete" data-id="' . $recurringPayment->id . '" title="Delete Record" type="button" class="btn btn-outline-danger"><i class="fa fa-trash-o"></i></button><hr>
-                            <button id="btn-RecurringPayment-account" data-id="' . $recurringPayment->id . '" type="button" class="btn btn-link">Manage RecurringPayment Accounts</button><br>
+                    return '<button id="btn-delete" data-id="' . $recurringPayment->id . '" title="Delete Record" type="button" class="btn btn-outline-danger"><i class="fa fa-trash-o"></i></button><hr>
+                            <button id="btn-manage-distribution" data-id="' . $recurringPayment->id . '" type="button" class="btn btn-link">Manage Distribution</button><br>
                             <button id="btn-update-status" data-id="' . $recurringPayment->id . '" type="button" class="btn btn-link">' . ($recurringPayment->disabled == 'N' ? 'Disable' : 'Enable') . '</button>';
                 })
-                ->rawColumns(['supplier_name', 'supplier_info', 'frequency', 'status', 'logs', 'actions'])
+                ->rawColumns(['supplier_name', 'supplier_info', 'duration', 'frequency', 'status', 'logs', 'actions'])
                 ->make(true);
         }
     }
@@ -86,20 +132,100 @@ class RecurringPaymentController extends Controller
             ]);
         }
 
-        $request->validate($validate);
-//
-//        $request['logs'] = 'Created by: Test';
-//        $data = $request->all();
+        $custom = [];
+        $frequency = $request['frequency'];
+        $frequency_type = $request['frequency_type'];
+        if ($frequency == 'W') {
+            $validate = array_merge($validate, ['frequency_type.W.weekday' => 'required']);
+            $custom = ['frequency_type.W.weekday.required' => 'The Day of the Week is required.'];
+        } else if ($frequency == 'M') {
+            $validate = array_merge($validate, ['frequency_type.M.day' => 'required']);
+            $custom = ['frequency_type.M.day.required' => 'The Day of the Month field is required.'];
+        } else if ($frequency == 'Q') {
+            $validate = array_merge($validate, [
+                'frequency_type.Q.Q1' => 'required',
+                'frequency_type.Q.Q2' => 'required',
+                'frequency_type.Q.Q3' => 'required',
+                'frequency_type.Q.Q4' => 'required'
+            ]);
+            $custom = [
+                'frequency_type.Q.Q1.required' => 'The 1st Quarter field is required.',
+                'frequency_type.Q.Q2.required' => 'The 2nd Quarter field is required.',
+                'frequency_type.Q.Q3.required' => 'The 3rd Quarter field is required.',
+                'frequency_type.Q.Q4.required' => 'The 4th Quarter field is required.'
+            ];
+        } else if ($frequency == 'S') {
+            $validate = array_merge($validate, [
+                'frequency_type.S.SEM1' => 'required',
+                'frequency_type.S.SEM2' => 'required',
+                'frequency_type.S.SUMMER' => 'required'
+            ]);
+            $custom = [
+                'frequency_type.S.SEM1.required' => 'The 1st Semester field is required.',
+                'frequency_type.S.SEM2.required' => 'The 2nd Semester field is required.',
+                'frequency_type.S.SUMMER.required' => 'The Summer field is required.'
+            ];
+        } else if ($frequency == 'A') {
+            $validate = array_merge($validate, [
+                'frequency_type.A.month' => 'required',
+                'frequency_type.A.day' => 'required'
+            ]);
+            $custom = [
+                'frequency_type.A.month.required' => 'The Month field is required.',
+                'frequency_type.A.day.required' => 'The Day of the Month field is required.',
+            ];
+        }
+        $request->validate($validate, $custom);
 
-//        $result = RecurringPayment::create($data);
-//        if ($result) {
-//            /**
-//             * check for failure of event tag when insert try to rollback (DB rollback)
-//             * try to check if there is other way to insert multiple record
-//             */
-//            return response()->json(['success' => true, 'message' => 'The record was added successfully!']);
-//        }
-//        return response()->json(['success' => false, 'message' => 'Something went wrong, Please try again.'], 500);
+        $request['logs'] = 'Created by: Test';
+        $data = $request->except('frequency_type');
+
+        $temp = array();
+        $dates_arr = array();
+        $result = RecurringPayment::create($data)->id;
+        if ($result) {
+            $created_at = now();
+            $updated_at = now();
+
+            foreach ($frequency_type[$frequency] as $key => $value) {
+                if ($frequency == 'Q' or $frequency == 'S') {
+                    $temp[$key] = array(
+                        'day' => date('d', strtotime($value)),
+                        'month' => date('m', strtotime($value))
+                    );
+                } else {
+                    $temp[$frequency][$key] = $value;
+                }
+            }
+
+            foreach ($temp as $key => $value) {
+                array_push($dates_arr, array(
+                    'recurring_payment_id' => $result,
+                    'month' => isset($value['month']) ? $value['month'] : 0,
+                    'day' => isset($value['day']) ? $value['day'] : 0,
+                    'weekday' => isset($value['weekday']) ? $value['weekday'] : 0,
+                    'frequency_type' => $key,
+                    'logs' => 'Created by: Test',
+                    'created_at' => $created_at,
+                    'updated_at' => $updated_at,
+                ));
+            }
+
+            $dates_result = RecurringPaymentDates::insert($dates_arr);
+            if ($dates_result) {
+                /**
+                 * check for failure of event tag when insert try to rollback (DB rollback)
+                 * try to check if there is other way to insert multiple record
+                 */
+                return response()->json(['success' => true, 'message' => 'The record was added successfully!']);
+            } else {
+                RecurringPayment::where(['id' => $result])->delete();
+                RecurringPaymentDates::where(['recurring_payment_id' => $result])->delete();
+
+                return response()->json(['success' => false, 'message' => 'Something went wrong, Please try again.'], 500);
+            }
+        }
+        return response()->json(['success' => false, 'message' => 'Something went wrong, Please try again.'], 500);
     }
 
     /**
@@ -139,12 +265,48 @@ class RecurringPaymentController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int $id
+     * @param RecurringPayment $recurringPayment
      * @return \Illuminate\Http\Response
+     * @throws \Exception
      */
-    public function destroy($id)
+    public function destroy(RecurringPayment $recurringPayment)
     {
-        //
+        $result = $recurringPayment->delete();
+        if ($result) {
+            return response()->json(['success' => true, 'message' => 'The record was deleted successfully!']);
+        }
+        return response()->json(['success' => false, 'message' => 'Something went wrong, Please try again.'], 500);
+    }
+
+    /**
+     * Update the status of specified resource from storage
+     *
+     * @param RecurringPayment $recurringPayment
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     */
+    public function update_status(RecurringPayment $recurringPayment)
+    {
+        $status = $recurringPayment->disabled == 'N' ? 'Y' : 'N';
+
+        if ($status == 'Y') {
+            $result = $recurringPayment->update([
+                'disabled' => $status,
+                'date_disabled' => now(),
+                'disabled_by' => 'Disabled by: Test',
+                'last_modified' => 'Last modified by: Test',
+            ]);
+        } else {
+            $result = $recurringPayment->update([
+                'disabled' => $status,
+                'last_modified' => 'Last modified by: Test',
+            ]);
+        }
+
+        if ($result) {
+            $status = $status == 'N' ? 'enabled' : 'disabled';
+            return response()->json(['success' => true, 'message' => 'The record was ' . $status . ' successfully!']);
+        }
+        return response()->json(['success' => false, 'message' => 'Something went wrong, Please try again.'], 500);
     }
 
     /**
@@ -165,10 +327,11 @@ class RecurringPaymentController extends Controller
     /**
      * Get frequency
      *
+     * @param null $frequency_type
      * @param null $value
      * @return array|mixed
      */
-    public function get_frequency($value = null)
+    public function get_frequency($frequency_type = null, $value = null)
     {
         $days = array();
         for ($count_days = 1; $count_days < 32; $count_days++) {
@@ -181,9 +344,26 @@ class RecurringPaymentController extends Controller
             'month' => array('1' => 'January', '2' => 'February', '3' => 'March', '4' => 'April', '5' => 'May', '6' => 'June', '7' => 'July', '8' => 'August', '9' => 'September', '10' => 'October', '11' => 'November', '12' => 'December'),
             'days' => $days);
         if ($value) {
-            return $frequency['frequency'][$value];
+            return $frequency[$frequency_type][$value];
         } else {
             return $frequency;
         }
     }
+
+    /**
+     * Convert number to its ordinal form
+     *
+     * @param $number
+     * @return string
+     */
+    function ConvertToOrdinal($number)
+    {
+        $ends = array('th', 'st', 'nd', 'rd', 'th', 'th', 'th', 'th', 'th', 'th');
+        if ((($number % 100) >= 11) && (($number % 100) <= 13)) {
+            return $number . 'th';
+        } else {
+            return $number . $ends[$number % 10];
+        }
+    }
+
 }

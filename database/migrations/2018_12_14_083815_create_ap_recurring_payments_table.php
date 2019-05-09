@@ -19,7 +19,7 @@ class CreateAprecurringPaymentsTable extends Migration {
 			$table->string('document_no', 30)->nullable();
 			$table->dateTime('duration_from')->nullable();
 			$table->dateTime('duration_to')->nullable();
-			$table->char('is_duration', 1)->nullable();
+			$table->char('is_duration', 1)->default('N')->nullable();
 			$table->char('frequency', 1)->nullable();
 			$table->string('remarks', 150)->nullable();
 			$table->decimal('amount', 18)->nullable();
