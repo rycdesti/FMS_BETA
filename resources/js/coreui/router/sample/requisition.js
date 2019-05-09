@@ -21,7 +21,7 @@ export default {
         },
         {
             path: 'supplier-classification',
-            name: 'Supplier Classification',
+            name: 'SupplierClassification',
             component: SupplierClassification,
         },
         {
@@ -31,7 +31,7 @@ export default {
         },
         {
             path: 'supplier-contact/:supplier_id',
-            name: 'Supplier Contact',
+            name: 'SupplierContact',
             component: SupplierContact,
             props: true,
         },

@@ -3,6 +3,7 @@ import Bank from '@/views/sample/ap/bank'
 import BankAccount from '@/views/sample/ap/bank_account'
 import Check from '@/views/sample/ap/check'
 import RecurringPayment from '@/views/sample/ap/recurring_payment'
+import RecurringPaymentDistribution from '@/views/sample/ap/recurring_payment_distribution'
 
 export default {
     path: 'ap',
@@ -21,8 +22,14 @@ export default {
         // },
         {
             path: 'recurring-payment',
-            name: 'Recurring Payment',
+            name: 'RecurringPayment',
             component: RecurringPayment,
+        },
+        {
+            path: 'recurring-payment-distribution/:recurring_payment_id',
+            name: 'RecurringPaymentDistribution',
+            component: RecurringPaymentDistribution,
+            props: true,
         },
         {
             path: 'bank',
@@ -31,7 +38,7 @@ export default {
         },
         {
             path: 'bank-account/:bank_id',
-            name: 'Bank Account',
+            name: 'BankAccount',
             component: BankAccount,
             props: true,
         },

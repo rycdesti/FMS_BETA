@@ -3,7 +3,6 @@
 namespace App\Models\Ap;
 
 use App\Models\BaseModel;
-use App\Models\Ap\RecurringPayment;
 
 /**
  * @property integer $id

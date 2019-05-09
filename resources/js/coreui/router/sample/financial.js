@@ -14,12 +14,12 @@ export default {
     children: [
         {
             path: 'account-category',
-            name: 'Account Category',
+            name: 'AccountCategory',
             component: AccountCategory,
         },
         {
             path: 'chart-of-account',
-            name: 'Chart of Account',
+            name: 'ChartOfAccount',
             component: ChartOfAccount,
         },
     ],

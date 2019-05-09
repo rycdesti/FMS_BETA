@@ -64,7 +64,7 @@ class BankAccountController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param $bank_id
+     * @param $id
      * @return \Illuminate\Http\Response
      * @throws \Exception
      */

@@ -20,6 +20,9 @@ Route::group(['prefix' => '/ap'], function () {
     Route::resource('/recurring-payment', 'Ap\RecurringPaymentController');
     Route::patch('/recurring-payment/{recurring_payment}/update_status', 'Ap\RecurringPaymentController@update_status');
 
+    // recurring payment
+    Route::resource('/recurring-payment-distribution', 'Ap\RecurringPaymentDistributionController');
+
     // utils
     Route::group(['prefix' => '/utils'], function () {
         Route::get('/get_bank_account/{bank_account}', 'Ap\CheckController@get_bank_account');

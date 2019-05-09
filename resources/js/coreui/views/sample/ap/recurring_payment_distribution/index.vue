@@ -1,7 +1,7 @@
 <template>
     <div class="wrapper">
         <div class="animated fadeIn">
-            <call_out_form/>
+            <call_out_form :recurring_payment_id="this.recurring_payment_id"/>
 
             <b-row>
                 <b-col cols="12">
@@ -10,7 +10,7 @@
                             footer-tag="footer"
                     >
                         <div slot="header">
-                            <i class="fa fa-align-justify"/> <strong>List of Recurring Payments</strong>
+                            <i class="fa fa-align-justify"/> <strong>List of Recurring Payment Distributions</strong>
                             <div class="card-actions">
                                 <a
                                         href="https://bootstrap-vue.js.org/docs/components/breadcrumb"
@@ -70,26 +70,26 @@
 </template>
 
 <script>
-    import CallOutForm from '@/views/sample/ap/recurring_payment/form'
+    import CallOutForm from '@/views/sample/ap/recurring_payment_distribution/form'
 
     export default {
-        name: 'RecurringPayment',
+        name: 'RecurringPaymentDistribution',
+        props: ['recurring_payment_id'],
         components: {
             'call_out_form': CallOutForm,
         },
         data() {
             return {
-                table_id: 'tbl-recurring-payment',
+                table_id: 'tbl-recurring-payment-distribution',
                 table_columns: [
-                    {data: 'supplier_name'},
-                    {data: 'supplier_info', bSortable: false, bSearchable: false},
-                    {data: 'duration', bSortable: false, bSearchable: false},
-                    {data: 'frequency', bSortable: false, bSearchable: false},
-                    {data: 'status', bSortable: false, bSearchable: false},
+                    {data: 'acct_code', bSortable: false, bSearchable: false},
+                    {data: 'acct_desc', bSortable: false, bSearchable: false},
+                    {data: 'debit', bSortable: false, bSearchable: false},
+                    {data: 'credit', bSortable: false, bSearchable: false},
                     {data: 'logs', bSortable: false, bSearchable: false},
                     {data: 'actions', bSortable: false, bSearchable: false}
                 ],
-                table_headers: ['Supplier Name', 'Supplier Information', 'Duration', 'Frequency', 'Status', 'Logs', 'Actions'],
+                table_headers: ['Account Code', 'Description', 'Debit', 'Credit', 'Logs', 'Actions'],
                 table_url: '',
                 data: '',
             }
@@ -103,31 +103,17 @@
             $(document).on('click', '#btn-delete', function () {
                 component.deleteData($(this).data('id'));
             });
-
-            $(document).on('click', '#btn-recurring-payment-distribution', function () {
-                const id = $(this).data('id');
-                component.$router.push({name: 'RecurringPaymentDistribution', params: {recurring_payment_id: id}});
-
-                // var table = $('#tbl-bank').DataTable();
-                // var node = table.row(`#row-${id}`).data();
-            });
-
-            $(document).on('click', '#btn-update-status', function () {
-                const id = $(this).data('id');
-                const status = $(this).text();
-                component.updateStatus(id, status);
-            });
         },
         beforeDestroy() {
             this.$root.$listener.destroy(
-                ['#btn-delete', '#btn-recurring-payment-distribution', '#btn-update-status'],
-                ['edit'],
+                ['#btn-delete'],
+                [],
                 this.$root
             );
         },
         methods: {
             fetchData() {
-                this.table_url = '/api/ap/recurring-payment';
+                this.table_url = `/api/ap/recurring-payment-distribution/${this.recurring_payment_id}`;
             },
             async deleteData(id) {
                 const component = this;
@@ -144,7 +130,7 @@
                 });
 
                 if (result.value) {
-                    axios.delete(`/api/ap/recurring-payment/${id}`)
+                    axios.delete(`/api/ap/recurring-payment-distribution/${id}`)
                         .then(function (response) {
                             if (response.data.success) {
                                 component.$swal.fire(
@@ -152,7 +138,7 @@
                                     response.data.message,
                                     'success'
                                 ).then(() => {
-                                    const table = $('#tbl-recurring-payment');
+                                    const table = $('#tbl-recurring-payment-distribution');
                                     table.DataTable().draw(false);
                                 });
                             }
@@ -163,40 +149,6 @@
                         });
                 }
             },
-            async updateStatus(id, status) {
-                const component = this;
-
-                let result = await this.$swal.fire({
-                    title: status,
-                    text: 'Do you really want to ' + status.toLowerCase() + ' this record?',
-                    type: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#20a8d8',
-                    cancelButtonColor: '#f86c6b',
-                    confirmButtonText: 'Yes',
-                    cancelButtonText: 'No'
-                });
-
-                if (result.value) {
-                    axios.patch(`/api/ap/recurring-payment/${id}/update_status`)
-                        .then(function (response) {
-                            if (response.data.success) {
-                                component.$swal.fire(
-                                    status,
-                                    response.data.message,
-                                    'success'
-                                ).then(() => {
-                                    const table = $('#tbl-recurring-payment');
-                                    table.DataTable().draw(false);
-                                });
-                            }
-                        })
-                        .catch(function (error) {
-                        })
-                        .finally(function () {
-                        });
-                }
-            }
         }
     }
 </script>

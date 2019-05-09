@@ -13,6 +13,7 @@ Route::group(['prefix' => '/financial'], function () {
 
     // utils
     Route::group(['prefix' => '/utils'], function () {
+        Route::get('/get_chart_account', 'Financial\ChartOfAccountController@get_chart_account');
         Route::get('/get_acct_category', 'Financial\ChartOfAccountController@get_acct_category');
         Route::get('/get_posting_type', 'Financial\ChartOfAccountController@get_posting_type');
         Route::get('/get_typical_balance', 'Financial\ChartOfAccountController@get_typical_balance');

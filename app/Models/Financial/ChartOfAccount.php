@@ -2,6 +2,7 @@
 
 namespace App\Models\Financial;
 
+use App\Models\Ap\RecurringPaymentDistribution;
 use App\Models\BaseModel;
 
 /**
@@ -40,6 +41,13 @@ class ChartOfAccount extends BaseModel
      * @var array
      */
     protected $fillable = ['account_category_id', 'acct_code', 'description', 'posting_type', 'typical_balance', 'disabled', 'date_disabled', 'disabled_by', 'logs', 'last_modified', 'created_at', 'updated_at'];
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function recurringPaymentDistribution() {
+        return $this->hasMany(RecurringPaymentDistribution::class);
+    }
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo

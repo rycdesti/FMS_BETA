@@ -6,44 +6,12 @@
             <!-- start: title -->
             <!--label="Title"-->
             <b-form-fieldset
-                    label="Account Code"
-                    description="Please enter account code.">
-                <b-form-input v-model="form.acct_code"
-                              autocomplete="off"
-                              :class="{ 'is-invalid': form.errors.has('acct_code') }"
-                              type="text"
-                              name="acct_code"
-                              class="input-container"
-                              :maxlength="50"></b-form-input>
-                <has-error :form="form" field="name"/>
-            </b-form-fieldset>
-            <!-- end: title -->
-
-            <!-- start: title -->
-            <!--label="Title"-->
-            <b-form-fieldset
-                    label="Description"
-                    description="Please enter description.">
-                <b-form-input v-model="form.description"
-                              autocomplete="off"
-                              :class="{ 'is-invalid': form.errors.has('description') }"
-                              type="text"
-                              name="description"
-                              class="input-container"
-                              :maxlength="50"></b-form-input>
-                <has-error :form="form" field="name"/>
-            </b-form-fieldset>
-            <!-- end: title -->
-
-            <!-- start: title -->
-            <!--label="Title"-->
-            <b-form-fieldset
-                    label="Account Category"
-                    description="Please select account category.">
-                <b-form-select v-model="form.account_category_id"
-                               :options="acct_category_opt"
-                               :class="{ 'is-invalid': form.errors.has('account_category_id') }"
-                               name="account_category_id"
+                    label="Account"
+                    description="Please select account.">
+                <b-form-select v-model="form.chart_of_account_id"
+                               :options="chart_account_opt"
+                               :class="{ 'is-invalid': form.errors.has('chart_of_account_id') }"
+                               name="chart_of_account_id"
                                class="input-container">
                     <template slot="first">
                         <option value selected disabled>-- Please select an option --</option>
@@ -56,36 +24,33 @@
             <!-- start: title -->
             <!--label="Title"-->
             <b-form-fieldset
-                    label="Posting Type"
-                    description="Please select posting type.">
-                <b-form-select v-model="form.posting_type"
-                               :options="posting_type_opt"
-                               :class="{ 'is-invalid': form.errors.has('posting_type') }"
-                               name="posting_type"
-                               class="input-container">
-                    <template slot="first">
-                        <option value selected disabled>-- Please select an option --</option>
-                    </template>
-                </b-form-select>
-                <has-error :form="form" field="name"/>
-            </b-form-fieldset>
-            <!-- end: title -->
-
-            <!-- start: title -->
-            <!--label="Title"-->
-            <b-form-fieldset
-                    label="Typical Balance"
-                    description="Please select typical balance.">
+                    label="Account Type"
+                    description="Please select account type.">
                 <b-form-select v-model="form.typical_balance"
                                :options="typical_balance_opt"
                                :class="{ 'is-invalid': form.errors.has('typical_balance') }"
                                name="typical_balance"
-                               class="input-container"
-                               :maxlength="50">
+                               class="input-container">
                     <template slot="first">
                         <option value selected disabled>-- Please select an option --</option>
                     </template>
                 </b-form-select>
+                <has-error :form="form" field="name"/>
+            </b-form-fieldset>
+            <!-- end: title -->
+
+            <!-- start: title -->
+            <!--label="Title"-->
+            <b-form-fieldset
+                    label="Amount"
+                    description="Please enter amount.">
+                <b-form-input v-model="form.amount"
+                              autocomplete="off"
+                              :class="{ 'is-invalid': form.errors.has('amount') }"
+                              type="number"
+                              name="amount"
+                              class="input-container"
+                              :maxlength="50"></b-form-input>
                 <has-error :form="form" field="name"/>
             </b-form-fieldset>
             <!-- end: title -->
@@ -110,20 +75,20 @@
     export default {
         name: "form",
         props: [
-            'data'
+            'data',
+            'recurring_payment_id',
         ],
         data() {
             return {
+                selected: 1,
                 form: new Form({
                     id: 0,
-                    acct_code: '',
-                    description: '',
-                    account_category_id: '',
-                    posting_type: '',
+                    recurring_payment_id: this.recurring_payment_id,
+                    chart_of_account_id: '',
                     typical_balance: '',
+                    amount: '',
                 }),
-                acct_category_opt: [{}],
-                posting_type_opt: [{}],
+                chart_account_opt: [{}],
                 typical_balance_opt: [{}],
             }
         },
@@ -133,12 +98,10 @@
             const component = this;
 
             axios.all([
-                axios.get('/api/financial/utils/get_acct_category'),
-                axios.get('/api/financial/utils/get_posting_type'),
+                axios.get('/api/financial/utils/get_chart_account'),
                 axios.get('/api/financial/utils/get_typical_balance'),
-            ]).then(axios.spread(function (acct_category, posting_type, typical_balance) {
-                component.acct_category_opt = acct_category.data;
-                component.posting_type_opt = posting_type.data;
+            ]).then(axios.spread(function (chart_account, typical_balance) {
+                component.chart_account_opt = chart_account.data;
                 component.typical_balance_opt = typical_balance.data;
             }));
 
@@ -151,7 +114,7 @@
                 const component = this;
                 component.id = id;
 
-                axios.get(`/api/financial/chart-of-account/${id}`)
+                axios.get(`/api/ap/recurring-payment-distribution/${id}`)
                     .then(function (response) {
                         component.form.fill(response.data);
                         component.$root.$emit('bv::show::modal', 'form_modal');
@@ -176,7 +139,7 @@
 
                 if (result.value) {
                     const response = is_update ?
-                        await this.form.patch(`/api/financial/chart-of-account/${this.id}`) : await this.form.post('/api/financial/chart-of-account');
+                        await this.form.patch(`/api/ap/recurring-payment-distribution/${this.id}`) : await this.form.post('/api/ap/recurring-payment-distribution');
 
                     if (response.data.success) {
                         this.$swal.fire(
@@ -187,7 +150,7 @@
                             this.formClose();
                             this.formReset();
 
-                            const table = $('#tbl-chart-of-account');
+                            const table = $('#tbl-recurring-payment-distribution');
                             table.DataTable().draw(true);
                         });
                     }
@@ -203,7 +166,7 @@
             },
             formTitle() {
                 const form_modal = $('#form_modal').find('.modal-title');
-                this.id ? form_modal.text('Edit Chart of Account') : form_modal.text('Add New Chart of Account');
+                this.id ? form_modal.text('Edit Recurring Payment Distribution') : form_modal.text('Add New Recurring Payment Distribution');
             }
         }
     }

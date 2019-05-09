@@ -199,6 +199,23 @@ class ChartOfAccountController extends Controller
      *
      * @return mixed
      */
+    public function get_chart_account()
+    {
+        $acctCategories = ChartOfAccount::where('disabled', '=', 'N')
+            ->orderBy('description')
+            ->get([
+                'id as value',
+                'acct_code as text'
+            ]);
+
+        return $acctCategories;
+    }
+
+    /**
+     * Get all enabled account categories
+     *
+     * @return mixed
+     */
     public function get_acct_category()
     {
         $acctCategories = AccountCategory::where('disabled', '=', 'N')

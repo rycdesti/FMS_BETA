@@ -107,7 +107,7 @@
 
             $(document).on('click', '#btn-contact', function () {
                 const id = $(this).data('id');
-                component.$router.push({name: 'Supplier Contact', params: {supplier_id: id}});
+                component.$router.push({name: 'SupplierContact', params: {supplier_id: id}});
             });
 
             $(document).on('click', '#btn-update-status', function () {

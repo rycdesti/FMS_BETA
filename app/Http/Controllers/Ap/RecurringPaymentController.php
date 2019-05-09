@@ -92,7 +92,7 @@ class RecurringPaymentController extends Controller
                 })
                 ->editColumn('actions', function (RecurringPayment $recurringPayment) {
                     return '<button id="btn-delete" data-id="' . $recurringPayment->id . '" title="Delete Record" type="button" class="btn btn-outline-danger"><i class="fa fa-trash-o"></i></button><hr>
-                            <button id="btn-manage-distribution" data-id="' . $recurringPayment->id . '" type="button" class="btn btn-link">Manage Distribution</button><br>
+                            <button id="btn-recurring-payment-distribution" data-id="' . $recurringPayment->id . '" type="button" class="btn btn-link">Manage Distribution</button><br>
                             <button id="btn-update-status" data-id="' . $recurringPayment->id . '" type="button" class="btn btn-link">' . ($recurringPayment->disabled == 'N' ? 'Disable' : 'Enable') . '</button>';
                 })
                 ->rawColumns(['supplier_name', 'supplier_info', 'duration', 'frequency', 'status', 'logs', 'actions'])

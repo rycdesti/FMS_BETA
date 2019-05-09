@@ -108,7 +108,7 @@
 
             $(document).on('click', '#btn-bank-account', function () {
                 const id = $(this).data('id');
-                component.$router.push({name: 'Bank Account', params: {bank_id: id}});
+                component.$router.push({name: 'BankAccount', params: {bank_id: id}});
 
                 // var table = $('#tbl-bank').DataTable();
                 // var node = table.row(`#row-${id}`).data();
