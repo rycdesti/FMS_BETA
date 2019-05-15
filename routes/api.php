@@ -16,3 +16,13 @@ use Illuminate\Support\Facades\Route;
 // Route::middleware('auth:api')->get('/user', function (Request $request) {
 //     return $request->user();
 // });
+
+
+Route::group(['prefix' => 'reports'], function() {
+    Route::group(['prefix' => 'requisition'], function() {
+        Route::get('supplier', 'Requisition\SupplierController@generatePDFReport');
+        Route::get('supplier_contact/{id}', 'Requisition\SupplierContactController@generatePDFReport');
+        Route::get('supplier_classification', 'Requisition\SupplierClassificationController@generatePDFReport');
+        Route::get('currency', 'Requisition\CurrencyController@generatePDFReport');
+    });
+});
