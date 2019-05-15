@@ -266,7 +266,7 @@ class ChartOfAccountController extends Controller
         $chartOfAccounts = ChartOfAccount::all();
 
         try {
-            $pdf = PDF::loadView('reports.financial.chart_of_accounts', compact('chartOfAccounts'));
+            $pdf = PDF::loadView('reports.financial.chart_of_account', compact('chartOfAccounts'));
             return $pdf->stream('report_req_chart_of_accounts_' . date('Y_m_d_h_i_s', strtotime(now())) . '.pdf');
         } catch (\Exception $e) {
             dd($e->getMessage());

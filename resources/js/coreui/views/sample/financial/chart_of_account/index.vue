@@ -193,7 +193,7 @@
             },
 
             generatePDFReport () {
-              const url = '/api/reports/financial/chart-of-accounts'
+              const url = '/api/reports/financial/chart-of-account'
               window.open(url, '_blank')
             },
         }
