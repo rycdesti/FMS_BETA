@@ -25,4 +25,10 @@ Route::group(['prefix' => 'reports'], function() {
         Route::get('supplier_classification', 'Requisition\SupplierClassificationController@generatePDFReport');
         Route::get('currency', 'Requisition\CurrencyController@generatePDFReport');
     });
+
+
+    Route::group(['prefix' => 'financial'], function() {
+        Route::get('chart-of-accounts', 'Financial\ChartOfAccountController@generatePDFReport');
+        Route::get('account-category', 'Financial\AccountCategoryController@generatePDFReport');
+    });
 });

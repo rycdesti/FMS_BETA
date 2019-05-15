@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Financial;
 
 use App\Models\Financial\AccountCategory;
 use App\Models\Financial\ChartOfAccount;
+use Barryvdh\Snappy\Facades\SnappyPdf as PDF;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Yajra\DataTables\Facades\DataTables;
@@ -257,6 +258,18 @@ class ChartOfAccountController extends Controller
             return $typicalBalance[$value];
         } else {
             return $typicalBalance;
+        }
+    }
+
+    public function generatePDFReport()
+    {
+        $chartOfAccounts = ChartOfAccount::all();
+
+        try {
+            $pdf = PDF::loadView('reports.financial.chart_of_accounts', compact('chartOfAccounts'));
+            return $pdf->stream('report_req_chart_of_accounts_' . date('Y_m_d_h_i_s', strtotime(now())) . '.pdf');
+        } catch (\Exception $e) {
+            dd($e->getMessage());
         }
     }
 }
