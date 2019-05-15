@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers\Requisition;
 
-use App\Models\Requisition\SupplierClassification;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\Requisition\SupplierClassification;
+use Barryvdh\Snappy\Facades\SnappyPdf as PDF;
+use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 
 class SupplierClassificationController extends Controller
@@ -193,5 +194,17 @@ class SupplierClassificationController extends Controller
             return response()->json(['success' => true, 'message' => 'The record was ' . $status . ' successfully!']);
         }
         return response()->json(['success' => false, 'message' => 'Something went wrong, Please try again.'], 500);
+    }
+
+    public function generatePDFReport()
+    {
+        $supplierClassifications = SupplierClassification::all();
+
+        try {
+            $pdf = PDF::loadView('reports.requisition.supplier_classification', compact('supplierClassifications'));
+            return $pdf->stream('report_req_supplier_classification_' . date('Y_m_d_h_i_s', strtotime(now())) . '.pdf');
+        } catch (\Exception $e) {
+            dd($e->getMessage());
+        }
     }
 }

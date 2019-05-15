@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers\Requisition;
 
+use App\Http\Controllers\Controller;
 use App\Models\Requisition\Currency;
 use App\Models\Requisition\Supplier;
 use App\Models\Requisition\SupplierClassification;
+use Barryvdh\Snappy\Facades\SnappyPdf as PDF;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 use Yajra\DataTables\Facades\DataTables;
 
 class SupplierController extends Controller
@@ -252,5 +253,17 @@ class SupplierController extends Controller
             ]);
 
         return $currencies;
+    }
+
+    public function generatePDFReport()
+    {
+        $suppliers = Supplier::all();
+
+        try {
+            $pdf = PDF::loadView('reports.requisition.supplier', compact('suppliers'));
+            return $pdf->stream('report_req_supplier_' . date('Y_m_d_h_i_s', strtotime(now())) . '.pdf');
+        } catch (\Exception $e) {
+            dd($e->getMessage());
+        }
     }
 }

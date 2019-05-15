@@ -40,6 +40,7 @@
                                 <b-button
                                         v-b-tooltip.hover
                                         title="Generate PDF Report"
+                                        @click="generatePDFReport"
                                         variant="outline-primary"
                                 >
                                     <i class="fa fa-file-pdf-o"/>
@@ -189,7 +190,12 @@
                         .finally(function () {
                         });
                 }
-            }
+            },
+
+            generatePDFReport () {
+              const url = '/api/reports/financial/chart-of-accounts'
+              window.open(url, '_blank')
+            },
         }
     }
 </script>
