@@ -104,7 +104,7 @@
             return {
                 table_id: 'tbl-monthly-payment',
                 table_columns: [
-                    {data: 'supplier_info', bSortable: false, bSearchable: false},
+                    {data: 'supplier_info', bSortable: false, bSearchable: true},
                     {data: 'remarks', bSortable: false, bSearchable: false},
                     {data: 'due_date', bSortable: false, bSearchable: false},
                     {data: 'remaining_days', bSortable: false, bSearchable: false},

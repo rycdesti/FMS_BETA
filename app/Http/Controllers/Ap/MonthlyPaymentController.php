@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Ap;
 
+use App\Models\Requisition\Supplier;
+use App\Models\Requisition\SupplierContact;
 use DateInterval;
 use DatePeriod;
 use DateTime;
@@ -92,23 +94,39 @@ class MonthlyPaymentController extends Controller
 
             return DataTables::of($monthlyPayments)
                 ->editColumn('supplier_info', function ($monthlyPayment) {
-                    $s_contact = '<div class="mb-3"> ' . $monthlyPayment->supplier_id . '</div>';
-                    $s_contact .= '<div class="mb-3">Amount: ' . $monthlyPayment->amount . '</div>';
+                    $s_info = '<div class="mb-3"> ' . Supplier::find($monthlyPayment->supplier_id)->name . '</div>';
 
-//                    foreach ($recurringPayment->supplier->supplierContacts as $value) {
-//                        $s_contact .= '<div class="mb-3">';
-//                        $s_contact .= '<div>Contact Person: ' . $value['contact_person'] . '</div>';
-//                        $s_contact .= '<div>Phone Number 1: ' . $value['phone_number1'] . '</div>';
-//                        $s_contact .= $value['phone_number2'] ? '<div>Phone Number 2: ' . $value['phone_number2'] . '</div>' : '';
-//                        $s_contact .= $value['phone_number3'] ? '<div>Phone Number 3: ' . $value['phone_number3'] . '</div>' : '';
-//                        $s_contact .= $value['fax_number'] ? '<div>Fax Number: ' . $value['fax_number'] . '</div>' : '';
-//                        $s_contact .= '</div>';
-//                    }
+                    foreach (SupplierContact::where('supplier_id', $monthlyPayment->supplier_id)->get() as $value) {
+                        $s_info .= '<div class="mb-3">';
+                        $s_info .= '<div>Contact Person: ' . $value->contact_person . '</div>';
+                        $s_info .= '<div>Phone Number 1: ' . $value->phone_number1 . '</div>';
+                        $s_info .= $value->phone_number2 ? '<div>Phone Number 2: ' . $value->phone_number2 . '</div>' : '';
+                        $s_info .= $value->phone_number3 ? '<div>Phone Number 3: ' . $value->phone_number3 . '</div>' : '';
+                        $s_info .= $value->fax_number ? '<div>Fax Number: ' . $value->fax_number . '</div>' : '';
+                        $s_info .= '</div>';
+                    }
 
-                    return $s_contact;
+                    $s_info .= '<div>Frequency: ' . $this->get_frequency('frequency', $monthlyPayment->frequency);
+                    if ($monthlyPayment->frequency == 'Q') {
+                        $s_info .= ' (' . $this->get_frequency('quarter', $monthlyPayment->frequency_type) . ')</div>';
+                    } else if ($monthlyPayment->frequency == 'S') {
+                        $s_info .= ' (' . $this->get_frequency('semester', $monthlyPayment->frequency_type) . ')</div>';
+                    } else {
+                        $s_info .= '</div>';
+                    }
+                    $s_info .= '<div class="mb-3">Amount Due: ' . $monthlyPayment->amount . '</div>';
+
+                    $s_info .= '<fieldset class="border p-2"><legend class="w-auto" style="font-size: 12pt"><span class="text-primary font-weight-bold">Duration</span></legend>';
+                    $s_info .= $monthlyPayment->is_duration == 'Y' ?
+                        '<div>Duration From: ' . date('F d, Y', strtotime($monthlyPayment->duration_from)) .
+                        '</div><div>Duration To: ' . date('F d, Y', strtotime($monthlyPayment->duration_to)) . '</div>' :
+                        '<div>Duration: Continuous</div>';
+                    $s_info .= "<br></fieldset>";
+
+                    return $s_info;
                 })
                 ->editColumn('due_date', function ($monthlyPayment) {
-                    return date('F d, Y', strtotime($monthlyPayment->date));
+                    return date('F d, Y', strtotime($monthlyPayment->date)) . '<br>' . date('l', strtotime($monthlyPayment->date));
                 })
                 ->editColumn('remaining_days', function ($monthlyPayment) {
                     return $monthlyPayment->remaining_days;
@@ -186,5 +204,31 @@ class MonthlyPaymentController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    /**
+     * Get frequency
+     *
+     * @param null $frequency_type
+     * @param null $value
+     * @return array|mixed
+     */
+    public function get_frequency($frequency_type = null, $value = null)
+    {
+        $days = array();
+        for ($count_days = 1; $count_days < 32; $count_days++) {
+            $days[$count_days] = $count_days;
+        }
+        $frequency = array('frequency' => array('W' => 'Weekly', 'M' => 'Monthly', 'Q' => 'Quarterly', 'S' => 'Semestral', 'A' => 'Annual'),
+            'week' => array('1' => 'Monday', '2' => 'Tuesday', '3' => 'Wednesday', '4' => 'Thursday', '5' => 'Friday', '6' => 'Saturday', '7' => 'Sunday'),
+            'quarter' => array('Q1' => '1st Quarter', 'Q2' => '2nd Quarter', 'Q3' => '3rd Quarter', 'Q4' => '4th Quarter'),
+            'semester' => array('SEM1' => '1st Semester', 'SEM2' => '2nd Semester', 'SUMMER' => 'Summer'),
+            'month' => array('1' => 'January', '2' => 'February', '3' => 'March', '4' => 'April', '5' => 'May', '6' => 'June', '7' => 'July', '8' => 'August', '9' => 'September', '10' => 'October', '11' => 'November', '12' => 'December'),
+            'days' => $days);
+        if ($value) {
+            return $frequency[$frequency_type][$value];
+        } else {
+            return $frequency;
+        }
     }
 }
