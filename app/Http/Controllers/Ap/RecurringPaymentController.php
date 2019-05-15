@@ -26,7 +26,7 @@ class RecurringPaymentController extends Controller
                     return $recurringPayment->supplier->name;
                 })
                 ->editColumn('supplier_info', function (RecurringPayment $recurringPayment) {
-                    $s_contact = '';
+                    $s_contact = '<div class="mb-3">Amount: ' . $recurringPayment->amount . '</div>';
 
                     foreach ($recurringPayment->supplier->supplierContacts as $value) {
                         $s_contact .= '<div class="mb-3">';
@@ -37,7 +37,6 @@ class RecurringPaymentController extends Controller
                         $s_contact .= $value['fax_number'] ? '<div>Fax Number: ' . $value['fax_number'] . '</div>' : '';
                         $s_contact .= '</div>';
                     }
-                    $s_contact .= '<div>Amount: ' . $recurringPayment->amount . '</div>';
 
                     return $s_contact;
                 })

@@ -57,10 +57,17 @@
                 type: Array,
                 default: function () {
                     return [
-                       'excel', 'pdf'
+                        'excel', 'pdf'
                     ]
                 }
             },
+            filter_fields: {
+                type: Object,
+                default: function () {
+                    return {
+                    }
+                }
+            }
         },
         data() {
             return {
@@ -82,6 +89,11 @@
                 autoWidth: false,
                 ajax: {
                     url: this.url,
+                    data: function (d) {
+                        $.each(component.filter_fields, function(key, value) {
+                            d[key] = value;
+                        })
+                    },
                     beforeSend: function (request) {
                         request.setRequestHeader('Request-Type', 'Datatable')
                         // request.setRequestHeader('Authorization', 'Bearer ' + store.getters['auth/token'])

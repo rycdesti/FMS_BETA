@@ -60,6 +60,8 @@
                         <b-datepicker v-model="form.duration_to"
                                       :class="{ 'is-invalid': form.errors.has('duration_to') }"
                                       :disabled-dates="{ to: form.duration_from }"
+                                      format="MMM yyyy"
+                                      minimum-view="month"
                                       name="duration_to"
                                       placeholder="Click to select...">
                         </b-datepicker>

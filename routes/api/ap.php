@@ -23,6 +23,9 @@ Route::group(['prefix' => '/ap'], function () {
     // recurring payment
     Route::resource('/recurring-payment-distribution', 'Ap\RecurringPaymentDistributionController');
 
+    // monthly payment
+    Route::resource('/monthly-payment', 'Ap\MonthlyPaymentController');
+
     // utils
     Route::group(['prefix' => '/utils'], function () {
         Route::get('/get_bank_account/{bank_account}', 'Ap\CheckController@get_bank_account');

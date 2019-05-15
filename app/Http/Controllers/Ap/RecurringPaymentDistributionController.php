@@ -91,7 +91,7 @@ class RecurringPaymentDistributionController extends Controller
                 ->editColumn('actions', function (RecurringPaymentDistribution $recurringPaymentDistribution) {
                     return '<button id="btn-delete" data-id="' . $recurringPaymentDistribution->id . '" title="Delete Record" type="button" class="btn btn-outline-danger"><i class="fa fa-trash-o"></i></button>';
                 })
-                ->rawColumns(['acct_info', 'debit', 'credit', 'logs', 'actions'])
+                ->rawColumns(['acct_info', 'acct_desc', 'debit', 'credit', 'logs', 'actions'])
                 ->make(true);
         } else {
             $data = RecurringPaymentDistribution::find($id);
