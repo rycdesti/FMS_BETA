@@ -14,7 +14,7 @@
         @php(extract($recurringPayment->toArray()))
 
         <tr style="vertical-align: top">
-            <td>{{ $recurringPayment->supplier->name }}</td>
+            <td width="20%">{{ $recurringPayment->supplier->name }}</td>
             <td>
                 @php($contactPersons = $recurringPayment->supplier->supplierContacts)
                 @foreach($contactPersons as $contactPerson)
@@ -30,8 +30,8 @@
             </td>
             <td>
                 @if($is_duration == 'Y')
-                    <span>From: {{ $duration_from }}</span><br>
-                    <span>To: {{ $duration_from }}</span>
+                    <span>From: {{ date('F d, Y', strtotime($duration_from)) }}</span><br>
+                    <span>To: {{ date('F d, Y', strtotime($duration_from)) }}</span>
                 @else
                     <span>Continuous</span>
                 @endif
@@ -65,7 +65,7 @@
                 @endforeach
 
             </td>
-            <td width="20%">{!! $disabled == 'N' ? 'Enabled' : 'Disabled<br>'.$disabled_by.'<br>'.date('F d, Y', strtotime($date_disabled)) !!}</td>
+            <td width="15%">{!! $disabled == 'N' ? 'Enabled' : 'Disabled<br>'.$disabled_by.'<br>'.date('F d, Y', strtotime($date_disabled)) !!}</td>
         </tr>
     @endforeach
 </table>

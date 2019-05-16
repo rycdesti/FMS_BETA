@@ -19,7 +19,7 @@
                 <span>Posting Type: {{ array('B' => 'Balance Sheet', 'P' => 'Profit And Loss')[$posting_type] }}</span><br>
                 <span>Typical Balance: {{ array('C' => 'Credit', 'D' => 'Debit')[$typical_balance] }}</span>
             </td>
-            <td width="20%">{!! $disabled == 'N' ? 'Enabled' : 'Disabled<br>'.$disabled_by.'<br>'.date('F d, Y', strtotime($date_disabled)) !!}</td>
+            <td width="15%">{!! $disabled == 'N' ? 'Enabled' : 'Disabled<br>'.$disabled_by.'<br>'.date('F d, Y', strtotime($date_disabled)) !!}</td>
         </tr>
     @endforeach
 </table>

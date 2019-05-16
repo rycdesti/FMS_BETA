@@ -41,6 +41,7 @@
                                 <b-button
                                         v-b-tooltip.hover
                                         title="Generate PDF Report"
+                                        @click="generatePDFReport"
                                         variant="outline-primary"
                                 >
                                     <i class="fa fa-file-pdf-o"/>
@@ -218,7 +219,12 @@
                         .finally(function () {
                         });
                 }
-            }
+            },
+
+            generatePDFReport () {
+              const url = '/api/reports/ap/monthly-payment?date_filter='+this.table_filter_fields.date_filter;
+              window.open(url, '_blank')
+            },
         }
     }
 </script>

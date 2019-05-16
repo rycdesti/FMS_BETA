@@ -20,7 +20,7 @@
                 <span>Currency: {{ $bankAccount->currency->description }}</span><br>
                 <span>Beginning Balance: {{ number_format($beginning_balance, 2) }}</span>
             </td>
-            <td width="20%">{!! $disabled == 'N' ? 'Enabled' : 'Disabled<br>'.$disabled_by.'<br>'.date('F d, Y', strtotime($date_disabled)) !!}</td>
+            <td width="15%">{!! $disabled == 'N' ? 'Enabled' : 'Disabled<br>'.$disabled_by.'<br>'.date('F d, Y', strtotime($date_disabled)) !!}</td>
         </tr>
     @endforeach
 </table>

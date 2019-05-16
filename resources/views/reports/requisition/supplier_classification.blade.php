@@ -14,7 +14,7 @@
         <tr style="vertical-align: top">
             <td>{{ $description }}</td>
             <td>{{ $classification_code }}</td>
-            <td width="20%">{!! $disabled == 'N' ? 'Enabled' : 'Disabled<br>'.$disabled_by.'<br>'.date('F d, Y', strtotime($date_disabled)) !!}</td>
+            <td width="15%">{!! $disabled == 'N' ? 'Enabled' : 'Disabled<br>'.$disabled_by.'<br>'.date('F d, Y', strtotime($date_disabled)) !!}</td>
         </tr>
     @endforeach
 </table>

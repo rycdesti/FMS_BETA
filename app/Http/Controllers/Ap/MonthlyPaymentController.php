@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Ap;
 
 use App\Models\Requisition\Supplier;
 use App\Models\Requisition\SupplierContact;
+use Barryvdh\Snappy\Facades\SnappyPdf as PDF;
 use DateInterval;
 use DatePeriod;
 use DateTime;
@@ -229,6 +230,18 @@ class MonthlyPaymentController extends Controller
             return $frequency[$frequency_type][$value];
         } else {
             return $frequency;
+        }
+    }
+
+    public function generatePDFReport()
+    {
+        $monthlyPayments = monthlyPayments(request()->date_filter);
+
+        try {
+            $pdf = PDF::loadView('reports.ap.monthly_payment', compact('monthlyPayments'));
+            return $pdf->stream('report_req_monthly_payment_' . date('Y_m_d_h_i_s', strtotime(now())) . '.pdf');
+        } catch (\Exception $e) {
+            dd($e->getMessage());
         }
     }
 }
