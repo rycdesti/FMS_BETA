@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Ap;
 
 use App\Models\Ap\RecurringPaymentDistribution;
+use Barryvdh\Snappy\Facades\SnappyPdf as PDF;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Yajra\DataTables\Facades\DataTables;
@@ -137,5 +138,17 @@ class RecurringPaymentDistributionController extends Controller
             return response()->json(['success' => true, 'message' => 'The record was deleted successfully!']);
         }
         return response()->json(['success' => false, 'message' => 'Something went wrong, Please try again.'], 500);
+    }
+
+    public function generatePDFReport($id)
+    {
+        $recurringPaymentDistributions = RecurringPaymentDistribution::where('recurring_payment_id', '=', $id)->get();
+
+        try {
+            $pdf = PDF::loadView('reports.ap.recurring_payment_distribution', compact('recurringPaymentDistributions'));
+            return $pdf->stream('report_req_recurring_payment_distribution_' . date('Y_m_d_h_i_s', strtotime(now())) . '.pdf');
+        } catch (\Exception $e) {
+            dd($e->getMessage());
+        }
     }
 }

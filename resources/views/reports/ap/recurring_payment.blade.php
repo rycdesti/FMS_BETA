@@ -1,3 +1,4 @@
+@php($reccuringPaymentController = new \App\Http\Controllers\Ap\RecurringPaymentController())
 <html>
 
 <body>
@@ -42,24 +43,24 @@
                     @php(extract($recurringPaymentDate->toArray()))
 
                     @if($frequency == 'W')
-                        <div class="text-center font-weight-bold">Every {{ get_frequency('week', $weekday) }}</div><br>
+                        <div class="text-center font-weight-bold">Every {{ $reccuringPaymentController->get_frequency('week', $weekday) }}</div><br>
                     @elseif ($frequency == 'M')
-                        <div class="text-center font-weight-bold">{{ ConvertToOrdinal($day) }} of the Month</div><br>
+                        <div class="text-center font-weight-bold">{{ $reccuringPaymentController->ConvertToOrdinal($day) }} of the Month</div><br>
                     @elseif ($frequency == 'Q')
-                        @php($frequency_type_desc = get_frequency('quarter', $frequency_type))
+                        @php($frequency_type_desc = $reccuringPaymentController->get_frequency('quarter', $frequency_type))
                         <div class="text-center">{{ $frequency_type_desc }}</div>
-                        <div class="text-center font-weight-bold">{{ ConvertToOrdinal($day) }} of
-                            {{ get_frequency('month', $month) }}
+                        <div class="text-center font-weight-bold">{{ $reccuringPaymentController->ConvertToOrdinal($day) }} of
+                            {{ $reccuringPaymentController->get_frequency('month', $month) }}
                         </div><br/>
                     @elseif ($frequency == 'S')
-                        @php($frequency_type_desc = get_frequency('semester', $frequency_type))
+                        @php($frequency_type_desc = $reccuringPaymentController->get_frequency('semester', $frequency_type))
                         <div class="text-center">{{ $frequency_type_desc }}<br/></div>
-                        <div class="text-center font-weight-bold">{{ ConvertToOrdinal($day) }} of
-                            {{ get_frequency('month', $month) }}
+                        <div class="text-center font-weight-bold">{{ $reccuringPaymentController->ConvertToOrdinal($day) }} of
+                            {{ $reccuringPaymentController->get_frequency('month', $month) }}
                         </div><br/>
                     @elseif ($frequency == 'A')
-                        <div class="text-center font-weight-bold"> {{ ConvertToOrdinal($day) }} of
-                            {{ get_frequency('month', $month) }}
+                        <div class="text-center font-weight-bold"> {{ $reccuringPaymentController->ConvertToOrdinal($day) }} of
+                            {{ $reccuringPaymentController->get_frequency('month', $month) }}
                         </div><br>
                     @endif
                 @endforeach

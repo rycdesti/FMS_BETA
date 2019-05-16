@@ -331,7 +331,7 @@ class RecurringPaymentController extends Controller
      * @param null $value
      * @return array|mixed
      */
-    public function get_frequency($frequency_type = null, $value = null)
+    public static function get_frequency($frequency_type = null, $value = null)
     {
         $days = array();
         for ($count_days = 1; $count_days < 32; $count_days++) {
@@ -356,7 +356,7 @@ class RecurringPaymentController extends Controller
      * @param $number
      * @return string
      */
-    function ConvertToOrdinal($number)
+    public static function ConvertToOrdinal($number)
     {
         $ends = array('th', 'st', 'nd', 'rd', 'th', 'th', 'th', 'th', 'th', 'th');
         if ((($number % 100) >= 11) && (($number % 100) <= 13)) {

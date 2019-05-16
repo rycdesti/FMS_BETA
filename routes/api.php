@@ -37,6 +37,7 @@ Route::group(['prefix' => 'reports'], function() {
         Route::get('bank-account/{id}', 'Ap\BankAccountController@generatePDFReport');
         Route::get('check/{id}', 'Ap\CheckController@generatePDFReport');
         Route::get('recurring-payment', 'Ap\RecurringPaymentController@generatePDFReport');
+        Route::get('recurring-payment-distribution/{id}', 'Ap\RecurringPaymentDistributionController@generatePDFReport');
         Route::get('monthly-payment', 'Ap\MonthlyPaymentController@generatePDFReport');
     });
 });
