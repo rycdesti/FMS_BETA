@@ -28,7 +28,14 @@ Route::group(['prefix' => 'reports'], function() {
 
 
     Route::group(['prefix' => 'financial'], function() {
-        Route::get('chart-of-accounts', 'Financial\ChartOfAccountController@generatePDFReport');
+        Route::get('chart-of-account', 'Financial\ChartOfAccountController@generatePDFReport');
         Route::get('account-category', 'Financial\AccountCategoryController@generatePDFReport');
+    });
+
+    Route::group(['prefix' => 'ap'], function() {
+        Route::get('bank', 'Ap\BankController@generatePDFReport');
+        Route::get('bank-account/{id}', 'Ap\BankAccountController@generatePDFReport');
+        Route::get('check/{id}', 'Ap\CheckController@generatePDFReport');
+        Route::get('recurring-payment', 'Ap\RecurringPaymentController@generatePDFReport');
     });
 });

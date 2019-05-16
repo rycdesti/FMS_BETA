@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers\Ap;
 
+use App\Http\Controllers\Controller;
 use App\Models\Ap\BankAccount;
 use App\Models\Ap\Check;
+use Barryvdh\Snappy\Facades\SnappyPdf as PDF;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 use Yajra\DataTables\Facades\DataTables;
 
 class CheckController extends Controller
@@ -215,6 +216,21 @@ class CheckController extends Controller
                 })
                 ->rawColumns(['status', 'actions'])
                 ->make(true);
+        }
+    }
+
+    public function generatePDFReport($id)
+    {
+        $checks = Check::select('bank_account_id', 'check_from', 'check_to')
+            ->where('bank_account_id', '=', $id)
+            ->groupCheck()
+            ->get();
+
+        try {
+            $pdf = PDF::loadView('reports.ap.check', compact('checks'));
+            return $pdf->stream('report_req_check_' . date('Y_m_d_h_i_s', strtotime(now())) . '.pdf');
+        } catch (\Exception $e) {
+            dd($e->getMessage());
         }
     }
 }

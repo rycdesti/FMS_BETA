@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Ap;
 use App\Models\Ap\RecurringPayment;
 use App\Models\Ap\RecurringPaymentDates;
 use App\Models\Requisition\Supplier;
+use Barryvdh\Snappy\Facades\SnappyPdf as PDF;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Yajra\DataTables\Facades\DataTables;
@@ -362,6 +363,18 @@ class RecurringPaymentController extends Controller
             return $number . 'th';
         } else {
             return $number . $ends[$number % 10];
+        }
+    }
+
+    public function generatePDFReport()
+    {
+        $recurringPayments = RecurringPayment::all();
+
+        try {
+            $pdf = PDF::loadView('reports.ap.recurring_payment', compact('recurringPayments'));
+            return $pdf->stream('report_req_recurring_payment_' . date('Y_m_d_h_i_s', strtotime(now())) . '.pdf');
+        } catch (\Exception $e) {
+            dd($e->getMessage());
         }
     }
 

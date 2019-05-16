@@ -38,10 +38,11 @@
                                     <i class="fa fa-plus"/>
                                 </b-button>
 
+                              <!--v-b-modal.form_modal2-->
                                 <b-button
                                         v-b-tooltip.hover
-                                        v-b-modal.form_modal2
                                         title="Generate PDF Report"
+                                        @click="generatePDFReport"
                                         variant="outline-primary"
                                 >
                                     <i class="fa fa-file-pdf-o"/>
@@ -188,7 +189,12 @@
                         .finally(function () {
                         });
                 }
-            }
+            },
+
+            generatePDFReport () {
+              const url = `/api/reports/ap/check/${this.bank_account_id}`
+              window.open(url, '_blank')
+            },
         }
     }
 </script>

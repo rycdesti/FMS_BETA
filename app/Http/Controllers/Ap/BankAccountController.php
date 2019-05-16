@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Ap;
 use App\Models\Ap\Bank;
 use App\Models\Ap\BankAccount;
 use App\Models\Requisition\Currency;
+use Barryvdh\Snappy\Facades\SnappyPdf as PDF;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Yajra\DataTables\Facades\DataTables;
@@ -272,5 +273,17 @@ class BankAccountController extends Controller
             ]);
 
         return $currencies;
+    }
+
+    public function generatePDFReport($id)
+    {
+        $bankAccounts = BankAccount::where('bank_id', '=', $id)->get();
+
+        try {
+            $pdf = PDF::loadView('reports.ap.bank_account', compact('bankAccounts'));
+            return $pdf->stream('report_req_bank_account_' . date('Y_m_d_h_i_s', strtotime(now())) . '.pdf');
+        } catch (\Exception $e) {
+            dd($e->getMessage());
+        }
     }
 }

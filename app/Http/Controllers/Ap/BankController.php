@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Ap;
 
 use App\Models\Ap\Bank;
+use Barryvdh\Snappy\Facades\SnappyPdf as PDF;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Yajra\DataTables\Facades\DataTables;
@@ -202,5 +203,17 @@ class BankController extends Controller
             return response()->json(['success' => true, 'message' => 'The record was ' . $status . ' successfully!']);
         }
         return response()->json(['success' => false, 'message' => 'Something went wrong, Please try again.'], 500);
+    }
+
+    public function generatePDFReport()
+    {
+        $banks = Bank::all();
+
+        try {
+            $pdf = PDF::loadView('reports.ap.bank', compact('banks'));
+            return $pdf->stream('report_req_bank_' . date('Y_m_d_h_i_s', strtotime(now())) . '.pdf');
+        } catch (\Exception $e) {
+            dd($e->getMessage());
+        }
     }
 }
