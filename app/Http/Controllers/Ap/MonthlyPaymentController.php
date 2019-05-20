@@ -39,7 +39,7 @@ class MonthlyPaymentController extends Controller
                     return $monthlyPayment->remaining_days;
                 })
                 ->editColumn('actions', function ($monthlyPayment) {
-                    return '';
+                    return '<button id="btn-create-check-voucher" data-id="' . $monthlyPayment->recurring_payment_id . '&' . $monthlyPayment->date . '" type="button" class="btn btn-link">Create Check Voucher</button>';
                 })
                 ->rawColumns(['supplier_name', 'supplier_info', 'due_date', 'remaining_days', 'actions'])
                 ->make(true);
@@ -65,7 +65,6 @@ class MonthlyPaymentController extends Controller
     public function store(Request $request)
     {
         var_dump($request->all());
-        //
     }
 
     /**
@@ -76,7 +75,7 @@ class MonthlyPaymentController extends Controller
      */
     public function show($id)
     {
-        //
+        var_dump($id);
     }
 
     /**
@@ -139,7 +138,8 @@ class MonthlyPaymentController extends Controller
         }
     }
 
-    public function monthlyPayments($date_filter) {
+    public function monthlyPayments($date_filter)
+    {
         $date_start = date('Y-m-1', strtotime($date_filter));
         $date_end = date('Y-m-t', strtotime($date_filter));
         $date_end_object = new DateTime($date_end);
@@ -169,7 +169,7 @@ class MonthlyPaymentController extends Controller
             foreach ($result as $monthlyPayment) {
                 $object = new stdClass();
                 $object->date = $date;
-                $object->id = $monthlyPayment->id;
+                $object->recurring_payment_id = $monthlyPayment->id;
                 $object->supplier_id = $monthlyPayment->supplier_id;
                 $object->document_no = $monthlyPayment->document_no;
                 $object->duration_from = $monthlyPayment->duration_from;
@@ -209,7 +209,8 @@ class MonthlyPaymentController extends Controller
         return $monthlyPayments;
     }
 
-    public static function supplierInformation($monthlyPayment) {
+    public static function supplierInformation($monthlyPayment)
+    {
         $s_info = '<div class="mb-3"> ' . Supplier::find($monthlyPayment->supplier_id)->name . '</div>';
 
         foreach (SupplierContact::where('supplier_id', $monthlyPayment->supplier_id)->get() as $value) {
@@ -222,11 +223,11 @@ class MonthlyPaymentController extends Controller
             $s_info .= '</div>';
         }
 
-        $s_info .= '<div>Frequency: ' . get_frequency('frequency', $monthlyPayment->frequency);
+        $s_info .= '<div>Frequency: ' . (new self)->get_frequency('frequency', $monthlyPayment->frequency);
         if ($monthlyPayment->frequency == 'Q') {
-            $s_info .= ' (' . get_frequency('quarter', $monthlyPayment->frequency_type) . ')</div>';
+            $s_info .= ' (' . (new self)->get_frequency('quarter', $monthlyPayment->frequency_type) . ')</div>';
         } else if ($monthlyPayment->frequency == 'S') {
-            $s_info .= ' (' . get_frequency('semester', $monthlyPayment->frequency_type) . ')</div>';
+            $s_info .= ' (' . (new self)->get_frequency('semester', $monthlyPayment->frequency_type) . ')</div>';
         } else {
             $s_info .= '</div>';
         }

@@ -88,7 +88,13 @@
                     {data: 'logs', bSortable: false, bSearchable: false},
                     {data: 'actions', bSortable: false, bSearchable: false}
                 ],
-                table_headers: ['Bank Name', 'Bank Code', 'Status', 'Logs', 'Actions'],
+                table_headers: [
+                    'Bank Name',
+                    'Bank Code',
+                    'Status',
+                    'Logs',
+                    'Actions'
+                ],
                 table_url: '',
                 data: '',
             }

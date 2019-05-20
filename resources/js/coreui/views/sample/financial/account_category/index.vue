@@ -86,7 +86,12 @@
                     {data: 'logs', bSortable: false, bSearchable: false},
                     {data: 'actions', bSortable: false, bSearchable: false}
                 ],
-                table_headers: ['Description', 'Status', 'Logs', 'Actions'],
+                table_headers: [
+                    'Description',
+                    'Status',
+                    'Logs',
+                    'Actions'
+                ],
                 table_url: '',
                 data: '',
             }
@@ -194,9 +199,9 @@
                 }
             },
 
-            generatePDFReport () {
-              const url = '/api/reports/financial/account-category'
-              window.open(url, '_blank')
+            generatePDFReport() {
+                const url = '/api/reports/financial/account-category'
+                window.open(url, '_blank')
             },
         }
     }

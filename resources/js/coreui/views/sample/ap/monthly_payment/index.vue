@@ -1,7 +1,7 @@
 <template>
     <div class="wrapper">
         <div class="animated fadeIn">
-            <!--<call_out_form/>-->
+            <call_out_form/>
 
             <b-row>
                 <b-col cols="12">
@@ -23,21 +23,11 @@
                             </div>
                         </div>
 
-
                         <b-card
                                 header-tag="header"
                                 footer-tag="footer"
                         >
                             <div class="pt-1" slot="header">
-                                <b-button
-                                        v-b-tooltip.hover
-                                        v-b-modal.form_modal
-                                        title="Add New Record"
-                                        variant="outline-primary"
-                                >
-                                    <i class="fa fa-plus"/>
-                                </b-button>
-
                                 <b-button
                                         v-b-tooltip.hover
                                         title="Generate PDF Report"
@@ -111,7 +101,13 @@
                     {data: 'remaining_days', bSortable: false, bSearchable: false},
                     {data: 'actions', bSortable: false, bSearchable: false}
                 ],
-                table_headers: ['Supplier Information', 'Remarks', 'Due Date', 'Remaining Days', 'Actions'],
+                table_headers: [
+                    'Supplier Information',
+                    'Remarks',
+                    'Due Date',
+                    'Remaining Days',
+                    'Actions'
+                ],
                 table_url: '',
                 data: '',
                 table_filter_fields: {
@@ -125,19 +121,13 @@
         mounted() {
             const component = this;
 
-            $(document).on('click', '#btn-delete', function () {
-                component.deleteData($(this).data('id'));
-            });
-
-            $(document).on('click', '#btn-update-status', function () {
-                const id = $(this).data('id');
-                const status = $(this).text();
-                component.updateStatus(id, status);
+            $(document).on('click', '#btn-create-check-voucher', function () {
+                component.$root.$emit('edit', $(this).data('id'));
             });
         },
         beforeDestroy() {
             this.$root.$listener.destroy(
-                ['#btn-delete', '#btn-update-status'],
+                ['#btn-create-check-voucher'],
                 ['edit'],
                 this.$root
             );
@@ -221,9 +211,9 @@
                 }
             },
 
-            generatePDFReport () {
-              const url = '/api/reports/ap/monthly-payment?date_filter='+this.table_filter_fields.date_filter;
-              window.open(url, '_blank')
+            generatePDFReport() {
+                const url = '/api/reports/ap/monthly-payment?date_filter=' + this.table_filter_fields.date_filter;
+                window.open(url, '_blank')
             },
         }
     }

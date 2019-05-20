@@ -92,7 +92,13 @@
                     {data: 'logs', bSortable: false, bSearchable: false},
                     {data: 'actions', bSortable: false, bSearchable: false},
                 ],
-                table_headers: ['Account Number', 'Check Sequence From', 'Check Sequence To', 'Logs', 'Actions'],
+                table_headers: [
+                    'Account Number',
+                    'Check Sequence From',
+                    'Check Sequence To',
+                    'Logs',
+                    'Actions'
+                ],
                 table_url: '',
                 data: '',
             }

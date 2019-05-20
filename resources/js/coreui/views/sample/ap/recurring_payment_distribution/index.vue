@@ -90,7 +90,14 @@
                     {data: 'logs', bSortable: false, bSearchable: false},
                     {data: 'actions', bSortable: false, bSearchable: false}
                 ],
-                table_headers: ['Account Code', 'Description', 'Debit', 'Credit', 'Logs', 'Actions'],
+                table_headers: [
+                    'Account Code',
+                    'Description',
+                    'Debit',
+                    'Credit',
+                    'Logs',
+                    'Actions'
+                ],
                 table_url: '',
                 data: '',
             }

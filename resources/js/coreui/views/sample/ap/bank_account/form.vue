@@ -67,7 +67,6 @@
                     </template>
                 </b-form-select>
                 <has-error :form="form" field="name"/>
-
             </b-form-fieldset>
             <!-- end: title -->
 
