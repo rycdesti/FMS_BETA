@@ -54,6 +54,14 @@ class RecurringPayment extends BaseModel
     }
 
     /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function recurringPaymentDistributions()
+    {
+        return $this->hasMany(RecurringPaymentDistribution::class);
+    }
+
+    /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function supplier()

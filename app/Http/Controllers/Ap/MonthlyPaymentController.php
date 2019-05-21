@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Ap;
 
+use App\Models\Ap\Bank;
+use App\Models\Ap\Check;
 use App\Models\Ap\RecurringPayment;
 use App\Models\Requisition\Supplier;
 use App\Models\Requisition\SupplierContact;
@@ -80,10 +82,11 @@ class MonthlyPaymentController extends Controller
 
         $recurringPayment = RecurringPayment::where('id', $recurring_payment_id)
             ->with('supplier')
+            ->with('recurringPaymentDistributions')
             ->with(['voucher' => function ($query) use ($recurring_payment_date) {
                 $query->where('date', $recurring_payment_date);
-                $query->with('voucherDistribution');
-            }])->get();
+                $query->with('voucherDistributions');
+            }])->first();
 
         return $recurringPayment;
     }
@@ -135,12 +138,50 @@ class MonthlyPaymentController extends Controller
         for ($count_days = 1; $count_days < 32; $count_days++) {
             $days[$count_days] = $count_days;
         }
-        $frequency = array('frequency' => array('W' => 'Weekly', 'M' => 'Monthly', 'Q' => 'Quarterly', 'S' => 'Semestral', 'A' => 'Annual'),
-            'week' => array('1' => 'Monday', '2' => 'Tuesday', '3' => 'Wednesday', '4' => 'Thursday', '5' => 'Friday', '6' => 'Saturday', '7' => 'Sunday'),
-            'quarter' => array('Q1' => '1st Quarter', 'Q2' => '2nd Quarter', 'Q3' => '3rd Quarter', 'Q4' => '4th Quarter'),
-            'semester' => array('SEM1' => '1st Semester', 'SEM2' => '2nd Semester', 'SUMMER' => 'Summer'),
-            'month' => array('1' => 'January', '2' => 'February', '3' => 'March', '4' => 'April', '5' => 'May', '6' => 'June', '7' => 'July', '8' => 'August', '9' => 'September', '10' => 'October', '11' => 'November', '12' => 'December'),
-            'days' => $days);
+        $frequency = array(
+            'frequency' => array(
+                'W' => 'Weekly',
+                'M' => 'Monthly',
+                'Q' => 'Quarterly',
+                'S' => 'Semestral',
+                'A' => 'Annual'
+            ),
+            'week' => array(
+                '1' => 'Monday',
+                '2' => 'Tuesday',
+                '3' => 'Wednesday',
+                '4' => 'Thursday',
+                '5' => 'Friday',
+                '6' => 'Saturday',
+                '7' => 'Sunday'
+            ),
+            'quarter' => array(
+                'Q1' => '1st Quarter',
+                'Q2' => '2nd Quarter',
+                'Q3' => '3rd Quarter',
+                'Q4' => '4th Quarter'
+            ),
+            'semester' => array(
+                'SEM1' => '1st Semester',
+                'SEM2' => '2nd Semester',
+                'SUMMER' => 'Summer'
+            ),
+            'month' => array(
+                '1' => 'January',
+                '2' => 'February',
+                '3' => 'March',
+                '4' => 'April',
+                '5' => 'May',
+                '6' => 'June',
+                '7' => 'July',
+                '8' => 'August',
+                '9' => 'September',
+                '10' => 'October',
+                '11' => 'November',
+                '12' => 'December'
+            ),
+            'days' => $days
+        );
         if ($value) {
             return $frequency[$frequency_type][$value];
         } else {
@@ -157,7 +198,7 @@ class MonthlyPaymentController extends Controller
      */
     public function monthlyPayments($date_filter)
     {
-        $date_start = date('Y-m-1', strtotime($date_filter));
+        $date_start = date('Y-m-01', strtotime($date_filter));
         $date_end = date('Y-m-t', strtotime($date_filter));
         $date_end_object = new DateTime($date_end);
         $date_end_object->modify('+1 days');
@@ -171,33 +212,25 @@ class MonthlyPaymentController extends Controller
                 $child_sub1->where('month', 0)
                     ->orWhere('month', $month);
             });
-        }])->where(function ($sub1) use ($date_start, $date_end) {
-            $sub1->where(function ($sub1_1) {
-                $sub1_1->where([
-                    ['duration_from', '=', null],
-                    ['duration_to', '=', null]
-                ]);
-            });
-            $sub1->orWhere(function ($sub1_2) use ($date_start, $date_end) {
-                $sub1_2->where([
-                    ['duration_from', '>=', $date_start],
-                    ['duration_to', '<=', $date_end]
-                ]);
-            });
-        })->get();
-
-//        dd($monthlyPayments);
-//
-//        $query = "SELECT rp.*, rpd.month, rpd.day, rpd.weekday, rpd.frequency_type
-//                FROM ap.recurring_payments rp
-//                INNER JOIN ap.recurring_payment_dates rpd
-//                ON rp.id = rpd.recurring_payment_id
-//                AND (rpd.month = 0 OR rpd.month IN (" . $month . "))
-//                AND ((rp.duration_from IS NULL AND rp.duration_to IS NULL) OR
-//                    (rp.duration_from >= '" . $date_start . "' AND
-//                    rp.duration_to <=  '" . $date_end . "'))";
-//
-//        $result = DB::select(DB::raw($query));
+        }])->where([
+            ['duration_from', '=', null],
+            ['duration_to', '=', null]
+        ])->orWhere(function ($sub1) use ($date_start, $date_end) {
+            $sub1->where([
+                ['duration_from', '>=', $date_start],
+                ['duration_to', '>=', $date_end]
+            ])->orWhere([
+                ['duration_from', '<=', $date_start],
+                ['duration_to', '<=', $date_end]
+            ])->orWhere([
+                ['duration_from', '>=', $date_start],
+                ['duration_to', '<=', $date_end]
+            ])->orWhere([
+                ['duration_from', '<=', $date_start],
+                ['duration_to', '>=', $date_end]
+            ]);
+        })->where('disabled', 'N')
+            ->get();
 
         $monthlyPaymentsList = array();
         foreach ($date as $date_row) {
@@ -207,19 +240,18 @@ class MonthlyPaymentController extends Controller
             $date = $date_row->format("Y-m-d");
 
             foreach ($monthlyPayments as $monthlyPayment) {
-                $object = new stdClass();
-                $object->date = $date;
-                $object->recurring_payment_id = $monthlyPayment->id;
-                $object->supplier_id = $monthlyPayment->supplier_id;
-                $object->document_no = $monthlyPayment->document_no;
-                $object->duration_from = $monthlyPayment->duration_from;
-                $object->duration_to = $monthlyPayment->duration_to;
-                $object->is_duration = $monthlyPayment->is_duration;
-                $object->frequency = $monthlyPayment->frequency;
-                $object->remarks = $monthlyPayment->remarks;
-                $object->amount = $monthlyPayment->amount;
-
                 foreach ($monthlyPayment->recurringPaymentDates as $recurringPaymentDate) {
+                    $object = new stdClass();
+                    $object->date = $date;
+                    $object->recurring_payment_id = $monthlyPayment->id;
+                    $object->supplier_id = $monthlyPayment->supplier_id;
+                    $object->document_no = $monthlyPayment->document_no;
+                    $object->duration_from = $monthlyPayment->duration_from;
+                    $object->duration_to = $monthlyPayment->duration_to;
+                    $object->is_duration = $monthlyPayment->is_duration;
+                    $object->frequency = $monthlyPayment->frequency;
+                    $object->remarks = $monthlyPayment->remarks;
+                    $object->amount = $monthlyPayment->amount;
                     $object->month = $recurringPaymentDate->month;
                     $object->day = $recurringPaymentDate->day;
                     $object->weekday = $recurringPaymentDate->weekday;
@@ -291,6 +323,66 @@ class MonthlyPaymentController extends Controller
         return $s_info;
     }
 
+    /**
+     * Get banks from resource storage
+     *
+     * @return array
+     */
+    public function get_banks()
+    {
+        $banks = Bank::with(['bankAccounts' => function ($child) {
+            $child->where('disabled', 'N')
+                ->where('acct_type', 'C');
+        }])->where('disabled', 'N')
+            ->get();
+
+        $bankList = array();
+        foreach ($banks as $bank) {
+            foreach ($bank->bankAccounts as $bankAccount) {
+                $bankList[$bankAccount->id] = $bank->bank_name . ' (' . $bank->bank_prefix . ') - ' . $bankAccount->acct_code;
+            }
+        }
+
+        return $bankList;
+    }
+
+    /**
+     * Get checks from resource storage
+     *
+     * @param $id
+     * @return mixed
+     */
+    public function get_checks($id)
+    {
+        $checks = Check::where('bank_account_id', $id)
+            ->where('voucher_no', null)
+            ->where('voided', 'N')
+            ->orderByRaw('len(check_no)')
+            ->orderBy('check_no')
+            ->get([
+                'id as value',
+                'check_no as text'
+            ]);
+
+        return $checks;
+    }
+
+    /**
+     * Get document types
+     *
+     * @param null $value
+     * @return array|mixed
+     */
+    public function get_document_type($value = null)
+    {
+        $documentType = array('I' => 'Invoice');
+        if ($value) {
+            return $documentType[$value];
+        } else {
+            return $documentType;
+        }
+    }
+
     public function generatePDFReport()
     {
         $monthlyPayments = $this->monthlyPayments(request()->date_filter);
@@ -302,4 +394,5 @@ class MonthlyPaymentController extends Controller
             dd($e->getMessage());
         }
     }
+
 }

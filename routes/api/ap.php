@@ -36,5 +36,9 @@ Route::group(['prefix' => '/ap'], function () {
 
         Route::get('/get_supplier', 'Ap\RecurringPaymentController@get_supplier');
         Route::get('/get_frequency', 'Ap\RecurringPaymentController@get_frequency');
+
+        Route::get('/get_banks', 'Ap\MonthlyPaymentController@get_banks');
+        Route::get('/get_checks/{bank_account}', 'Ap\MonthlyPaymentController@get_checks');
+        Route::get('/get_document_type', 'Ap\MonthlyPaymentController@get_document_type');
     });
 });

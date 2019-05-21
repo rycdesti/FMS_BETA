@@ -21,7 +21,7 @@ class CreateApvouchersTable extends Migration {
 			$table->char('document_type', 1)->nullable();
 			$table->string('document_no', 30)->nullable();
 			$table->string('explanation', 150)->nullable();
-			$table->bigInteger('bank_id');
+			$table->bigInteger('bank_account_id');
 			$table->bigInteger('check_id');
 			$table->date('check_date')->nullable();
 			$table->decimal('amount', 18)->nullable();
@@ -44,15 +44,14 @@ class CreateApvouchersTable extends Migration {
                 ->on('ap.recurring_payments')
                 ->onDelete('cascade');
 
-            $table->foreign('bank_id')
+            $table->foreign('bank_account_id')
                 ->references('id')
-                ->on('ap.banks')
+                ->on('ap.bank_accounts')
                 ->onDelete('cascade');
 
             $table->foreign('check_id')
                 ->references('id')
-                ->on('ap.checks')
-                ->onDelete('cascade');
+                ->on('ap.checks');
 		});
 	}
 
