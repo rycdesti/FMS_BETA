@@ -26,7 +26,6 @@ Route::group(['prefix' => 'reports'], function() {
         Route::get('currency', 'Requisition\CurrencyController@generatePDFReport');
     });
 
-
     Route::group(['prefix' => 'financial'], function() {
         Route::get('chart-of-account', 'Financial\ChartOfAccountController@generatePDFReport');
         Route::get('account-category', 'Financial\AccountCategoryController@generatePDFReport');

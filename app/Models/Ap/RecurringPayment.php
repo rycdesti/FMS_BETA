@@ -48,7 +48,7 @@ class RecurringPayment extends BaseModel
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function recurringPayment()
+    public function recurringPaymentDates()
     {
         return $this->hasMany(RecurringPaymentDates::class);
     }
@@ -59,5 +59,13 @@ class RecurringPayment extends BaseModel
     public function supplier()
     {
         return $this->belongsTo(Supplier::class);
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function voucher()
+    {
+        return $this->hasMany(Voucher::class);
     }
 }

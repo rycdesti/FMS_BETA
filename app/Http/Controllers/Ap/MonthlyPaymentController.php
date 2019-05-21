@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Ap;
 
+use App\Models\Ap\RecurringPayment;
 use App\Models\Requisition\Supplier;
 use App\Models\Requisition\SupplierContact;
 use Barryvdh\Snappy\Facades\SnappyPdf as PDF;
@@ -10,7 +11,6 @@ use DatePeriod;
 use DateTime;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\DB;
 use stdClass;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -75,7 +75,17 @@ class MonthlyPaymentController extends Controller
      */
     public function show($id)
     {
-        var_dump($id);
+        $recurring_payment_id = explode('&', $id)[0];
+        $recurring_payment_date = explode('&', $id)[1];
+
+        $recurringPayment = RecurringPayment::where('id', $recurring_payment_id)
+            ->with('supplier')
+            ->with(['voucher' => function ($query) use ($recurring_payment_date) {
+                $query->where('date', $recurring_payment_date);
+                $query->with('voucherDistribution');
+            }])->get();
+
+        return $recurringPayment;
     }
 
     /**
@@ -138,6 +148,13 @@ class MonthlyPaymentController extends Controller
         }
     }
 
+    /**
+     * Retrieve list of monthly payments from resource storage
+     *
+     * @param $date_filter
+     * @return array
+     * @throws \Exception
+     */
     public function monthlyPayments($date_filter)
     {
         $date_start = date('Y-m-1', strtotime($date_filter));
@@ -149,24 +166,47 @@ class MonthlyPaymentController extends Controller
         $date = new DatePeriod(
             new DateTime($date_start), new DateInterval('P1D'), $date_end_object);
 
-        $query = "SELECT rp.*, rpd.month, rpd.day, rpd.weekday, rpd.frequency_type
-                FROM ap.recurring_payments rp
-                INNER JOIN ap.recurring_payment_dates rpd
-                ON rp.id = rpd.recurring_payment_id
-                AND (rpd.month = 0 OR rpd.month IN (" . $month . "))
-                AND ((rp.duration_from IS NULL AND rp.duration_to IS NULL) OR
-                    (rp.duration_from >= '" . $date_start . "' AND
-                    rp.duration_to <=  '" . $date_end . "'))";
+        $monthlyPayments = RecurringPayment::with(['recurringPaymentDates' => function ($child) use ($month, $date_start, $date_end) {
+            $child->where(function ($child_sub1) use ($month) {
+                $child_sub1->where('month', 0)
+                    ->orWhere('month', $month);
+            });
+        }])->where(function ($sub1) use ($date_start, $date_end) {
+            $sub1->where(function ($sub1_1) {
+                $sub1_1->where([
+                    ['duration_from', '=', null],
+                    ['duration_to', '=', null]
+                ]);
+            });
+            $sub1->orWhere(function ($sub1_2) use ($date_start, $date_end) {
+                $sub1_2->where([
+                    ['duration_from', '>=', $date_start],
+                    ['duration_to', '<=', $date_end]
+                ]);
+            });
+        })->get();
 
-        $result = DB::select(DB::raw($query));
-        $monthlyPayments = array();
+//        dd($monthlyPayments);
+//
+//        $query = "SELECT rp.*, rpd.month, rpd.day, rpd.weekday, rpd.frequency_type
+//                FROM ap.recurring_payments rp
+//                INNER JOIN ap.recurring_payment_dates rpd
+//                ON rp.id = rpd.recurring_payment_id
+//                AND (rpd.month = 0 OR rpd.month IN (" . $month . "))
+//                AND ((rp.duration_from IS NULL AND rp.duration_to IS NULL) OR
+//                    (rp.duration_from >= '" . $date_start . "' AND
+//                    rp.duration_to <=  '" . $date_end . "'))";
+//
+//        $result = DB::select(DB::raw($query));
+
+        $monthlyPaymentsList = array();
         foreach ($date as $date_row) {
             $day_of_week = $date_row->format("N");
             $month_only = $date_row->format("m");
             $date_only = $date_row->format("d");
             $date = $date_row->format("Y-m-d");
 
-            foreach ($result as $monthlyPayment) {
+            foreach ($monthlyPayments as $monthlyPayment) {
                 $object = new stdClass();
                 $object->date = $date;
                 $object->recurring_payment_id = $monthlyPayment->id;
@@ -178,37 +218,46 @@ class MonthlyPaymentController extends Controller
                 $object->frequency = $monthlyPayment->frequency;
                 $object->remarks = $monthlyPayment->remarks;
                 $object->amount = $monthlyPayment->amount;
-                $object->month = $monthlyPayment->month;
-                $object->day = $monthlyPayment->day;
-                $object->weekday = $monthlyPayment->weekday;
-                $object->frequency_type = $monthlyPayment->frequency_type;
-                $object->remaining_days = ceil((strtotime($date) - time()) / 86400);
 
-                if ((strtotime($monthlyPayment->duration_from) <= strtotime($date)
-                        && strtotime($monthlyPayment->duration_to) >= strtotime($date))
-                    || ($monthlyPayment->duration_from == null
-                        && $monthlyPayment->duration_to == null)) {
+                foreach ($monthlyPayment->recurringPaymentDates as $recurringPaymentDate) {
+                    $object->month = $recurringPaymentDate->month;
+                    $object->day = $recurringPaymentDate->day;
+                    $object->weekday = $recurringPaymentDate->weekday;
+                    $object->frequency_type = $recurringPaymentDate->frequency_type;
+                    $object->remaining_days = ceil((strtotime($date) - time()) / 86400);
 
-                    if ($monthlyPayment->frequency == 'W' && $day_of_week == $monthlyPayment->weekday) {
-                        $monthlyPayments[] = $object;
+                    if ((strtotime($monthlyPayment->duration_from) <= strtotime($date)
+                            && strtotime($monthlyPayment->duration_to) >= strtotime($date))
+                        || ($monthlyPayment->duration_from == null
+                            && $monthlyPayment->duration_to == null)) {
 
-                    } else if (($monthlyPayment->frequency == 'Q'
-                            || $monthlyPayment->frequency == 'S'
-                            || $monthlyPayment->frequency == 'A')
-                        && ($monthlyPayment->month == $month_only
-                            && $monthlyPayment->day == $date_only)) {
-                        $monthlyPayments[] = $object;
+                        if ($monthlyPayment->frequency == 'W' && $day_of_week == $recurringPaymentDate->weekday) {
+                            $monthlyPaymentsList[] = $object;
 
-                    } else if ($monthlyPayment->frequency == 'M' && $monthlyPayment->day == $date_only) {
-                        $monthlyPayments[] = $object;
+                        } else if (($monthlyPayment->frequency == 'Q'
+                                || $monthlyPayment->frequency == 'S'
+                                || $monthlyPayment->frequency == 'A')
+                            && ($recurringPaymentDate->month == $month_only
+                                && $recurringPaymentDate->day == $date_only)) {
+                            $monthlyPaymentsList[] = $object;
+
+                        } else if ($monthlyPayment->frequency == 'M' && $recurringPaymentDate->day == $date_only) {
+                            $monthlyPaymentsList[] = $object;
+                        }
                     }
                 }
             }
         }
 
-        return $monthlyPayments;
+        return $monthlyPaymentsList;
     }
 
+    /**
+     * Display supplier information
+     *
+     * @param $monthlyPayment
+     * @return string
+     */
     public static function supplierInformation($monthlyPayment)
     {
         $s_info = '<div class="mb-3"> ' . Supplier::find($monthlyPayment->supplier_id)->name . '</div>';

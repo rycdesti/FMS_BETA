@@ -52,7 +52,7 @@ class RecurringPaymentController extends Controller
                 ->editColumn('frequency', function (RecurringPayment $recurringPayment) {
                     $s_frequency = '<fieldset class="border p-2"><legend class="w-auto" style="font-size: 12pt"><span class="text-primary font-weight-bold">' . $this->get_frequency('frequency', $recurringPayment->frequency) . '</span></legend>';
 
-                    foreach ($recurringPayment->recurringPayment as $value) {
+                    foreach ($recurringPayment->recurringPaymentDates as $value) {
                         $month = $value['month'];
                         $day = $value['day'];
                         $weekday = $value['weekday'];
