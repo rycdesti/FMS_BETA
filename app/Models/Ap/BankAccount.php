@@ -68,4 +68,12 @@ class BankAccount extends BaseModel
     {
         return $this->hasMany(Check::class);
     }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function vouchers()
+    {
+        return $this->hasMany(Voucher::class);
+    }
 }

@@ -23,6 +23,7 @@ use App\Models\Requisition\Supplier;
  * @property string $created_at
  * @property string $updated_at
  * @property Supplier $supplier
+ * @property mixed voucher
  */
 class RecurringPayment extends BaseModel
 {
@@ -70,10 +71,10 @@ class RecurringPayment extends BaseModel
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
      */
     public function voucher()
     {
-        return $this->hasMany(Voucher::class);
+        return $this->hasOne(Voucher::class);
     }
 }

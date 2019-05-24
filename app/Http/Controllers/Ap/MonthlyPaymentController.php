@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Ap;
 use App\Models\Ap\Bank;
 use App\Models\Ap\Check;
 use App\Models\Ap\RecurringPayment;
+use App\Models\Ap\Voucher;
+use App\Models\Ap\VoucherDistribution;
 use App\Models\Requisition\Supplier;
 use App\Models\Requisition\SupplierContact;
 use Barryvdh\Snappy\Facades\SnappyPdf as PDF;
@@ -35,13 +37,48 @@ class MonthlyPaymentController extends Controller
                     return $this->supplierInformation($monthlyPayment);
                 })
                 ->editColumn('due_date', function ($monthlyPayment) {
-                    return date('F d, Y', strtotime($monthlyPayment->date)) . '<br>' . date('l', strtotime($monthlyPayment->date));
+                    $status = '';
+                    if ($monthlyPayment->voucher) {
+                        if ($monthlyPayment->voucher->status == 'O') {
+                            $status .= '<div class="mt-4">Status: <span class="text-primary font-weight-bold">For Review</span></div>';
+                        } else if ($monthlyPayment->voucher->status == 'R') {
+                            $status .= '<div class="mt-4">Status: <span class="text-purple font-weight-bold">For Recommendation</span></div>';
+                        } else if ($monthlyPayment->voucher->status == 'F') {
+                            $status .= '<div class="mt-4">Status: <span class="text-warning font-weight-bold">For Approval</span></div>';
+                        } else if ($monthlyPayment->voucher->status == 'A') {
+                            $status .= '<div class="mt-4">Status: <span class="text-success font-weight-bold">Approved</span></div>';
+                        }
+                    } else {
+                        $status .= '<div class="mt-4">Status: <span class="text-danger font-weight-bold">Not Requested</span></div>';
+                    }
+                    return date('F d, Y', strtotime($monthlyPayment->date)) . '<br>' . date('l', strtotime($monthlyPayment->date)) . $status;
                 })
                 ->editColumn('remaining_days', function ($monthlyPayment) {
-                    return $monthlyPayment->remaining_days;
+                    if ($monthlyPayment->voucher && $monthlyPayment->voucher->status == 'A') {
+                        $monthlyPayment->remaining_days = 0;
+                    }
+                    return '<div class="text-center">' . $monthlyPayment->remaining_days . '</div>';
                 })
                 ->editColumn('actions', function ($monthlyPayment) {
-                    return '<button id="btn-create-check-voucher" data-id="' . $monthlyPayment->recurring_payment_id . '&' . $monthlyPayment->date . '" type="button" class="btn btn-link">Create Check Voucher</button>';
+                    $actions = '';
+                    $voucher_label = 'Create Check Voucher';
+                    if ($monthlyPayment->voucher) {
+                        if ($monthlyPayment->voucher->status == 'O') {
+                            $voucher_label = 'Review Check Voucher';
+                        } else if ($monthlyPayment->voucher->status == 'R') {
+                            $voucher_label = 'Recommend Check Voucher';
+                        } else if ($monthlyPayment->voucher->status == 'F') {
+                            $voucher_label = 'Approve Check Voucher';
+                        }
+
+                        if ($monthlyPayment->voucher->status != 'A') {
+                            $actions .= '<button id="btn-check-voucher" data-id="' . $monthlyPayment->recurring_payment_id . '&' . $monthlyPayment->date . '" type="button" class="btn btn-link">' . $voucher_label . '</button><br>';
+                        }
+                        $actions .= '<button id="btn-print-check-voucher" data-id="' . $monthlyPayment->recurring_payment_id . '&' . $monthlyPayment->date . '" type="button" class="btn btn-link">Print Check Voucher</button>';
+                    } else {
+                        $actions .= '<button id="btn-check-voucher" data-id="' . $monthlyPayment->recurring_payment_id . '&' . $monthlyPayment->date . '" type="button" class="btn btn-link">' . $voucher_label . '</button>';
+                    }
+                    return $actions;
                 })
                 ->rawColumns(['supplier_name', 'supplier_info', 'due_date', 'remaining_days', 'actions'])
                 ->make(true);
@@ -66,7 +103,84 @@ class MonthlyPaymentController extends Controller
      */
     public function store(Request $request)
     {
-        var_dump($request->all());
+        $validate = [
+            'voucher.bank_account_id' => 'required',
+            'voucher.check_id' => 'required',
+            'voucher.check_date' => 'required',
+            'voucher.document_type' => 'required',
+            'voucher.document_no' => 'required',
+            'voucher.explanation' => 'required',
+            'debit_total' => 'in:' . $request['credit_total'],
+            'amount' => 'lte:' . $request['debit_total'],
+            'recurring_payment_distributions.*.chart_of_account_id' => 'required_with:recurring_payment_distributions.*.typical_balance, recurring_payment_distributions.*.amount',
+            'recurring_payment_distributions.*.amount' => 'required_with:recurring_payment_distributions.*.chart_of_account_id'
+        ];
+
+        $custom = [
+            'voucher.bank_account_id.required' => 'Bank is required.',
+            'voucher.check_id.required' => 'Check number is required.',
+            'voucher.check_date.required' => 'Check date is required.',
+            'voucher.document_type.required' => 'Document type is required.',
+            'voucher.document_no.required' => 'Document number is required.',
+            'voucher.explanation.required' => 'Explanation is required.',
+            'debit_total.in' => 'Total debit should tally with total credit.',
+            'amount.lte' => 'Total distribution amount does not satisfy the amount needed to be paid.',
+            'recurring_payment_distributions.*.chart_of_account_id.required_with' => 'Account number is required.',
+            'recurring_payment_distributions.*.amount.required_with' => 'Debit/Credit is required.',
+        ];
+
+        $curr_date = date('Y-m', time());
+        $count_vouchers = Voucher::where('voucher_no', 'like', '%' . $curr_date . '%')->get()->count();
+        $voucher_no = $curr_date . '-' . sprintf("%04d", $count_vouchers + 1);
+
+        $request->validate($validate, $custom);
+
+        $voucher_array = $request['voucher'];
+        $voucher_array = array_merge($voucher_array, [
+            'voucher_no' => $voucher_no,
+            'status' => 'O',
+            'prepared_by' => 'Test',
+            'logs' => 'Created by: Test'
+        ]);
+        $request->request->set('voucher', $voucher_array);
+        $voucher_data = $request['voucher'];
+        $recurring_payment_distribution_data = $request['recurring_payment_distributions'];
+
+        $result = Voucher::create($voucher_data)->id;
+        if ($result) {
+            $created_at = now();
+            $updated_at = now();
+
+            $voucher_distribution_data = array();
+            foreach ($recurring_payment_distribution_data as $distribution_datum) {
+                $voucher_distribution_data[] = [
+                    'voucher_id' => $result,
+                    'chart_of_account_id' => $distribution_datum['chart_of_account_id'],
+                    'typical_balance' => $distribution_datum['typical_balance'],
+                    'amount' => $distribution_datum['amount'],
+                    'logs' => 'Created by: Test',
+                    'created_at' => $created_at,
+                    'updated_at' => $updated_at
+                ];
+            }
+
+            $check_result = Check::find($voucher_data['check_id'])->update(['voucher_no' => $voucher_no]);
+            $voucher_distribution_result = VoucherDistribution::insert($voucher_distribution_data);
+
+            if ($check_result && $voucher_distribution_result) {
+                /**
+                 * check for failure of event tag when insert try to rollback (DB rollback)
+                 * try to check if there is other way to insert multiple record
+                 */
+                return response()->json(['success' => true, 'message' => 'The record was added successfully!']);
+            } else {
+                Check::find($voucher_data['check_id'])->update('voucher_no', null);
+                VoucherDistribution::where(['voucher_id' => $result])->delete();
+
+                return response()->json(['success' => false, 'message' => 'Something went wrong, Please try again.'], 500);
+            }
+        }
+        return response()->json(['success' => false, 'message' => 'Something went wrong, Please try again.'], 500);
     }
 
     /**
@@ -82,9 +196,11 @@ class MonthlyPaymentController extends Controller
 
         $recurringPayment = RecurringPayment::where('id', $recurring_payment_id)
             ->with('supplier')
-            ->with('recurringPaymentDistributions')
-            ->with(['voucher' => function ($query) use ($recurring_payment_date) {
+            ->with(['recurringPaymentDistributions' => function ($query) {
+                $query->select('recurring_payment_id', 'chart_of_account_id', 'typical_balance', 'amount');
+            }])->with(['voucher' => function ($query) use ($recurring_payment_date) {
                 $query->where('date', $recurring_payment_date);
+                $query->first();
                 $query->with('voucherDistributions');
             }])->first();
 
@@ -111,7 +227,94 @@ class MonthlyPaymentController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $validate = [
+            'voucher.bank_account_id' => 'required',
+            'voucher.check_id' => 'required',
+            'voucher.check_date' => 'required',
+            'voucher.document_type' => 'required',
+            'voucher.document_no' => 'required',
+            'voucher.explanation' => 'required',
+            'debit_total' => 'in:' . $request['credit_total'],
+            'amount' => 'lte:' . $request['debit_total'],
+            'recurring_payment_distributions.*.chart_of_account_id' => 'required_with:recurring_payment_distributions.*.typical_balance, recurring_payment_distributions.*.amount',
+            'recurring_payment_distributions.*.amount' => 'required_with:recurring_payment_distributions.*.chart_of_account_id'
+        ];
+
+        $custom = [
+            'voucher.bank_account_id.required' => 'Bank is required.',
+            'voucher.check_id.required' => 'Check number is required.',
+            'voucher.check_date.required' => 'Check date is required.',
+            'voucher.document_type.required' => 'Document type is required.',
+            'voucher.document_no.required' => 'Document number is required.',
+            'voucher.explanation.required' => 'Explanation is required.',
+            'debit_total.in' => 'Total debit should tally with total credit.',
+            'amount.lte' => 'Total distribution amount does not satisfy the amount needed to be paid.',
+            'recurring_payment_distributions.*.chart_of_account_id.required_with' => 'Account number is required.',
+            'recurring_payment_distributions.*.amount.required_with' => 'Debit/Credit is required.',
+        ];
+
+        $request->validate($validate, $custom);
+
+        $voucher_array = $request['voucher'];
+        $voucher_array = array_merge($voucher_array, [
+            'last_modified' => 'Last modified by: Test'
+        ]);
+
+        $voucher_status = $request['voucher']['status'];
+        if ($voucher_status == 'O') {
+            $voucher_array = array_merge($voucher_array, [
+                'status' => 'R',
+                'checked_by' => 'Test'
+            ]);
+        } else if ($voucher_status == 'R') {
+            $voucher_array = array_merge($voucher_array, [
+                'status' => 'F',
+                'recommended_by' => 'Test'
+            ]);
+        } else if ($voucher_status == 'F') {
+            $voucher_array = array_merge($voucher_array, [
+                'status' => 'A',
+                'approved_by' => 'Test'
+            ]);
+        }
+        $request->request->set('voucher', $voucher_array);
+        $voucher_data = $request['voucher'];
+        $recurring_payment_distribution_data = $request['recurring_payment_distributions'];
+
+        $result = Voucher::find($voucher_data['id'])->update($voucher_array);
+        if ($result) {
+            $created_at = now();
+            $updated_at = now();
+
+            $voucher_distribution_data = array();
+            foreach ($recurring_payment_distribution_data as $distribution_datum) {
+                $voucher_distribution_data[] = [
+                    'voucher_id' => $voucher_data['id'],
+                    'chart_of_account_id' => $distribution_datum['chart_of_account_id'],
+                    'typical_balance' => $distribution_datum['typical_balance'],
+                    'amount' => $distribution_datum['amount'],
+                    'logs' => 'Created by: Test',
+                    'created_at' => $created_at,
+                    'updated_at' => $updated_at
+                ];
+            }
+
+            VoucherDistribution::where(['voucher_id' => $voucher_data['id']])->delete();
+            if ($voucher_data['old_check_id'] != $voucher_data['check_id']) {
+                Check::find($voucher_data['old_check_id'])->update(['voucher_no' => null]);
+                Check::find($voucher_data['check_id'])->update(['voucher_no' => $voucher_data['voucher_no']]);
+            }
+
+            $voucher_distribution_result = VoucherDistribution::insert($voucher_distribution_data);
+            if ($voucher_distribution_result) {
+                /**
+                 * check for failure of event tag when insert try to rollback (DB rollback)
+                 * try to check if there is other way to insert multiple record
+                 */
+                return response()->json(['success' => true, 'message' => 'The record was added successfully!']);
+            }
+        }
+        return response()->json(['success' => false, 'message' => 'Something went wrong, Please try again.'], 500);
     }
 
     /**
@@ -258,6 +461,12 @@ class MonthlyPaymentController extends Controller
                     $object->frequency_type = $recurringPaymentDate->frequency_type;
                     $object->remaining_days = ceil((strtotime($date) - time()) / 86400);
 
+                    $voucher = Voucher::where('recurring_payment_id', $monthlyPayment->id)
+                        ->where('date', $date)
+                        ->first();
+
+                    $object->voucher = $voucher;
+
                     if ((strtotime($monthlyPayment->duration_from) <= strtotime($date)
                             && strtotime($monthlyPayment->duration_to) >= strtotime($date))
                         || ($monthlyPayment->duration_from == null
@@ -292,7 +501,7 @@ class MonthlyPaymentController extends Controller
      */
     public static function supplierInformation($monthlyPayment)
     {
-        $s_info = '<div class="mb-3"> ' . Supplier::find($monthlyPayment->supplier_id)->name . '</div>';
+        $s_info = '<div class="mb-3">' . Supplier::find($monthlyPayment->supplier_id)->name . '</div>';
 
         foreach (SupplierContact::where('supplier_id', $monthlyPayment->supplier_id)->get() as $value) {
             $s_info .= '<div class="mb-3">';
@@ -368,6 +577,33 @@ class MonthlyPaymentController extends Controller
     }
 
     /**
+     * Get voucher checks from resource storage
+     *
+     * @param $id
+     * @return mixed
+     */
+    public function get_voucher_checks($id)
+    {
+        $bank_account_id = explode('&', $id)[0];
+        $check_id = explode('&', $id)[1];
+
+        $checks = Check::where('bank_account_id', $bank_account_id)
+            ->where(function ($query) use ($check_id) {
+                $query->where('voucher_no', null)
+                    ->orWhere('id', $check_id);
+            })
+            ->where('voided', 'N')
+            ->orderByRaw('len(check_no)')
+            ->orderBy('check_no')
+            ->get([
+                'id as value',
+                'check_no as text'
+            ]);
+
+        return $checks;
+    }
+
+    /**
      * Get document types
      *
      * @param null $value
@@ -395,4 +631,8 @@ class MonthlyPaymentController extends Controller
         }
     }
 
+    public function generateCheckVoucherPDF()
+    {
+
+    }
 }

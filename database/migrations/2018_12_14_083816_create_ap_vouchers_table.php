@@ -26,12 +26,10 @@ class CreateApvouchersTable extends Migration {
 			$table->date('check_date')->nullable();
 			$table->decimal('amount', 18)->nullable();
 			$table->char('tax_id', 1)->nullable();
-			$table->date('last_updated')->nullable();
 			$table->char('status', 1)->nullable();
 			$table->string('prepared_by', 50)->nullable();
 			$table->string('checked_by', 50)->nullable();
-			$table->string('reviewed_by', 50)->nullable();
-			$table->string('noted_by', 50)->nullable();
+			$table->string('recommended_by', 50)->nullable();
 			$table->string('approved_by', 50)->nullable();
 			$table->date('date_cancelled')->nullable();
 			$table->string('cancelled_by', 50)->nullable();

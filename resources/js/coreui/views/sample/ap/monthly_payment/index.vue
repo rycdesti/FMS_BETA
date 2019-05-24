@@ -121,7 +121,7 @@
         mounted() {
             const component = this;
 
-            $(document).on('click', '#btn-create-check-voucher', function () {
+            $(document).on('click', '#btn-check-voucher', function () {
                 component.$root.$emit('edit', $(this).data('id'));
             });
         },

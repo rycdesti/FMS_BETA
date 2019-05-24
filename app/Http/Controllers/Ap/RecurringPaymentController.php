@@ -21,7 +21,7 @@ class RecurringPaymentController extends Controller
     public function index()
     {
         if ($this->isRequestTypeDatatable(request())) {
-            $recurringPayments = RecurringPayment::all();
+            $recurringPayments = RecurringPayment::with('voucher')->get();
             return DataTables::of($recurringPayments)
                 ->editColumn('supplier_name', function (RecurringPayment $recurringPayment) {
                     return $recurringPayment->supplier->name;
@@ -91,9 +91,13 @@ class RecurringPaymentController extends Controller
                             <div><i class="fa fa-clock-o pr-1"></i>' . $recurringPayment->updated_at->diffForHumans() . '</div>' : '');
                 })
                 ->editColumn('actions', function (RecurringPayment $recurringPayment) {
-                    return '<button id="btn-delete" data-id="' . $recurringPayment->id . '" title="Delete Record" type="button" class="btn btn-outline-danger"><i class="fa fa-trash-o"></i></button><hr>
-                            <button id="btn-recurring-payment-distribution" data-id="' . $recurringPayment->id . '" type="button" class="btn btn-link">Manage Distribution</button><br>
+                    $actions = '';
+                    if (!$recurringPayment->voucher) {
+                        $actions .= '<button id="btn-delete" data-id="' . $recurringPayment->id . '" title="Delete Record" type="button" class="btn btn-outline-danger"><i class="fa fa-trash-o"></i></button><hr>';
+                    }
+                    $actions .= '<button id="btn-recurring-payment-distribution" data-id="' . $recurringPayment->id . '" type="button" class="btn btn-link">Manage Distribution</button><br>
                             <button id="btn-update-status" data-id="' . $recurringPayment->id . '" type="button" class="btn btn-link">' . ($recurringPayment->disabled == 'N' ? 'Disable' : 'Enable') . '</button>';
+                    return $actions;
                 })
                 ->rawColumns(['supplier_name', 'supplier_info', 'duration', 'frequency', 'status', 'logs', 'actions'])
                 ->make(true);
