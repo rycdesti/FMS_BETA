@@ -654,7 +654,7 @@ class MonthlyPaymentController extends Controller
         }));
 
         try {
-            $pdf = PDF::loadView('reports.ap.check_voucher', compact(['monthlyPayment', 'voucherDistributions', 'debitDistribution', 'creditDistribution']));
+            $pdf = PDF::loadView('reports.ap.check_voucher', compact(['monthlyPayment', 'debitDistribution', 'creditDistribution']));
             return $pdf->setPaper('Letter')->setOption('margin-bottom', 0)->stream('report_req_check_voucher_' . date('Y_m_d_h_i_s', strtotime(now())) . '.pdf');
         } catch (\Exception $e) {
             dd($e->getMessage());

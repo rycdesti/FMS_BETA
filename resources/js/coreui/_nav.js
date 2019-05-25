@@ -54,6 +54,10 @@ export default {
                     name: 'Banks',
                     url: '/ap/bank',
                 },
+                {
+                    name: 'Checks',
+                    url: '/ap/check',
+                },
             ],
         },
         {

@@ -44,11 +44,10 @@ export default {
             props: true,
         },
         {
-            path: 'check/:bank_account_id',
+            path: 'check',
             name: 'Check',
             component: Check,
             props: true,
         },
-
     ],
 }

@@ -105,7 +105,7 @@ class BankAccountController extends Controller
 
                     }
                     $actions .= '<button id="btn-beginning-bal" data-id="' . $bankAccount->id . '" type="button" class="btn btn-link">Beginning Balance</button><br>' .
-                        ($bankAccount->acct_type == 'C' ? '<button id="btn-check-booklet" data-id="' . $bankAccount->id . '" type="button" class="btn btn-link">Manage Check Booklet</button><br>' : '') .
+//                        ($bankAccount->acct_type == 'C' ? '<button id="btn-check-booklet" data-id="' . $bankAccount->id . '" type="button" class="btn btn-link">Manage Check Booklet</button><br>' : '') .
                         '<button id="btn-update-status" data-id="' . $bankAccount->id . '" type="button" class="btn btn-link">' . ($bankAccount->disabled == 'N' ? 'Disable' : 'Enable') . '</button>';
                     return $actions;
                 })
