@@ -53,7 +53,7 @@ class Voucher extends BaseModel
     /**
      * @var array
      */
-    protected $fillable = ['recurring_payment_id', 'bank_account_id', 'check_id', 'voucher_no', 'date', 'document_type', 'document_no', 'explanation', 'check_date', 'amount', 'tax_id', 'last_updated', 'status', 'prepared_by', 'checked_by', 'reviewed_by', 'noted_by', 'approved_by', 'date_cancelled', 'cancelled_by', 'logs', 'last_modified', 'created_at', 'updated_at'];
+    protected $fillable = ['recurring_payment_id', 'bank_account_id', 'check_id', 'voucher_no', 'date', 'document_type', 'document_no', 'explanation', 'check_date', 'amount', 'tax_id', 'last_updated', 'status', 'prepared_by', 'checked_by', 'recommended_by', 'approved_by', 'date_cancelled', 'cancelled_by', 'logs', 'last_modified', 'created_at', 'updated_at'];
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany

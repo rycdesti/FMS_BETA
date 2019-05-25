@@ -111,7 +111,7 @@ class MonthlyPaymentController extends Controller
             'voucher.document_no' => 'required',
             'voucher.explanation' => 'required',
             'debit_total' => 'in:' . $request['credit_total'],
-            'amount' => 'lte:' . $request['debit_total'],
+            'voucher.amount' => 'lte:' . $request['debit_total'],
             'recurring_payment_distributions.*.chart_of_account_id' => 'required_with:recurring_payment_distributions.*.typical_balance, recurring_payment_distributions.*.amount',
             'recurring_payment_distributions.*.amount' => 'required_with:recurring_payment_distributions.*.chart_of_account_id'
         ];
@@ -124,7 +124,7 @@ class MonthlyPaymentController extends Controller
             'voucher.document_no.required' => 'Document number is required.',
             'voucher.explanation.required' => 'Explanation is required.',
             'debit_total.in' => 'Total debit should tally with total credit.',
-            'amount.lte' => 'Total distribution amount does not satisfy the amount needed to be paid.',
+            'voucher.amount.lte' => 'Total distribution amount does not satisfy the amount needed to be paid.',
             'recurring_payment_distributions.*.chart_of_account_id.required_with' => 'Account number is required.',
             'recurring_payment_distributions.*.amount.required_with' => 'Debit/Credit is required.',
         ];
@@ -153,15 +153,19 @@ class MonthlyPaymentController extends Controller
 
             $voucher_distribution_data = array();
             foreach ($recurring_payment_distribution_data as $distribution_datum) {
-                $voucher_distribution_data[] = [
-                    'voucher_id' => $result,
-                    'chart_of_account_id' => $distribution_datum['chart_of_account_id'],
-                    'typical_balance' => $distribution_datum['typical_balance'],
-                    'amount' => $distribution_datum['amount'],
-                    'logs' => 'Created by: Test',
-                    'created_at' => $created_at,
-                    'updated_at' => $updated_at
-                ];
+                if ($distribution_datum['chart_of_account_id'] &&
+                    $distribution_datum['typical_balance'] &&
+                    $distribution_datum['amount']) {
+                    $voucher_distribution_data[] = [
+                        'voucher_id' => $result,
+                        'chart_of_account_id' => $distribution_datum['chart_of_account_id'],
+                        'typical_balance' => $distribution_datum['typical_balance'],
+                        'amount' => $distribution_datum['amount'],
+                        'logs' => 'Created by: Test',
+                        'created_at' => $created_at,
+                        'updated_at' => $updated_at
+                    ];
+                }
             }
 
             $check_result = Check::find($voucher_data['check_id'])->update(['voucher_no' => $voucher_no]);
@@ -201,7 +205,11 @@ class MonthlyPaymentController extends Controller
             }])->with(['voucher' => function ($query) use ($recurring_payment_date) {
                 $query->where('date', $recurring_payment_date);
                 $query->first();
-                $query->with('voucherDistributions');
+                $query->with(['voucherDistributions' => function ($query) {
+                    $query->with('chartOfAccount');
+                }]);
+                $query->with('bankAccount');
+                $query->with('check');
             }])->first();
 
         return $recurringPayment;
@@ -235,7 +243,7 @@ class MonthlyPaymentController extends Controller
             'voucher.document_no' => 'required',
             'voucher.explanation' => 'required',
             'debit_total' => 'in:' . $request['credit_total'],
-            'amount' => 'lte:' . $request['debit_total'],
+            'voucher.amount' => 'lte:' . $request['debit_total'],
             'recurring_payment_distributions.*.chart_of_account_id' => 'required_with:recurring_payment_distributions.*.typical_balance, recurring_payment_distributions.*.amount',
             'recurring_payment_distributions.*.amount' => 'required_with:recurring_payment_distributions.*.chart_of_account_id'
         ];
@@ -248,7 +256,7 @@ class MonthlyPaymentController extends Controller
             'voucher.document_no.required' => 'Document number is required.',
             'voucher.explanation.required' => 'Explanation is required.',
             'debit_total.in' => 'Total debit should tally with total credit.',
-            'amount.lte' => 'Total distribution amount does not satisfy the amount needed to be paid.',
+            'voucher.amount.lte' => 'Total distribution amount does not satisfy the amount needed to be paid.',
             'recurring_payment_distributions.*.chart_of_account_id.required_with' => 'Account number is required.',
             'recurring_payment_distributions.*.amount.required_with' => 'Debit/Credit is required.',
         ];
@@ -260,43 +268,42 @@ class MonthlyPaymentController extends Controller
             'last_modified' => 'Last modified by: Test'
         ]);
 
-        $voucher_status = $request['voucher']['status'];
+        $voucher_status = $voucher_array['status'];
         if ($voucher_status == 'O') {
-            $voucher_array = array_merge($voucher_array, [
-                'status' => 'R',
-                'checked_by' => 'Test'
-            ]);
+            $voucher_array['status'] = 'R';
+            $voucher_array['checked_by'] = 'Test';
         } else if ($voucher_status == 'R') {
-            $voucher_array = array_merge($voucher_array, [
-                'status' => 'F',
-                'recommended_by' => 'Test'
-            ]);
+            $voucher_array['status'] = 'F';
+            $voucher_array['recommended_by'] = 'Test';
         } else if ($voucher_status == 'F') {
-            $voucher_array = array_merge($voucher_array, [
-                'status' => 'A',
-                'approved_by' => 'Test'
-            ]);
+            $voucher_array['status'] = 'A';
+            $voucher_array['approved_by'] = 'Test';
         }
+
         $request->request->set('voucher', $voucher_array);
         $voucher_data = $request['voucher'];
         $recurring_payment_distribution_data = $request['recurring_payment_distributions'];
 
-        $result = Voucher::find($voucher_data['id'])->update($voucher_array);
+        $result = Voucher::find($voucher_data['id'])->update($voucher_data);
         if ($result) {
             $created_at = now();
             $updated_at = now();
 
             $voucher_distribution_data = array();
             foreach ($recurring_payment_distribution_data as $distribution_datum) {
-                $voucher_distribution_data[] = [
-                    'voucher_id' => $voucher_data['id'],
-                    'chart_of_account_id' => $distribution_datum['chart_of_account_id'],
-                    'typical_balance' => $distribution_datum['typical_balance'],
-                    'amount' => $distribution_datum['amount'],
-                    'logs' => 'Created by: Test',
-                    'created_at' => $created_at,
-                    'updated_at' => $updated_at
-                ];
+                if ($distribution_datum['chart_of_account_id'] &&
+                    $distribution_datum['typical_balance'] &&
+                    $distribution_datum['amount']) {
+                    $voucher_distribution_data[] = [
+                        'voucher_id' => $voucher_data['id'],
+                        'chart_of_account_id' => $distribution_datum['chart_of_account_id'],
+                        'typical_balance' => $distribution_datum['typical_balance'],
+                        'amount' => $distribution_datum['amount'],
+                        'logs' => 'Created by: Test',
+                        'created_at' => $created_at,
+                        'updated_at' => $updated_at
+                    ];
+                }
             }
 
             VoucherDistribution::where(['voucher_id' => $voucher_data['id']])->delete();
@@ -631,8 +638,131 @@ class MonthlyPaymentController extends Controller
         }
     }
 
-    public function generateCheckVoucherPDF()
+    public function generateCheckVoucherPDF($id)
+    {
+        $monthlyPayment = $this->show($id);
+        $voucherDistributions = $monthlyPayment->voucher->voucherDistributions->toArray();
+
+        $debitDistribution = array_values(array_filter($voucherDistributions, function ($distribution) {
+            $filtered_array = ($distribution['typical_balance'] == 'D');
+            return $filtered_array;
+        }));
+
+        $creditDistribution = array_values(array_filter($voucherDistributions, function ($distribution)  {
+            $filtered_array = ($distribution['typical_balance'] == 'C');
+            return $filtered_array;
+        }));
+
+        try {
+            $pdf = PDF::loadView('reports.ap.check_voucher', compact(['monthlyPayment', 'voucherDistributions', 'debitDistribution', 'creditDistribution']));
+            return $pdf->setPaper('Letter')->setOption('margin-bottom', 0)->stream('report_req_check_voucher_' . date('Y_m_d_h_i_s', strtotime(now())) . '.pdf');
+        } catch (\Exception $e) {
+            dd($e->getMessage());
+        }
+    }
+
+    public static function convertNumberToWords($number)
     {
 
+        $hyphen = ' ';
+        $conjunction = ' ';
+        $separator = ', ';
+        $negative = 'negative ';
+        $decimal = ' point ';
+        $dictionary = array(
+            0 => 'Zero',
+            1 => 'One',
+            2 => 'Two',
+            3 => 'Three',
+            4 => 'Four',
+            5 => 'Five',
+            6 => 'Six',
+            7 => 'Seven',
+            8 => 'Eight',
+            9 => 'Nine',
+            10 => 'Ten',
+            11 => 'Eleven',
+            12 => 'Twelve',
+            13 => 'Thirteen',
+            14 => 'Fourteen',
+            15 => 'Fifteen',
+            16 => 'Sixteen',
+            17 => 'Seventeen',
+            18 => 'Eighteen',
+            19 => 'Nineteen',
+            20 => 'Twenty',
+            30 => 'Thirty',
+            40 => 'Forty',
+            50 => 'Fifty',
+            60 => 'Sixty',
+            70 => 'Seventy',
+            80 => 'Eighty',
+            90 => 'Ninety',
+            100 => 'Hundred',
+            1000 => 'Thousand',
+            1000000 => 'Million',
+            1000000000 => 'Billion',
+            1000000000000 => 'Trillion',
+            1000000000000000 => 'Quadrillion',
+            1000000000000000000 => 'Quintillion'
+        );
+
+        if (!is_numeric($number)) {
+            return false;
+        }
+
+        if (($number >= 0 && (int)$number < 0) || (int)$number < 0 - PHP_INT_MAX) {
+            // overflow
+            trigger_error(
+                'convert_number_to_words only accepts numbers between -' . PHP_INT_MAX . ' and ' . PHP_INT_MAX,
+                E_USER_WARNING
+            );
+            return false;
+        }
+
+        if ($number < 0) {
+            return $negative . (new self)->ConvertNumberToWords(abs($number));
+        }
+
+        $string = $fraction = null;
+
+        if (strpos($number, '.') !== false) {
+            list($number, $fraction) = explode('.', $number);
+        }
+
+        switch (true) {
+            case $number < 21:
+                $string = $dictionary[$number];
+                break;
+            case $number < 100:
+                $tens = ((int)($number / 10)) * 10;
+                $units = $number % 10;
+                $string = $dictionary[$tens];
+                if ($units) {
+                    $string .= $hyphen . $dictionary[$units];
+                }
+                break;
+            case $number < 1000:
+                $hundreds = $number / 100;
+                $remainder = $number % 100;
+                $string = $dictionary[$hundreds] . ' ' . $dictionary[100];
+
+                if ($remainder) {
+                    $string .= $conjunction . (new self)->convertNumberToWords($remainder);
+                }
+                break;
+            default:
+                $baseUnit = pow(1000, floor(log($number, 1000)));
+                $numBaseUnits = (int)($number / $baseUnit);
+                $remainder = $number % $baseUnit;
+                $string = (new self)->convertNumberToWords($numBaseUnits) . ' ' . $dictionary[$baseUnit];
+                if ($remainder) {
+                    $string .= $remainder < 100 ? $conjunction : $separator;
+                    $string .= (new self)->convertNumberToWords($remainder);
+                }
+                break;
+        }
+
+        return $string;
     }
 }

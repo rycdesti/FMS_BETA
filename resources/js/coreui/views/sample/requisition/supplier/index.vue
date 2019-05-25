@@ -105,25 +105,25 @@
             this.fetchData()
         },
         mounted() {
-            const component = this
+            const component = this;
 
             $(document).on('click', '#btn-edit', function () {
-                component.$root.$emit('edit', $(this).data('id'))
-            })
+                component.$root.$emit('edit', $(this).data('id'));
+            });
 
             $(document).on('click', '#btn-delete', function () {
-                component.deleteData($(this).data('id'))
-            })
+                component.deleteData($(this).data('id'));
+            });
 
             $(document).on('click', '#btn-contact', function () {
-                const id = $(this).data('id')
-                component.$router.push({name: 'SupplierContact', params: {supplier_id: id}})
-            })
+                const id = $(this).data('id');
+                component.$router.push({name: 'SupplierContact', params: {supplier_id: id}});
+            });
 
             $(document).on('click', '#btn-update-status', function () {
-                const id = $(this).data('id')
-                const status = $(this).text()
-                component.updateStatus(id, status)
+                const id = $(this).data('id');
+                const status = $(this).text();
+                component.updateStatus(id, status);
 
                 // var table = $('#tbl-supplier').DataTable();
                 // var node = table.row(`#row-${id}`).data();
@@ -146,7 +146,7 @@
                 this.table_url = '/api/requisition/supplier'
             },
             async deleteData(id) {
-                const component = this
+                const component = this;
 
                 const result = await this.$swal.fire({
                     title: 'Delete Record',
@@ -157,7 +157,7 @@
                     cancelButtonColor: '#f86c6b',
                     confirmButtonText: 'Yes',
                     cancelButtonText: 'No',
-                })
+                });
 
                 if (result.value) {
                     axios.delete(`/api/requisition/supplier/${id}`)
@@ -168,8 +168,8 @@
                                     response.data.message,
                                     'success'
                                 ).then(() => {
-                                    const table = $('#tbl-supplier')
-                                    table.DataTable().draw(false)
+                                    const table = $('#tbl-supplier');
+                                    table.DataTable().draw(false);
                                 })
                             }
                         })
@@ -180,7 +180,7 @@
                 }
             },
             async updateStatus(id, status) {
-                const component = this
+                const component = this;
 
                 const result = await this.$swal.fire({
                     title: status,
@@ -191,7 +191,7 @@
                     cancelButtonColor: '#f86c6b',
                     confirmButtonText: 'Yes',
                     cancelButtonText: 'No',
-                })
+                });
 
                 if (result.value) {
                     axios.patch(`/api/requisition/supplier/${id}/update_status`)
@@ -202,8 +202,8 @@
                                     response.data.message,
                                     'success'
                                 ).then(() => {
-                                    const table = $('#tbl-supplier')
-                                    table.DataTable().draw(false)
+                                    const table = $('#tbl-supplier');
+                                    table.DataTable().draw(false);
                                 })
                             }
                         })
@@ -215,8 +215,8 @@
             },
 
             generatePDFReport() {
-                const url = '/api/reports/requisition/supplier'
-                window.open(url, '_blank')
+                const url = '/api/reports/requisition/supplier';
+                window.open(url, '_blank');
             },
         },
     }

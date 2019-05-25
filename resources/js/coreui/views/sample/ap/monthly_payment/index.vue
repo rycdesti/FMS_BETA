@@ -124,10 +124,14 @@
             $(document).on('click', '#btn-check-voucher', function () {
                 component.$root.$emit('edit', $(this).data('id'));
             });
+
+            $(document).on('click', '#btn-print-check-voucher', function () {
+                component.generateCheckVoucherPDF($(this).data('id'));
+            });
         },
         beforeDestroy() {
             this.$root.$listener.destroy(
-                ['#btn-create-check-voucher'],
+                ['#btn-check-voucher', '#btn-print-check-voucher'],
                 ['edit'],
                 this.$root
             );
@@ -215,6 +219,11 @@
                 const url = '/api/reports/ap/monthly-payment?date_filter=' + this.table_filter_fields.date_filter;
                 window.open(url, '_blank')
             },
+
+            generateCheckVoucherPDF(id) {
+                const url = `/api/reports/ap/check-voucher/${id}`;
+                window.open(url, '_blank')
+            }
         }
     }
 </script>

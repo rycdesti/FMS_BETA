@@ -78,7 +78,7 @@
     export default {
         name: 'SupplierContact',
         components: {call_out_form: CallOutForm},
-        props: ['supplierId'],
+        props: ['supplier_id'],
         data() {
             return {
                 table_id: 'tbl-supplier-contact',
@@ -102,24 +102,24 @@
             this.fetchData()
         },
         mounted() {
-            const component = this
+            const component = this;
 
             $(document).on('click', '#btn-edit', function () {
-                component.$root.$emit('edit', $(this).data('id'))
-            })
+                component.$root.$emit('edit', $(this).data('id'));
+            });
 
             $(document).on('click', '#btn-delete', function () {
-                component.deleteData($(this).data('id'))
-            })
+                component.deleteData($(this).data('id'));
+            });
 
             $(document).on('click', '#btn-update-status', function () {
-                const id = $(this).data('id')
-                const status = $(this).text()
-                component.updateStatus(id, status)
+                const id = $(this).data('id');
+                const status = $(this).text();
+                component.updateStatus(id, status);
 
                 // var table = $('#tbl-supplier-contact').DataTable();
                 // var node = table.row(`#row-${id}`).data();
-            })
+            });
         },
         beforeDestroy() {
             this.$root.$listener.destroy(
@@ -134,10 +134,10 @@
         },
         methods: {
             fetchData() {
-                this.table_url = `/api/requisition/supplier-contact/${this.supplier_id}`
+                this.table_url = `/api/requisition/supplier-contact/${this.supplier_id}`;
             },
             async deleteData(id) {
-                const component = this
+                const component = this;
 
                 const result = await this.$swal.fire({
                     title: 'Delete Record',
@@ -148,7 +148,7 @@
                     cancelButtonColor: '#f86c6b',
                     confirmButtonText: 'Yes',
                     cancelButtonText: 'No',
-                })
+                });
 
                 if (result.value) {
                     axios.delete(`/api/requisition/supplier-contact/${id}`)
@@ -159,8 +159,8 @@
                                     response.data.message,
                                     'success'
                                 ).then(() => {
-                                    const table = $('#tbl-supplier-contact')
-                                    table.DataTable().draw(false)
+                                    const table = $('#tbl-supplier-contact');
+                                    table.DataTable().draw(false);
                                 })
                             }
                         })
@@ -172,7 +172,7 @@
             },
 
             async updateStatus(id, status) {
-                const component = this
+                const component = this;
 
                 const result = await this.$swal.fire({
                     title: status,
@@ -183,7 +183,7 @@
                     cancelButtonColor: '#f86c6b',
                     confirmButtonText: 'Yes',
                     cancelButtonText: 'No',
-                })
+                });
 
                 if (result.value) {
                     axios.patch(`/api/requisition/supplier-contact/${id}/update_status`)
@@ -194,8 +194,8 @@
                                     response.data.message,
                                     'success'
                                 ).then(() => {
-                                    const table = $('#tbl-supplier-contact')
-                                    table.DataTable().draw(false)
+                                    const table = $('#tbl-supplier-contact');
+                                    table.DataTable().draw(false);
                                 })
                             }
                         })
@@ -207,8 +207,8 @@
             },
 
             generatePDFReport() {
-                const url = `/api/reports/requisition/supplier_contact/${this.supplier_id}`
-                window.open(url, '_blank')
+                const url = `/api/reports/requisition/supplier_contact/${this.supplier_id}`;
+                window.open(url, '_blank');
             },
         },
     }
