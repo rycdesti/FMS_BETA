@@ -3,6 +3,7 @@
 namespace App\Models\Financial;
 
 use App\Models\Ap\RecurringPaymentDistribution;
+use App\Models\Ap\VoucherDistribution;
 use App\Models\BaseModel;
 
 /**
@@ -20,6 +21,8 @@ use App\Models\BaseModel;
  * @property string $created_at
  * @property string $updated_at
  * @property AccountCategory $accountCategory
+ * @property mixed voucherDistributions
+ * @property mixed recurringPaymentDistributions
  */
 class ChartOfAccount extends BaseModel
 {
@@ -45,8 +48,15 @@ class ChartOfAccount extends BaseModel
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function recurringPaymentDistribution() {
+    public function recurringPaymentDistributions() {
         return $this->hasMany(RecurringPaymentDistribution::class);
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function voucherDistributions() {
+        return $this->hasMany(VoucherDistribution::class);
     }
 
     /**

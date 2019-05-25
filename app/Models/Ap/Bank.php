@@ -16,6 +16,7 @@ use App\Models\BaseModel;
  * @property string $last_modified
  * @property string $created_at
  * @property string $updated_at
+ * @property mixed bankAccounts
  */
 class Bank extends BaseModel
 {

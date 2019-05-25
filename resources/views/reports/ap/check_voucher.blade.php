@@ -75,7 +75,7 @@
         <td width="15%" style="text-align:center; border-top: 1px solid; border-bottom: 1px solid;">CREDIT</td>
     </tr>
 
-    @for($key = 0; $key <= 52; $key++)
+    @for($key = 0; $key <= 20; $key++)
         <tr>
             @if(isset($debitDistribution[$key]))
                 @if($debitDistribution[$key]['typical_balance'] == 'D')
@@ -83,7 +83,7 @@
                     <td style="text-align:center; border-right: 1px solid;">{{ $debitDistribution[$key]['amount'] }}</td>
                 @endif
             @else
-                <td style="border-right: 1px solid;"></td>
+                <td style="border-right: 1px solid; height: 28px"></td>
                 <td style="border-right: 1px solid;"></td>
             @endif
 
@@ -93,7 +93,7 @@
                     <td style="text-align:center;">{{ $creditDistribution[$key]['amount'] }}</td>
                 @endif
             @else
-                <td style="border-right: 1px solid;"></td>
+                <td style="border-right: 1px solid; height: 28px"></td>
                 <td></td>
             @endif
         </tr>

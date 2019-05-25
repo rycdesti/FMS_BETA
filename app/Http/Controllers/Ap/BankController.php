@@ -38,10 +38,16 @@ class BankController extends Controller
                             <div><i class="fa fa-clock-o pr-1"></i>' . $bank->updated_at->diffForHumans() . '</div>' : '');
                 })
                 ->editColumn('actions', function (Bank $bank) {
-                    return '<button id="btn-edit" data-id="' . $bank->id . '" title="Edit Record" type="button" class="btn btn-outline-secondary"><i class="fa fa-edit"></i></button>
-                            <button id="btn-delete" data-id="' . $bank->id . '" title="Delete Record" type="button" class="btn btn-outline-danger"><i class="fa fa-trash-o"></i></button><hr>
-                            <button id="btn-bank-account" data-id="' . $bank->id . '" type="button" class="btn btn-link">Manage Bank Accounts</button><br>
+                    $actions = '';
+                    if (!$bank->bankAccounts->count()) {
+                        $actions .= '<button id="btn-edit" data-id="' . $bank->id . '" title="Edit Record" type="button" class="btn btn-outline-secondary"><i class="fa fa-edit"></i></button>
+                                    <button id="btn-delete" data-id="' . $bank->id . '" title="Delete Record" type="button" class="btn btn-outline-danger"><i class="fa fa-trash-o"></i></button><hr>';
+                    } else {
+                        $actions .= '<button id="btn-edit" data-id="' . $bank->id . '" title="Edit Record" type="button" class="btn btn-outline-secondary"><i class="fa fa-edit"></i></button><hr>';
+                    }
+                    $actions .= '<button id="btn-bank-account" data-id="' . $bank->id . '" type="button" class="btn btn-link">Manage Bank Accounts</button><br>
                             <button id="btn-update-status" data-id="' . $bank->id . '" type="button" class="btn btn-link">' . ($bank->disabled == 'N' ? 'Disable' : 'Enable') . '</button>';
+                    return $actions;
                 })
                 ->rawColumns(['status', 'logs', 'actions'])
                 ->make(true);

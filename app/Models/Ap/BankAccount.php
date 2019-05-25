@@ -23,6 +23,7 @@ use App\Models\Requisition\Currency;
  * @property string $created_at
  * @property string $updated_at
  * @property Bank $bank
+ * @property mixed checks
  */
 class BankAccount extends BaseModel
 {

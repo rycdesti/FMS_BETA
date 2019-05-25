@@ -14,6 +14,7 @@ use App\Models\BaseModel;
  * @property string $last_modified
  * @property string $created_at
  * @property string $updated_at
+ * @property mixed chartOfAccounts
  */
 class AccountCategory extends BaseModel
 {

@@ -22,6 +22,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $created_at
  * @property string $updated_at
  * @property BankAccount $bankAccount
+ * @property mixed vouchers
  */
 class Check extends BaseModel
 {
@@ -50,6 +51,13 @@ class Check extends BaseModel
     public function bankAccount()
     {
         return $this->belongsTo(BankAccount::class);
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function vouchers() {
+        return $this->hasMany(Voucher::class);
     }
 
     public function scopeGroupCheck($query)

@@ -44,9 +44,13 @@ class ChartOfAccountController extends Controller
                             <div><i class="fa fa-clock-o pr-1"></i>' . $chartOfAccount->updated_at->diffForHumans() . '</div>' : '');
                 })
                 ->editColumn('actions', function (ChartOfAccount $chartOfAccount) {
-                    return '<button id="btn-edit" data-id="' . $chartOfAccount->id . '" title="Edit Record" type="button" class="btn btn-outline-secondary"><i class="fa fa-edit"></i></button>
-                            <button id="btn-delete" data-id="' . $chartOfAccount->id . '" title="Delete Record" type="button" class="btn btn-outline-danger"><i class="fa fa-trash-o"></i></button><hr>
-                            <button id="btn-update-status" data-id="' . $chartOfAccount->id . '" type="button" class="btn btn-link">' . ($chartOfAccount->disabled == 'N' ? 'Disable' : 'Enable') . '</button>';
+                    $actions = '';
+                    if (!$chartOfAccount->voucherDistributions->count() && !$chartOfAccount->recurringPaymentDistributions->count() ) {
+                        $actions .= '<button id="btn-edit" data-id="' . $chartOfAccount->id . '" title="Edit Record" type="button" class="btn btn-outline-secondary"><i class="fa fa-edit"></i></button>
+                            <button id="btn-delete" data-id="' . $chartOfAccount->id . '" title="Delete Record" type="button" class="btn btn-outline-danger"><i class="fa fa-trash-o"></i></button><hr>';
+                    }
+                    $actions .= '<button id="btn-update-status" data-id="' . $chartOfAccount->id . '" type="button" class="btn btn-link">' . ($chartOfAccount->disabled == 'N' ? 'Disable' : 'Enable') . '</button>';
+                    return $actions;
                 })
                 ->rawColumns(['information', 'status', 'logs', 'actions'])
                 ->make(true);

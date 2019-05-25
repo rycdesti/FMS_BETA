@@ -109,9 +109,19 @@ class CheckController extends Controller
                         ($check->last_modified ? '<div>' . $check->last_modified . '</div>
                             <div><i class="fa fa-clock-o pr-1"></i>' . $check->updated_at->diffForHumans() . '</div>' : '');
                 })
-                ->editColumn('actions', function (Check $check) {
-                    return '<button id="btn-delete" data-id="' . $check->check_from . '-' . $check->check_to . '" title="Delete Record" type="button" class="btn btn-outline-danger"><i class="fa fa-trash-o"></i></button><hr>
-                            <button id="btn-view-check" data-id="' . $check->check_from . '-' . $check->check_to . '" type="button" class="btn btn-link">View Check Booklet</button><br>';
+                ->editColumn('actions', function (Check $check) use ($id) {
+                    $actions = '';
+                    $validate_check = Check::whereHas('vouchers')->where([
+                        ['bank_account_id', '=', $id],
+                        ['check_from', '=', $check->check_from],
+                        ['check_to', '=', $check->check_to],
+                    ])->first();
+
+                    if (!isset($validate_check)) {
+                        $actions .= '<button id="btn-delete" data-id="' . $check->check_from . '-' . $check->check_to . '" title="Delete Record" type="button" class="btn btn-outline-danger"><i class="fa fa-trash-o"></i></button><hr>';
+                    }
+                    $actions .= '<button id="btn-view-check" data-id="' . $check->check_from . '-' . $check->check_to . '" type="button" class="btn btn-link">View Check Booklet</button><br>';
+                    return $actions;
                 })
                 ->rawColumns(['acct_no', 'logs', 'actions'])
                 ->make(true);
@@ -207,12 +217,12 @@ class CheckController extends Controller
             $checks = Check::where(['bank_account_id' => $sequence_[0], 'check_from' => $sequence_[1], 'check_to' => $sequence_[2]])->get();
             return DataTables::of($checks)
                 ->editColumn('status', function (Check $check) {
-                    $status = $check->voided == 'N' ? '<span>Blank Check</span>' :
+                    $status = $check->voided == 'N' && $check->voucher_no == null ? '<span>Blank Check</span>' :
                         $status = $check->voucher_no ? '<span>Issued Check</span>' : '<span>Voided Check</span>';
                     return $status;
                 })
                 ->editColumn('actions', function (Check $check) {
-                    return $check->voided == 'N' ? '<button id="btn-void-check" data-id="' . $check->id . '" type="button" class="btn btn-link">Void Check</button>' : '';
+                    return $check->voided == 'N' && $check->voucher_no == null ? '<button id="btn-void-check" data-id="' . $check->id . '" type="button" class="btn btn-link">Void Check</button>' : '';
                 })
                 ->rawColumns(['status', 'actions'])
                 ->make(true);

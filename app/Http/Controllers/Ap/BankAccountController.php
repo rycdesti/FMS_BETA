@@ -97,11 +97,17 @@ class BankAccountController extends Controller
                             <div><i class="fa fa-clock-o pr-1"></i>' . $bankAccount->updated_at->diffForHumans() . '</div>' : '');
                 })
                 ->editColumn('actions', function (BankAccount $bankAccount) {
-                    return '<button id="btn-edit" data-id="' . $bankAccount->id . '" title="Edit Record" type="button" class="btn btn-outline-secondary"><i class="fa fa-edit"></i></button>
-                            <button id="btn-delete" data-id="' . $bankAccount->id . '" title="Delete Record" type="button" class="btn btn-outline-danger"><i class="fa fa-trash-o"></i></button><hr>
-                            <button id="btn-beginning-bal" data-id="' . $bankAccount->id . '" type="button" class="btn btn-link">Beginning Balance</button><br>' .
+                    $actions = '';
+                    if (!$bankAccount->checks->count()) {
+                        $actions .= '<button id="btn-delete" data-id="' . $bankAccount->id . '" title="Delete Record" type="button" class="btn btn-outline-danger"><i class="fa fa-trash-o"></i></button><hr>';
+                    } else {
+                        $actions .= '<button id="btn-edit" data-id="' . $bankAccount->id . '" title="Edit Record" type="button" class="btn btn-outline-secondary"><i class="fa fa-edit"></i></button><hr>';
+
+                    }
+                    $actions .= '<button id="btn-beginning-bal" data-id="' . $bankAccount->id . '" type="button" class="btn btn-link">Beginning Balance</button><br>' .
                         ($bankAccount->acct_type == 'C' ? '<button id="btn-check-booklet" data-id="' . $bankAccount->id . '" type="button" class="btn btn-link">Manage Check Booklet</button><br>' : '') .
                         '<button id="btn-update-status" data-id="' . $bankAccount->id . '" type="button" class="btn btn-link">' . ($bankAccount->disabled == 'N' ? 'Disable' : 'Enable') . '</button>';
+                    return $actions;
                 })
                 ->rawColumns(['acct_info', 'status', 'logs', 'actions'])
                 ->make(true);
