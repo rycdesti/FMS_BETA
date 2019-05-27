@@ -21,7 +21,13 @@ class RecurringPaymentController extends Controller
     public function index()
     {
         if ($this->isRequestTypeDatatable(request())) {
+            $status_filter = request()->status_filter;
             $recurringPayments = RecurringPayment::with('voucher')->get();
+
+            if ($status_filter) {
+                $recurringPayments = $recurringPayments->where('disabled', $status_filter);
+            }
+
             return DataTables::of($recurringPayments)
                 ->editColumn('supplier_name', function (RecurringPayment $recurringPayment) {
                     return $recurringPayment->supplier->name;

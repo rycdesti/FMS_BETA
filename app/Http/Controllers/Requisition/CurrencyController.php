@@ -19,7 +19,13 @@ class CurrencyController extends Controller
     public function index()
     {
         if ($this->isRequestTypeDatatable(request())) {
-            $currencies = Currency::all();
+            $status_filter = request()->status_filter;
+            $currencies = Currency::get();
+
+            if ($status_filter) {
+                $currencies = $currencies->where('disabled', $status_filter);
+            }
+
             return DataTables::of($currencies)
                 ->editColumn('status', function (Currency $currency) {
                     if ($currency->disabled == 'N') {

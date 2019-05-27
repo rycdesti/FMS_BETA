@@ -21,7 +21,13 @@ class SupplierController extends Controller
     public function index()
     {
         if ($this->isRequestTypeDatatable(request())) {
-            $suppliers = Supplier::all();
+            $status_filter = request()->status_filter;
+            $suppliers = Supplier::get();
+
+            if ($status_filter) {
+                $suppliers = $suppliers->where('disabled', $status_filter);
+            }
+
             return DataTables::of($suppliers)
                 ->editColumn('supplier_information', function (Supplier $supplier) {
                     return '<div>Supplier Code: ' . $supplier->supplier_code . '</div>

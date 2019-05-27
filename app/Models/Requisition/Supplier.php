@@ -26,6 +26,7 @@ use App\Models\BaseModel;
  * @property string $updated_at
  * @property SupplierClassification $supplierClassification
  * @property Currency $currency
+ * @property mixed supplierContacts
  */
 class Supplier extends BaseModel
 {

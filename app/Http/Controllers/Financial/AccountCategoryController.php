@@ -19,7 +19,13 @@ class AccountCategoryController extends Controller
     public function index()
     {
         if ($this->isRequestTypeDatatable(request())) {
-            $accountCategories = AccountCategory::all();
+            $status_filter = request()->status_filter;
+            $accountCategories = AccountCategory::get();
+
+            if ($status_filter) {
+                $accountCategories = $accountCategories->where('disabled', $status_filter);
+            }
+
             return DataTables::of($accountCategories)
                 ->editColumn('status', function (AccountCategory $accountCategory) {
                     if ($accountCategory->disabled == 'N') {

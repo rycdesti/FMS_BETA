@@ -6,6 +6,23 @@
             <!-- start: title -->
             <!--label="Title"-->
             <b-form-fieldset
+                    label="Bank Account"
+                    description="Please select bank account.">
+                <b-form-select v-model="form.bank_account_id"
+                               :options="bank_opt"
+                               class="input-container mb-2"
+                               @change="filter">
+                    <template slot="first">
+                        <option value selected disabled>-- Please select an option --</option>
+                    </template>
+                </b-form-select>
+                <has-error :form="form" field="name"/>
+            </b-form-fieldset>
+            <!-- end: title -->
+
+            <!-- start: title -->
+            <!--label="Title"-->
+            <b-form-fieldset
                     label="Check Sequence From"
                     description="Please enter check sequence from.">
                 <b-form-input v-model="form.check_from"
@@ -54,27 +71,33 @@
         name: "form",
         props: [
             'data',
-            'bank_account_id',
         ],
         data() {
             return {
                 form: new Form({
-                    bank_account_id: this.bank_account_id,
+                    bank_account_id: '',
                     check_from: '',
                     check_to: '',
                 }),
+                bank_opt: [{}],
             }
         },
         created() {
         },
         mounted() {
+            const component = this;
+
+            axios.get('/api/ap/utils/get_banks')
+                .then(function (response) {
+                    component.bank_opt = response.data;
+                });
         },
         methods: {
             formSubmit: async function () {
                 let result = await this.$swal.fire({
                     title: 'Add New Record',
                     text: 'Do you really want to add this record?',
-                    type: 'warning',
+                    type: 'question',
                     showCancelButton: true,
                     confirmButtonColor: '#20a8d8',
                     cancelButtonColor: '#f86c6b',

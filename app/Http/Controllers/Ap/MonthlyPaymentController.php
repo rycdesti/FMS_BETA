@@ -29,8 +29,9 @@ class MonthlyPaymentController extends Controller
     public function index()
     {
         if ($this->isRequestTypeDatatable(request())) {
+            $status_filter = request()->status_filter;
             $date_filter = request()->date_filter;
-            $monthlyPayments = $this->monthlyPayments($date_filter);
+            $monthlyPayments = $this->monthlyPayments($date_filter, $status_filter);
 
             return DataTables::of($monthlyPayments)
                 ->editColumn('supplier_info', function ($monthlyPayment) {
@@ -73,6 +74,7 @@ class MonthlyPaymentController extends Controller
 
                         if ($monthlyPayment->voucher->status != 'A') {
                             $actions .= '<button id="btn-check-voucher" data-id="' . $monthlyPayment->recurring_payment_id . '&' . $monthlyPayment->date . '" type="button" class="btn btn-link">' . $voucher_label . '</button><br>';
+                            $actions .= '<button id="btn-delete-check-voucher" data-id="' . $monthlyPayment->recurring_payment_id . '&' . $monthlyPayment->date . '&' . $monthlyPayment->voucher->check_id . '" type="button" class="btn btn-link">Delete Check Voucher</button><br>';
                         }
                         $actions .= '<button id="btn-print-check-voucher" data-id="' . $monthlyPayment->recurring_payment_id . '&' . $monthlyPayment->date . '" type="button" class="btn btn-link">Print Check Voucher</button>';
                     } else {
@@ -332,7 +334,18 @@ class MonthlyPaymentController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $recurring_payment_id = explode('&', $id)[0];
+        $recurring_payment_date = explode('&', $id)[1];
+        $voucher_check_id = explode('&', $id)[2];
+
+        $result = Voucher::where('recurring_payment_id', $recurring_payment_id)
+            ->where('date', $recurring_payment_date)
+            ->delete();
+        if ($result) {
+            Check::find($voucher_check_id)->update(['voucher_no' => null]);
+            return response()->json(['success' => true, 'message' => 'The check voucher was deleted successfully!']);
+        }
+        return response()->json(['success' => false, 'message' => 'Something went wrong, Please try again.'], 500);
     }
 
     /**
@@ -406,7 +419,7 @@ class MonthlyPaymentController extends Controller
      * @return array
      * @throws \Exception
      */
-    public function monthlyPayments($date_filter)
+    public function monthlyPayments($date_filter, $status_filter)
     {
         $date_start = date('Y-m-01', strtotime($date_filter));
         $date_end = date('Y-m-t', strtotime($date_filter));
@@ -628,7 +641,7 @@ class MonthlyPaymentController extends Controller
 
     public function generatePDFReport()
     {
-        $monthlyPayments = $this->monthlyPayments(request()->date_filter);
+        $monthlyPayments = $this->monthlyPayments(request()->date_filter, '');
 
         try {
             $pdf = PDF::loadView('reports.ap.monthly_payment', compact('monthlyPayments'));
@@ -648,7 +661,7 @@ class MonthlyPaymentController extends Controller
             return $filtered_array;
         }));
 
-        $creditDistribution = array_values(array_filter($voucherDistributions, function ($distribution)  {
+        $creditDistribution = array_values(array_filter($voucherDistributions, function ($distribution) {
             $filtered_array = ($distribution['typical_balance'] == 'C');
             return $filtered_array;
         }));

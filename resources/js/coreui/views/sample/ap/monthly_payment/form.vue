@@ -114,7 +114,8 @@
                                           autocomplete="off"
                                           :class="{ 'is-invalid': form.errors.has('voucher.document_no') }"
                                           type="text"
-                                          class="input-container"></b-form-input>
+                                          class="input-container"
+                                          :maxlength="30"></b-form-input>
                             <has-error :form="form" field="name"/>
                         </b-form-fieldset>
                         <!-- end: title -->
@@ -142,6 +143,7 @@
                     <b-form-textarea v-model="form.voucher.explanation"
                                      :class="{ 'is-invalid': form.errors.has('voucher.explanation') }"
                                      class="input-container"
+                                     :maxlength="150"
                                      :rows="6"
                                      :max-rows="6">
                     </b-form-textarea>
@@ -414,7 +416,7 @@
                 let result = await this.$swal.fire({
                     title: is_update ? 'Update Record' : 'Add New Record',
                     text: is_update ? 'Do you really want to update this record?' : 'Do you really want to add this record?',
-                    type: 'warning',
+                    type: 'question',
                     showCancelButton: true,
                     confirmButtonColor: '#20a8d8',
                     cancelButtonColor: '#f86c6b',

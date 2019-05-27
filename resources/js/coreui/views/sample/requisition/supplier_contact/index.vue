@@ -142,7 +142,7 @@
                 const result = await this.$swal.fire({
                     title: 'Delete Record',
                     text: 'Do you really want to delete this record?',
-                    type: 'warning',
+                    type: 'question',
                     showCancelButton: true,
                     confirmButtonColor: '#20a8d8',
                     cancelButtonColor: '#f86c6b',
@@ -177,7 +177,7 @@
                 const result = await this.$swal.fire({
                     title: status,
                     text: `Do you really want to ${status.toLowerCase()} this record?`,
-                    type: 'warning',
+                    type: 'question',
                     showCancelButton: true,
                     confirmButtonColor: '#20a8d8',
                     cancelButtonColor: '#f86c6b',

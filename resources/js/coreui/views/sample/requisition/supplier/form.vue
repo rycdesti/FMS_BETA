@@ -14,7 +14,7 @@
                               type="text"
                               name="name"
                               class="input-container"
-                              :maxlength="50"></b-form-input>
+                              :maxlength="65"></b-form-input>
                 <has-error :form="form" field="name"/>
             </b-form-fieldset>
             <!-- end: title -->
@@ -30,7 +30,7 @@
                               type="text"
                               name="check_name"
                               class="input-container"
-                              :maxlength="50"></b-form-input>
+                              :maxlength="65"></b-form-input>
                 <has-error :form="form" field="name"/>
             </b-form-fieldset>
             <!-- end: title -->
@@ -119,7 +119,7 @@
                                        name="state"
                                        id="stateId"
                                        class="input-container states order-alpha"
-                                       :maxlength="50">
+                                       :maxlength="150">
                             <template slot="first">
                                 <option value selected disabled>-- Please select an option --</option>
                             </template>
@@ -140,7 +140,7 @@
                                        name="city"
                                        id="cityId"
                                        class="input-container cities order-alpha"
-                                       :maxlength="50">
+                                       :maxlength="150">
                             <template slot="first">
                                 <option value selected disabled>-- Please select an option --</option>
                             </template>
@@ -162,7 +162,7 @@
                               type="text"
                               name="zip_code"
                               class="input-container"
-                              :maxlength="50"></b-form-input>
+                              :maxlength="10"></b-form-input>
                 <has-error :form="form" field="name"/>
             </b-form-fieldset>
             <!-- end: title -->
@@ -250,7 +250,7 @@
                 let result = await this.$swal.fire({
                     title: is_update ? 'Update Record' : 'Add New Record',
                     text: is_update ? 'Do you really want to update this record?' : 'Do you really want to add this record?',
-                    type: 'warning',
+                    type: 'question',
                     showCancelButton: true,
                     confirmButtonColor: '#20a8d8',
                     cancelButtonColor: '#f86c6b',

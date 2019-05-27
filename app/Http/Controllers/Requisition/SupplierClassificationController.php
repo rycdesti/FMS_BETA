@@ -19,7 +19,13 @@ class SupplierClassificationController extends Controller
     public function index()
     {
         if ($this->isRequestTypeDatatable(request())) {
-            $supplierClassifications = SupplierClassification::all();
+            $status_filter = request()->status_filter;
+            $supplierClassifications = SupplierClassification::get();
+
+            if ($status_filter) {
+                $supplierClassifications = $supplierClassifications->where('disabled', $status_filter);
+            }
+
             return DataTables::of($supplierClassifications)
                 ->editColumn('status', function (SupplierClassification $supplierClassification) {
                     if ($supplierClassification->disabled == 'N') {

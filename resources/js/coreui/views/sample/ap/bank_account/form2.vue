@@ -14,7 +14,7 @@
                               type="text"
                               name="acct_code"
                               class="input-container"
-                              :maxlength="50"></b-form-input>
+                              :maxlength="20"></b-form-input>
                 <has-error :form="form" field="name"/>
             </b-form-fieldset>
             <!-- end: title -->
@@ -30,7 +30,7 @@
                               type="text"
                               name="acct_no"
                               class="input-container"
-                              :maxlength="50"></b-form-input>
+                              :maxlength="20"></b-form-input>
                 <has-error :form="form" field="name"/>
             </b-form-fieldset>
             <!-- end: title -->
@@ -46,7 +46,7 @@
                               type="number"
                               name="beginning_balance"
                               class="input-container"
-                              :maxlength="50"></b-form-input>
+                              :maxlength="18"></b-form-input>
                 <has-error :form="form" field="name"/>
             </b-form-fieldset>
             <!-- end: title -->
@@ -128,7 +128,7 @@
                 let result = await this.$swal.fire({
                     title: is_update ? 'Update Record' : 'Add New Record',
                     text: is_update ? 'Do you really want to update this record?' : 'Do you really want to add this record?',
-                    type: 'warning',
+                    type: 'question',
                     showCancelButton: true,
                     confirmButtonColor: '#20a8d8',
                     cancelButtonColor: '#f86c6b',

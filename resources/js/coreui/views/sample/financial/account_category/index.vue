@@ -55,11 +55,30 @@
                                 </b-button>
                             </div>
 
+                            <div class="row">
+                                <div class="col-md-6"></div>
+                                <div class="col-md-6">
+                                    <div class="float-right form-inline">
+                                        <label class="mr-2">Status:</label>
+                                        <b-form-select v-model="table_filter_fields.status_filter"
+                                                       :options="status_opt"
+                                                       id="status_filter"
+                                                       class="input-container mb-2"
+                                                       @change="filter">
+                                            <template slot="first">
+                                                <option value="">Display all</option>
+                                            </template>
+                                        </b-form-select>
+                                    </div>
+                                </div>
+                            </div>
+
                             <datatable
                                     :id="table_id"
                                     :headers="table_headers"
                                     :columns="table_columns"
-                                    :url="table_url"></datatable>
+                                    :url="table_url"
+                                    :filter_fields="table_filter_fields"></datatable>
                         </b-card>
                     </b-card>
                 </b-col>
@@ -93,7 +112,14 @@
                     'Actions'
                 ],
                 table_url: '',
+                table_filter_fields: {
+                    status_filter: ''
+                },
                 data: '',
+                status_opt: {
+                    'N': 'Enabled',
+                    'Y': 'Disabled'
+                }
             }
         },
         created() {
@@ -127,6 +153,11 @@
             );
         },
         methods: {
+            filter() {
+                this.table_filter_fields.status_filter = $('#status_filter').val();
+                const table = $('#tbl-account-category');
+                table.DataTable().draw(false);
+            },
             fetchData() {
                 this.table_url = '/api/financial/account-category';
             },
@@ -136,7 +167,7 @@
                 let result = await this.$swal.fire({
                     title: 'Delete Record',
                     text: 'Do you really want to delete this record?',
-                    type: 'warning',
+                    type: 'question',
                     showCancelButton: true,
                     confirmButtonColor: '#20a8d8',
                     cancelButtonColor: '#f86c6b',
@@ -170,7 +201,7 @@
                 let result = await this.$swal.fire({
                     title: status,
                     text: 'Do you really want to ' + status.toLowerCase() + ' this record?',
-                    type: 'warning',
+                    type: 'question',
                     showCancelButton: true,
                     confirmButtonColor: '#20a8d8',
                     cancelButtonColor: '#f86c6b',

@@ -72,9 +72,15 @@ class BankAccountController extends Controller
     public function show($id)
     {
         if ($this->isRequestTypeDatatable(request())) {
+            $status_filter = request()->status_filter;
             $bankAccounts = BankAccount::where('bank_id', '=', $id);
+
+            if ($status_filter) {
+                $bankAccounts = $bankAccounts->where('disabled', $status_filter);
+            }
+
             return DataTables::of($bankAccounts)
-                ->editColumn('acct_info', function (BankAccount $bankAccount) {
+                ->editColumn('account_info', function (BankAccount $bankAccount) {
                     return '<div>Account Code: ' . $bankAccount->acct_code . '</div>
                             <div>Account Number: ' . $bankAccount->acct_no . '</div>
                             <div>Account Type: ' . $this->get_acct_type($bankAccount->acct_type) . '</div>
@@ -109,7 +115,7 @@ class BankAccountController extends Controller
                         '<button id="btn-update-status" data-id="' . $bankAccount->id . '" type="button" class="btn btn-link">' . ($bankAccount->disabled == 'N' ? 'Disable' : 'Enable') . '</button>';
                     return $actions;
                 })
-                ->rawColumns(['acct_info', 'status', 'logs', 'actions'])
+                ->rawColumns(['account_info', 'status', 'logs', 'actions'])
                 ->make(true);
         } else {
             $data = BankAccount::find($id);

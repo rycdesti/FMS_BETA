@@ -19,7 +19,13 @@ class BankController extends Controller
     public function index()
     {
         if ($this->isRequestTypeDatatable(request())) {
-            $banks = Bank::all();
+            $status_filter = request()->status_filter;
+            $banks = Bank::get();
+
+            if ($status_filter) {
+                $banks = $banks->where('disabled', $status_filter);
+            }
+
             return DataTables::of($banks)
                 ->setRowId('row-{{ $id }}')
                 ->editColumn('status', function (Bank $bank) {

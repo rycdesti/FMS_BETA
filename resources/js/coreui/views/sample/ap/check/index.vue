@@ -66,7 +66,7 @@
                                                        :options="bank_opt"
                                                        id="bank_account_filter"
                                                        class="input-container mb-2"
-                                                       @change="getChecks">
+                                                       @change="filter">
                                             <template slot="first">
                                                 <option value selected disabled>-- Please select an option --</option>
                                             </template>
@@ -152,7 +152,7 @@
             );
         },
         methods: {
-            getChecks() {
+            filter() {
                 this.table_filter_fields.bank_account_filter = $('#bank_account_filter').val();
                 const table = $('#tbl-check');
                 table.DataTable().draw(false);
@@ -166,7 +166,7 @@
                 let result = await this.$swal.fire({
                     title: 'Delete Record',
                     text: 'Do you really want to delete this record?',
-                    type: 'warning',
+                    type: 'question',
                     showCancelButton: true,
                     confirmButtonColor: '#20a8d8',
                     cancelButtonColor: '#f86c6b',
@@ -200,7 +200,7 @@
                 let result = await this.$swal.fire({
                     title: status,
                     text: 'Do you really want to ' + status.toLowerCase() + ' this record?',
-                    type: 'warning',
+                    type: 'question',
                     showCancelButton: true,
                     confirmButtonColor: '#20a8d8',
                     cancelButtonColor: '#f86c6b',

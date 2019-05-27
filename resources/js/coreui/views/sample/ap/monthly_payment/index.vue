@@ -50,12 +50,30 @@
                                 <div class="col-md-6"></div>
                                 <div class="col-md-6">
                                     <div class="float-right form-inline">
+                                        <label class="mr-2">Status:</label>
+                                        <b-form-select v-model="table_filter_fields.status_filter"
+                                                       :options="status_opt"
+                                                       id="status_filter"
+                                                       class="input-container mb-2"
+                                                       @change="filter">
+                                            <template slot="first">
+                                                <option value="">Display all</option>
+                                            </template>
+                                        </b-form-select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6"></div>
+                                <div class="col-md-6">
+                                    <div class="float-right form-inline">
                                         <label class="mr-2">Month and Year:</label>
                                         <b-datepicker v-model="table_filter_fields.date_filter"
                                                       class="mb-2"
                                                       format="MMM yyyy"
                                                       minimum-view="month"
-                                                      @closed="dateFilter"
+                                                      @closed="filter"
                                         >
                                         </b-datepicker>
                                     </div>
@@ -109,9 +127,17 @@
                     'Actions'
                 ],
                 table_url: '',
-                data: '',
                 table_filter_fields: {
+                    status_filter: '',
                     date_filter: new Date().getFullYear() + '-' + (new Date().getMonth() + 1),
+                },
+                data: '',
+                status_opt: {
+                    'N': 'Not Requested',
+                    'O': 'For Review',
+                    'R': 'For Recommendation',
+                    'F': 'For Approval',
+                    'A': 'Approved'
                 }
             }
         },
@@ -123,6 +149,10 @@
 
             $(document).on('click', '#btn-check-voucher', function () {
                 component.$root.$emit('edit', $(this).data('id'));
+            });
+
+            $(document).on('click', '#btn-delete-check-voucher', function () {
+                component.deleteData($(this).data('id'));
             });
 
             $(document).on('click', '#btn-print-check-voucher', function () {
@@ -137,9 +167,12 @@
             );
         },
         methods: {
-            dateFilter() {
-                this.table_filter_fields.date_filter = this.table_filter_fields.date_filter.getFullYear() + '-' +
-                    (this.table_filter_fields.date_filter.getMonth() + 1);
+            filter() {
+                this.table_filter_fields.status_filter = $('#status_filter').val();
+                if (this.table_filter_fields.date_filter instanceof Date) {
+                    this.table_filter_fields.date_filter = this.table_filter_fields.date_filter.getFullYear() + '-' +
+                        (this.table_filter_fields.date_filter.getMonth() + 1);
+                }
                 const table = $('#tbl-monthly-payment');
                 table.DataTable().draw(false);
             },
@@ -150,9 +183,9 @@
                 const component = this;
 
                 let result = await this.$swal.fire({
-                    title: 'Delete Record',
-                    text: 'Do you really want to delete this record?',
-                    type: 'warning',
+                    title: 'Delete Check Voucher',
+                    text: 'Do you really want to delete this check voucher?',
+                    type: 'question',
                     showCancelButton: true,
                     confirmButtonColor: '#20a8d8',
                     cancelButtonColor: '#f86c6b',
@@ -165,7 +198,7 @@
                         .then(function (response) {
                             if (response.data.success) {
                                 component.$swal.fire(
-                                    'Delete Record',
+                                    'Delete Check Voucher',
                                     response.data.message,
                                     'success'
                                 ).then(() => {
@@ -186,7 +219,7 @@
                 let result = await this.$swal.fire({
                     title: status,
                     text: 'Do you really want to ' + status.toLowerCase() + ' this record?',
-                    type: 'warning',
+                    type: 'question',
                     showCancelButton: true,
                     confirmButtonColor: '#20a8d8',
                     cancelButtonColor: '#f86c6b',

@@ -20,7 +20,13 @@ class ChartOfAccountController extends Controller
     public function index()
     {
         if ($this->isRequestTypeDatatable(request())) {
-            $chartOfAccounts = ChartOfAccount::all();
+            $status_filter = request()->status_filter;
+            $chartOfAccounts = ChartOfAccount::get();
+
+            if ($status_filter) {
+                $chartOfAccounts = $chartOfAccounts->where('disabled', $status_filter);
+            }
+
             return DataTables::of($chartOfAccounts)
                 ->editColumn('information', function (ChartOfAccount $chartOfAccount) {
                     return '<div>Description: ' . $chartOfAccount->description . '</div>

@@ -80,7 +80,7 @@
                 let {value: text} = await this.$swal.fire({
                     title: 'Void Check',
                     text: 'Do you really want to void this check?',
-                    type: 'warning',
+                    type: 'question',
                     input: 'text',
                     inputPlaceholder: 'Reason for voiding',
                     showCancelButton: true,

@@ -78,7 +78,7 @@
                 let result = await this.$swal.fire({
                     title: is_update ? 'Update Record' : 'Add New Record',
                     text: is_update ? 'Do you really want to update this record?' : 'Do you really want to add this record?',
-                    type: 'warning',
+                    type: 'question',
                     showCancelButton: true,
                     confirmButtonColor: '#20a8d8',
                     cancelButtonColor: '#f86c6b',
