@@ -1,5 +1,9 @@
 @php($monthlyPaymentController = new \App\Http\Controllers\Ap\MonthlyPaymentController())
 
+<head>
+    <title>Check Voucher</title>
+</head>
+
 <html>
 
 <body>

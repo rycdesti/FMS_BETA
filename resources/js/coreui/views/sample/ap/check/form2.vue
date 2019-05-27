@@ -3,11 +3,30 @@
              hide-footer no-enforce-focus
              class="modal-primary" no-close-on-backdrop>
 
+        <div class="row">
+            <div class="col-md-6"></div>
+            <div class="col-md-6">
+                <div class="float-right form-inline">
+                    <label class="mr-2">Status:</label>
+                    <b-form-select v-model="form_filter_fields.status_filter"
+                                   :options="status_opt"
+                                   id="status_filter"
+                                   class="input-container mb-2"
+                                   @change="filter">
+                        <template slot="first">
+                            <option value="">Display all</option>
+                        </template>
+                    </b-form-select>
+                </div>
+            </div>
+        </div>
+
         <datatable v-if="is_open"
                    :id="form_table_id"
                    :headers="form_headers"
                    :columns="form_columns"
-                   :url="form_url"></datatable>
+                   :url="form_url"
+                   :filter_fields="form_filter_fields"></datatable>
 
         <b-button type="reset" size="sm" variant="danger" @click="formClose"><i
                 class="fa fa-ban"></i> Cancel
@@ -36,10 +55,18 @@
                 ],
                 form_headers: ['Check Number', 'Voucher Number', 'Status', 'Remarks', 'Actions'],
                 form_url: '',
+                form_filter_fields: {
+                    status_filter: '',
+                },
                 form: new Form({
                     id: 0,
                 }),
                 is_open: false,
+                status_opt: {
+                    'I': 'Issued Check',
+                    'N': 'Blank Check',
+                    'Y': 'Voided Check',
+                }
             }
         },
         created() {
@@ -62,6 +89,11 @@
             })
         },
         methods: {
+            filter() {
+                this.form_filter_fields.status_filter = $('#status_filter').val();
+                const table = $('#tbl-check-list');
+                table.DataTable().draw(false);
+            },
             fetchData(sequence) {
                 const component = this;
                 $.fn.modal.Constructor.prototype.enforceFocus = function () {

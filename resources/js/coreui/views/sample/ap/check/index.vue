@@ -118,10 +118,10 @@
                     'Actions'
                 ],
                 table_url: '',
-                data: '',
                 table_filter_fields: {
                     bank_account_filter: 0,
                 },
+                data: '',
                 bank_opt: [{}],
             }
         },

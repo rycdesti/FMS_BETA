@@ -50,6 +50,24 @@
                                 <div class="col-md-6"></div>
                                 <div class="col-md-6">
                                     <div class="float-right form-inline">
+                                        <label class="mr-2">Frequency:</label>
+                                        <b-form-select v-model="table_filter_fields.frequency_filter"
+                                                       :options="frequency_opt"
+                                                       id="frequency_filter"
+                                                       class="input-container mb-2"
+                                                       @change="filter">
+                                            <template slot="first">
+                                                <option value="">Display all</option>
+                                            </template>
+                                        </b-form-select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6"></div>
+                                <div class="col-md-6">
+                                    <div class="float-right form-inline">
                                         <label class="mr-2">Status:</label>
                                         <b-form-select v-model="table_filter_fields.status_filter"
                                                        :options="status_opt"
@@ -128,10 +146,12 @@
                 ],
                 table_url: '',
                 table_filter_fields: {
+                    frequency_filter: '',
                     status_filter: '',
                     date_filter: new Date().getFullYear() + '-' + (new Date().getMonth() + 1),
                 },
                 data: '',
+                frequency_opt : [{}],
                 status_opt: {
                     'N': 'Not Requested',
                     'O': 'For Review',
@@ -158,6 +178,11 @@
             $(document).on('click', '#btn-print-check-voucher', function () {
                 component.generateCheckVoucherPDF($(this).data('id'));
             });
+
+            axios.get('/api/ap/utils/get_frequency')
+                .then(function (response) {
+                    component.frequency_opt = response.data.frequency;
+                });
         },
         beforeDestroy() {
             this.$root.$listener.destroy(
@@ -168,6 +193,7 @@
         },
         methods: {
             filter() {
+                this.table_filter_fields.frequency_filter = $('#frequency_filter').val();
                 this.table_filter_fields.status_filter = $('#status_filter').val();
                 if (this.table_filter_fields.date_filter instanceof Date) {
                     this.table_filter_fields.date_filter = this.table_filter_fields.date_filter.getFullYear() + '-' +

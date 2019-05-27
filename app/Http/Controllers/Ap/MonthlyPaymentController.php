@@ -29,9 +29,10 @@ class MonthlyPaymentController extends Controller
     public function index()
     {
         if ($this->isRequestTypeDatatable(request())) {
+            $frequency_filter = request()->frequency_filter;
             $status_filter = request()->status_filter;
             $date_filter = request()->date_filter;
-            $monthlyPayments = $this->monthlyPayments($date_filter, $status_filter);
+            $monthlyPayments = $this->monthlyPayments($date_filter, $status_filter, $frequency_filter);
 
             return DataTables::of($monthlyPayments)
                 ->editColumn('supplier_info', function ($monthlyPayment) {
@@ -416,10 +417,12 @@ class MonthlyPaymentController extends Controller
      * Retrieve list of monthly payments from resource storage
      *
      * @param $date_filter
+     * @param $status_filter
+     * @param $frequency_filter
      * @return array
      * @throws \Exception
      */
-    public function monthlyPayments($date_filter, $status_filter)
+    public function monthlyPayments($date_filter, $status_filter, $frequency_filter)
     {
         $date_start = date('Y-m-01', strtotime($date_filter));
         $date_end = date('Y-m-t', strtotime($date_filter));
@@ -454,6 +457,10 @@ class MonthlyPaymentController extends Controller
             ]);
         })->where('disabled', 'N')
             ->get();
+
+        if ($frequency_filter) {
+            $monthlyPayments = $monthlyPayments->where('frequency', $frequency_filter);
+        }
 
         $monthlyPaymentsList = array();
         foreach ($date as $date_row) {
@@ -493,17 +500,23 @@ class MonthlyPaymentController extends Controller
                             && $monthlyPayment->duration_to == null)) {
 
                         if ($monthlyPayment->frequency == 'W' && $day_of_week == $recurringPaymentDate->weekday) {
-                            $monthlyPaymentsList[] = $object;
+                            if ($this->checkStatusFilter($status_filter, $object->voucher['status'])) {
+                                $monthlyPaymentsList[] = $object;
+                            }
 
                         } else if (($monthlyPayment->frequency == 'Q'
                                 || $monthlyPayment->frequency == 'S'
                                 || $monthlyPayment->frequency == 'A')
                             && ($recurringPaymentDate->month == $month_only
                                 && $recurringPaymentDate->day == $date_only)) {
-                            $monthlyPaymentsList[] = $object;
+                            if ($this->checkStatusFilter($status_filter, $object->voucher['status'])) {
+                                $monthlyPaymentsList[] = $object;
+                            }
 
                         } else if ($monthlyPayment->frequency == 'M' && $recurringPaymentDate->day == $date_only) {
-                            $monthlyPaymentsList[] = $object;
+                            if ($this->checkStatusFilter($status_filter, $object->voucher['status'])) {
+                                $monthlyPaymentsList[] = $object;
+                            }
                         }
                     }
                 }
@@ -511,6 +524,28 @@ class MonthlyPaymentController extends Controller
         }
 
         return $monthlyPaymentsList;
+    }
+
+    /**
+     * Check if object satisfied the filter
+     *
+     * @param $status_filter
+     * @param $status
+     * @return bool
+     */
+    public function checkStatusFilter($status_filter, $status)
+    {
+        if (!$status_filter) {
+            return true;
+        } else if ($status_filter == 'N') {
+            if (!$status) {
+                return true;
+            }
+        } else if ($status == $status_filter) {
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -641,7 +676,7 @@ class MonthlyPaymentController extends Controller
 
     public function generatePDFReport()
     {
-        $monthlyPayments = $this->monthlyPayments(request()->date_filter, '');
+        $monthlyPayments = $this->monthlyPayments(request()->date_filter, '', '');
 
         try {
             $pdf = PDF::loadView('reports.ap.monthly_payment', compact('monthlyPayments'));

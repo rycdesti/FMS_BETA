@@ -217,7 +217,20 @@ class CheckController extends Controller
         $sequence_ = explode('-', $sequence);
 
         if ($this->isRequestTypeDatatable(request())) {
-            $checks = Check::where(['bank_account_id' => $sequence_[0], 'check_from' => $sequence_[1], 'check_to' => $sequence_[2]])->get();
+            $status_filter = request()->status_filter;
+            $checks = Check::where(['bank_account_id' => $sequence_[0], 'check_from' => $sequence_[1], 'check_to' => $sequence_[2]]);
+
+            if($status_filter == 'I') {
+                $checks = $checks->whereNotNull('voucher_no')->get();;
+            } else if($status_filter == 'N') {
+                $checks = $checks->where('voucher_no', null)
+                    ->where('voided', $status_filter)->get();;
+            } else if($status_filter == 'Y'){
+                $checks = $checks->where('voided', $status_filter)->get();;
+            } else {
+                $checks = $checks->get();
+            }
+
             return DataTables::of($checks)
                 ->editColumn('status', function (Check $check) {
                     $status = $check->voided == 'N' && $check->voucher_no == null ? '<span>Blank Check</span>' :

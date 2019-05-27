@@ -65,7 +65,7 @@
                                                        :options="status_opt"
                                                        id="status_filter"
                                                        class="input-container mb-2"
-                                                       @change="statusFilter">
+                                                       @change="filter">
                                             <template slot="first">
                                                 <option value="">Display all</option>
                                             </template>
@@ -161,7 +161,7 @@
             );
         },
         methods: {
-            statusFilter() {
+            filter() {
                 this.table_filter_fields.status_filter = $('#status_filter').val();
                 const table = $('#tbl-recurring-payment');
                 table.DataTable().draw(false);
