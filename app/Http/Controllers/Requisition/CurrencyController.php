@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Requisition;
 
 use App\Http\Controllers\Controller;
 use App\Models\Requisition\Currency;
-use Barryvdh\Snappy\Facades\SnappyPdf as PDF;
+use Barryvdh\Snappy\Facades\SnappyPdf;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -195,7 +195,7 @@ class CurrencyController extends Controller
         $currencies = Currency::all();
 
         try {
-            $pdf = PDF::loadView('reports.requisition.currency', compact('currencies'));
+            $pdf = SnappyPdf::loadView('reports.requisition.currency', compact('currencies'));
             return $pdf->stream('report_req_currency_' . date('Y_m_d_h_i_s', strtotime(now())) . '.pdf');
         } catch (\Exception $e) {
             dd($e->getMessage());

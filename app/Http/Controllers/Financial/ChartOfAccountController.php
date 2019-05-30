@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Financial;
 
 use App\Models\Financial\AccountCategory;
 use App\Models\Financial\ChartOfAccount;
-use Barryvdh\Snappy\Facades\SnappyPdf as PDF;
+use Barryvdh\Snappy\Facades\SnappyPdf;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Yajra\DataTables\Facades\DataTables;
@@ -276,7 +276,7 @@ class ChartOfAccountController extends Controller
         $chartOfAccounts = ChartOfAccount::all();
 
         try {
-            $pdf = PDF::loadView('reports.financial.chart_of_account', compact('chartOfAccounts'));
+            $pdf = SnappyPdf::loadView('reports.financial.chart_of_account', compact('chartOfAccounts'));
             return $pdf->stream('report_req_chart_of_accounts_' . date('Y_m_d_h_i_s', strtotime(now())) . '.pdf');
         } catch (\Exception $e) {
             dd($e->getMessage());

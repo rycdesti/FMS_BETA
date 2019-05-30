@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Ap;
 use App\Http\Controllers\Controller;
 use App\Models\Ap\BankAccount;
 use App\Models\Ap\Check;
-use Barryvdh\Snappy\Facades\SnappyPdf as PDF;
+use Barryvdh\Snappy\Facades\SnappyPdf;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -253,7 +253,7 @@ class CheckController extends Controller
             ->get();
 
         try {
-            $pdf = PDF::loadView('reports.ap.check', compact('checks'));
+            $pdf = SnappyPdf::loadView('reports.ap.check', compact('checks'));
             return $pdf->stream('report_req_check_' . date('Y_m_d_h_i_s', strtotime(now())) . '.pdf');
         } catch (\Exception $e) {
             dd($e->getMessage());

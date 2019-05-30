@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Requisition;
 use App\Models\Requisition\PaymentTerm;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use stdClass;
 use Yajra\DataTables\Facades\DataTables;
 
 class PaymentTermController extends Controller

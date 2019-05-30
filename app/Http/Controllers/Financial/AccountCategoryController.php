@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Financial;
 
 use App\Models\Financial\AccountCategory;
-use Barryvdh\Snappy\Facades\SnappyPdf as PDF;
+use Barryvdh\Snappy\Facades\SnappyPdf;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Yajra\DataTables\Facades\DataTables;
@@ -191,7 +191,7 @@ class AccountCategoryController extends Controller
         $accountCategories = AccountCategory::all();
 
         try {
-            $pdf = PDF::loadView('reports.financial.account_category', compact('accountCategories'));
+            $pdf = SnappyPdf::loadView('reports.financial.account_category', compact('accountCategories'));
             return $pdf->stream('report_req_account_categories_' . date('Y_m_d_h_i_s', strtotime(now())) . '.pdf');
         } catch (\Exception $e) {
             dd($e->getMessage());

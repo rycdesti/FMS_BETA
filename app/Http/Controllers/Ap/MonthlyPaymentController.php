@@ -9,7 +9,7 @@ use App\Models\Ap\Voucher;
 use App\Models\Ap\VoucherDistribution;
 use App\Models\Requisition\Supplier;
 use App\Models\Requisition\SupplierContact;
-use Barryvdh\Snappy\Facades\SnappyPdf as PDF;
+use Barryvdh\Snappy\Facades\SnappyPdf;
 use DateInterval;
 use DatePeriod;
 use DateTime;
@@ -679,7 +679,7 @@ class MonthlyPaymentController extends Controller
         $monthlyPayments = $this->monthlyPayments(request()->date_filter, '', '');
 
         try {
-            $pdf = PDF::loadView('reports.ap.monthly_payment', compact('monthlyPayments'));
+            $pdf = SnappyPdf::loadView('reports.ap.monthly_payment', compact('monthlyPayments'));
             return $pdf->stream('report_req_monthly_payment_' . date('Y_m_d_h_i_s', strtotime(now())) . '.pdf');
         } catch (\Exception $e) {
             dd($e->getMessage());
@@ -702,7 +702,7 @@ class MonthlyPaymentController extends Controller
         }));
 
         try {
-            $pdf = PDF::loadView('reports.ap.check_voucher', compact(['monthlyPayment', 'debitDistribution', 'creditDistribution']));
+            $pdf = SnappyPdf::loadView('reports.ap.check_voucher', compact(['monthlyPayment', 'debitDistribution', 'creditDistribution']));
             return $pdf->setPaper('Letter')->setOption('margin-bottom', 0)->stream('report_req_check_voucher_' . date('Y_m_d_h_i_s', strtotime(now())) . '.pdf');
         } catch (\Exception $e) {
             dd($e->getMessage());

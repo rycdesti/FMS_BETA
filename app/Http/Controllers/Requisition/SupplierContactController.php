@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Requisition;
 
 use App\Http\Controllers\Controller;
 use App\Models\Requisition\SupplierContact;
-use Barryvdh\Snappy\Facades\SnappyPdf as PDF;
+use Barryvdh\Snappy\Facades\SnappyPdf;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -154,7 +154,7 @@ class SupplierContactController extends Controller
         $supplierContacts = SupplierContact::where('supplier_id', '=', $id)->get();
 
         try {
-            $pdf = PDF::loadView('reports.requisition.supplier_contact', compact('supplierContacts'));
+            $pdf = SnappyPdf::loadView('reports.requisition.supplier_contact', compact('supplierContacts'));
             return $pdf->stream('report_req_supplier_contact_' . date('Y_m_d_h_i_s', strtotime(now())) . '.pdf');
         } catch (\Exception $e) {
             dd($e->getMessage());

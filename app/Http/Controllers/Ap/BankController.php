@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Ap;
 
 use App\Models\Ap\Bank;
-use Barryvdh\Snappy\Facades\SnappyPdf as PDF;
+use Barryvdh\Snappy\Facades\SnappyPdf;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Yajra\DataTables\Facades\DataTables;
@@ -222,7 +222,7 @@ class BankController extends Controller
         $banks = Bank::all();
 
         try {
-            $pdf = PDF::loadView('reports.ap.bank', compact('banks'));
+            $pdf = SnappyPdf::loadView('reports.ap.bank', compact('banks'));
             return $pdf->stream('report_req_bank_' . date('Y_m_d_h_i_s', strtotime(now())) . '.pdf');
         } catch (\Exception $e) {
             dd($e->getMessage());
