@@ -1,5 +1,6 @@
 // Views - Components
 import Currency from '@/views/sample/requisition/currency'
+import PaymentTerm from '@/views/sample/requisition/payment_term'
 import SupplierClassification from '@/views/sample/requisition/supplier_classification'
 import Supplier from '@/views/sample/requisition/supplier'
 import SupplierContact from '@/views/sample/requisition/supplier_contact'
@@ -18,6 +19,11 @@ export default {
             path: 'currency',
             name: 'Currency',
             component: Currency,
+        },
+        {
+            path: 'payment-term',
+            name: 'PaymentTerm',
+            component: PaymentTerm,
         },
         {
             path: 'supplier-classification',

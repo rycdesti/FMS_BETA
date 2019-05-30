@@ -12,7 +12,6 @@
                               autocomplete="off"
                               :class="{ 'is-invalid': form.errors.has('contact_person') }"
                               type="text"
-                              name="contact_person"
                               class="input-container"
                               :maxlength="250"></b-form-input>
                 <has-error :form="form" field="name"/>
@@ -28,7 +27,6 @@
                               autocomplete="off"
                               :class="{ 'is-invalid': form.errors.has('phone_number1') }"
                               type="text"
-                              name="phone_number1"
                               class="input-container"
                               :maxlength="15"></b-form-input>
                 <has-error :form="form" field="name"/>
@@ -42,7 +40,6 @@
                 <b-form-input v-model="form.phone_number2"
                               autocomplete="off"
                               type="text"
-                              name="phone_number2"
                               class="input-container"
                               :maxlength="15"></b-form-input>
                 <has-error :form="form" field="name"/>
@@ -56,7 +53,6 @@
                 <b-form-input v-model="form.phone_number3"
                               autocomplete="off"
                               type="text"
-                              name="phone_number3"
                               class="input-container"
                               :maxlength="15"></b-form-input>
                 <has-error :form="form" field="name"/>
@@ -70,7 +66,6 @@
                 <b-form-input v-model="form.fax_number"
                               autocomplete="off"
                               type="text"
-                              name="fax_number"
                               class="input-container"
                               :maxlength="15"></b-form-input>
                 <has-error :form="form" field="name"/>

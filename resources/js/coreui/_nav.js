@@ -85,6 +85,10 @@ export default {
                     url: '/requisition/currency',
                 },
                 {
+                    name: 'Payment Term',
+                    url: '/requisition/payment-term',
+                },
+                {
                     name: 'Supplier Classification',
                     url: '/requisition/supplier-classification',
                 },

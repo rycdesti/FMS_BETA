@@ -12,7 +12,6 @@
                               autocomplete="off"
                               :class="{ 'is-invalid': form.errors.has('name') }"
                               type="text"
-                              name="name"
                               class="input-container"
                               :maxlength="65"></b-form-input>
                 <has-error :form="form" field="name"/>
@@ -28,7 +27,6 @@
                               autocomplete="off"
                               :class="{ 'is-invalid': form.errors.has('check_name') }"
                               type="text"
-                              name="check_name"
                               class="input-container"
                               :maxlength="65"></b-form-input>
                 <has-error :form="form" field="name"/>
@@ -43,7 +41,6 @@
                 <b-form-select v-model="form.supplier_classification_id"
                                :options="supplier_classification_opt"
                                :class="{ 'is-invalid': form.errors.has('supplier_classification_id') }"
-                               name="supplier_classification_id"
                                class="input-container">
                     <template slot="first">
                         <option value selected disabled>-- Please select an option --</option>
@@ -61,7 +58,6 @@
                 <b-form-select v-model="form.currency_id"
                                :options="currency_opt"
                                :class="{ 'is-invalid': form.errors.has('currency_id') }"
-                               name="currency_id"
                                class="input-container">
                     <template slot="first">
                         <option value selected disabled>-- Please select an option --</option>
@@ -80,7 +76,6 @@
                               autocomplete="off"
                               :class="{ 'is-invalid': form.errors.has('address') }"
                               type="text"
-                              name="address"
                               class="input-container"
                               :maxlength="50"></b-form-input>
                 <has-error :form="form" field="name"/>
@@ -160,7 +155,6 @@
                               autocomplete="off"
                               :class="{ 'is-invalid': form.errors.has('zip_code') }"
                               type="text"
-                              name="zip_code"
                               class="input-container"
                               :maxlength="10"></b-form-input>
                 <has-error :form="form" field="name"/>

@@ -11,7 +11,6 @@
                 <b-form-select v-model="form.chart_of_account_id"
                                :options="chart_account_opt"
                                :class="{ 'is-invalid': form.errors.has('chart_of_account_id') }"
-                               name="chart_of_account_id"
                                class="input-container">
                     <template slot="first">
                         <option value selected disabled>-- Please select an option --</option>
@@ -29,7 +28,6 @@
                 <b-form-select v-model="form.typical_balance"
                                :options="typical_balance_opt"
                                :class="{ 'is-invalid': form.errors.has('typical_balance') }"
-                               name="typical_balance"
                                class="input-container">
                     <template slot="first">
                         <option value selected disabled>-- Please select an option --</option>
@@ -48,7 +46,6 @@
                               autocomplete="off"
                               :class="{ 'is-invalid': form.errors.has('amount') }"
                               type="number"
-                              name="amount"
                               class="input-container"
                               :maxlength="18"></b-form-input>
                 <has-error :form="form" field="name"/>

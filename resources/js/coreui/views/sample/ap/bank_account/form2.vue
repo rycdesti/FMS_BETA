@@ -12,7 +12,6 @@
                               autocomplete="off"
                               :class="{ 'is-invalid': form.errors.has('acct_code') }"
                               type="text"
-                              name="acct_code"
                               class="input-container"
                               :maxlength="20"></b-form-input>
                 <has-error :form="form" field="name"/>
@@ -28,7 +27,6 @@
                               autocomplete="off"
                               :class="{ 'is-invalid': form.errors.has('acct_no') }"
                               type="text"
-                              name="acct_no"
                               class="input-container"
                               :maxlength="20"></b-form-input>
                 <has-error :form="form" field="name"/>
@@ -44,7 +42,6 @@
                               autocomplete="off"
                               :class="{ 'is-invalid': form.errors.has('beginning_balance') }"
                               type="number"
-                              name="beginning_balance"
                               class="input-container"
                               :maxlength="18"></b-form-input>
                 <has-error :form="form" field="name"/>
@@ -59,7 +56,6 @@
                     <b-datepicker
                             v-model="form.as_of"
                             :class="{ 'is-invalid': form.errors.has('as_of') }"
-                            name="as_of"
                             placeholder="Click to select...">
                     </b-datepicker>
                 <has-error :form="form" field="name"/>

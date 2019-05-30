@@ -7,6 +7,10 @@ Route::group(['prefix' => '/requisition'], function () {
     Route::resource('/currency', 'Requisition\CurrencyController');
     Route::patch('/currency/{currency}/update_status', 'Requisition\CurrencyController@update_status');
 
+    // payment term
+    Route::resource('/payment-term', 'Requisition\PaymentTermController');
+    Route::patch('/payment-term/{payment_term}/update_status', 'Requisition\PaymentTermController@update_status');
+
     // supplier classification
     Route::resource('/supplier-classification', 'Requisition\SupplierClassificationController');
     Route::patch('/supplier-classification/{supplier_classification}/update_status', 'Requisition\SupplierClassificationController@update_status');

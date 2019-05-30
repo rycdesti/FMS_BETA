@@ -12,7 +12,6 @@
                               autocomplete="off"
                               :class="{ 'is-invalid': form.errors.has('description') }"
                               type="text"
-                              name="description"
                               class="input-container"
                               :maxlength="100"></b-form-input>
                 <has-error :form="form" field="name"/>
@@ -28,7 +27,6 @@
                               autocomplete="off"
                               :class="{ 'is-invalid': form.errors.has('currency_code') }"
                               type="text"
-                              name="currency_code"
                               class="input-container"
                               :maxlength="20"></b-form-input>
                 <has-error :form="form" field="name"/>
@@ -44,7 +42,6 @@
                               autocomplete="off"
                               :class="{ 'is-invalid': form.errors.has('symbol') }"
                               type="text"
-                              name="symbol"
                               class="input-container"
                               :maxlength="10"></b-form-input>
                 <has-error :form="form" field="name"/>

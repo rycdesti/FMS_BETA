@@ -11,7 +11,6 @@
                 <b-form-select v-model="form.supplier_id"
                                :options="supplier_opt"
                                :class="{ 'is-invalid': form.errors.has('supplier_id') }"
-                               name="supplier_id"
                                class="input-container">
                     <template slot="first">
                         <option value selected disabled>-- Please select an option --</option>
@@ -25,7 +24,6 @@
             <!--label="Title"-->
             <b-form-fieldset>
                 <b-form-checkbox v-model="form.is_duration"
-                                 name="is_duration"
                                  class="input-container"
                                  value="Y"
                                  unchecked-value="N">With Duration
@@ -42,7 +40,6 @@
                             description="Please enter duration from.">
                         <b-datepicker v-model="form.duration_from"
                                       :class="{ 'is-invalid': form.errors.has('duration_from') }"
-                                      name="duration_from"
                                       placeholder="Click to select...">
                         </b-datepicker>
                         <has-error :form="form" field="name"/>
@@ -59,7 +56,6 @@
                         <b-datepicker v-model="form.duration_to"
                                       :class="{ 'is-invalid': form.errors.has('duration_to') }"
                                       :disabled-dates="{ to: form.duration_from }"
-                                      name="duration_to"
                                       placeholder="Click to select...">
                         </b-datepicker>
                         <has-error :form="form" field="name"/>
@@ -75,7 +71,6 @@
                     description="Please enter remarks.">
                 <b-form-textarea v-model="form.remarks"
                                  :class="{ 'is-invalid': form.errors.has('remarks') }"
-                                 name="remarks"
                                  class="input-container"
                                  :maxlength="150"
                                  :rows="6"
@@ -94,7 +89,6 @@
                               autocomplete="off"
                               :class="{ 'is-invalid': form.errors.has('amount') }"
                               type="number"
-                              name="amount"
                               class="input-container"
                               :maxlength="18"></b-form-input>
                 <has-error :form="form" field="name"/>
@@ -110,7 +104,6 @@
                 <b-form-select v-model="form.frequency"
                                :options="frequency_opt"
                                :class="{ 'is-invalid': form.errors.has('frequency') }"
-                               name="frequency"
                                class="input-container">
                     <template slot="first">
                         <option value selected disabled>-- Please select an option --</option>

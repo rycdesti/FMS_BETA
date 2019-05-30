@@ -12,7 +12,6 @@
                               autocomplete="off"
                               :class="{ 'is-invalid': form.errors.has('description') }"
                               type="text"
-                              name="description"
                               class="input-container"
                               :maxlength="50"></b-form-input>
                 <has-error :form="form" field="name"/>

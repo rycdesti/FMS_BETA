@@ -169,7 +169,7 @@
                 this.table_url = '/api/requisition/currency'
             },
             async deleteData(id) {
-                const component = this
+                const component = this;
 
                 const result = await this.$swal.fire({
                     title: 'Delete Record',
@@ -191,7 +191,7 @@
                                     response.data.message,
                                     'success'
                                 ).then(() => {
-                                    const table = $('#tbl-currency')
+                                    const table = $('#tbl-currency');
                                     table.DataTable().draw(false)
                                 })
                             }

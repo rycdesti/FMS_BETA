@@ -12,7 +12,6 @@
                               autocomplete="off"
                               :class="{ 'is-invalid': form.errors.has('bank_address') }"
                               type="text"
-                              name="bank_address"
                               class="input-container"
                               :maxlength="70"></b-form-input>
                 <has-error :form="form" field="name"/>
@@ -28,7 +27,6 @@
                               autocomplete="off"
                               :class="{ 'is-invalid': form.errors.has('acct_code') }"
                               type="text"
-                              name="acct_code"
                               class="input-container"
                               :maxlength="20"></b-form-input>
                 <has-error :form="form" field="name"/>
@@ -44,7 +42,6 @@
                               autocomplete="off"
                               :class="{ 'is-invalid': form.errors.has('acct_no') }"
                               type="text"
-                              name="acct_no"
                               class="input-container"
                               :maxlength="20"></b-form-input>
                 <has-error :form="form" field="name"/>
@@ -59,7 +56,6 @@
                 <b-form-select v-model="form.acct_type"
                                :options="acct_type_opt"
                                :class="{ 'is-invalid': form.errors.has('acct_type') }"
-                               name="acct_type"
                                class="input-container">
                     <template slot="first">
                         <option value selected disabled>-- Please select an option --</option>
@@ -77,7 +73,6 @@
                 <b-form-select v-model="form.currency_id"
                                :options="currency_opt"
                                :class="{ 'is-invalid': form.errors.has('currency_id') }"
-                               name="currency_id"
                                class="input-container">
                     <template slot="first">
                         <option value selected disabled>-- Please select an option --</option>

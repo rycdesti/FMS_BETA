@@ -12,7 +12,6 @@
                               autocomplete="off"
                               :class="{ 'is-invalid': form.errors.has('bank_name') }"
                               type="text"
-                              name="bank_name"
                               class="input-container"
                               :maxlength="70"></b-form-input>
                 <has-error :form="form" field="name"/>

@@ -12,7 +12,6 @@
                               autocomplete="off"
                               :class="{ 'is-invalid': form.errors.has('acct_code') }"
                               type="text"
-                              name="acct_code"
                               class="input-container"
                               :maxlength="20"></b-form-input>
                 <has-error :form="form" field="name"/>
@@ -28,7 +27,6 @@
                               autocomplete="off"
                               :class="{ 'is-invalid': form.errors.has('description') }"
                               type="text"
-                              name="description"
                               class="input-container"
                               :maxlength="150"></b-form-input>
                 <has-error :form="form" field="name"/>
@@ -43,7 +41,6 @@
                 <b-form-select v-model="form.account_category_id"
                                :options="acct_category_opt"
                                :class="{ 'is-invalid': form.errors.has('account_category_id') }"
-                               name="account_category_id"
                                class="input-container">
                     <template slot="first">
                         <option value selected disabled>-- Please select an option --</option>
@@ -61,7 +58,6 @@
                 <b-form-select v-model="form.posting_type"
                                :options="posting_type_opt"
                                :class="{ 'is-invalid': form.errors.has('posting_type') }"
-                               name="posting_type"
                                class="input-container">
                     <template slot="first">
                         <option value selected disabled>-- Please select an option --</option>
@@ -79,7 +75,6 @@
                 <b-form-select v-model="form.typical_balance"
                                :options="typical_balance_opt"
                                :class="{ 'is-invalid': form.errors.has('typical_balance') }"
-                               name="typical_balance"
                                class="input-container">
                     <template slot="first">
                         <option value selected disabled>-- Please select an option --</option>

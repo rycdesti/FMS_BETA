@@ -11,6 +11,7 @@
                 <b-form-select v-model="form.bank_account_id"
                                :options="bank_opt"
                                class="input-container mb-2"
+                               :class="{ 'is-invalid': form.errors.has('bank_account_id') }"
                                @change="filter">
                     <template slot="first">
                         <option value selected disabled>-- Please select an option --</option>
@@ -29,7 +30,6 @@
                               autocomplete="off"
                               :class="{ 'is-invalid': form.errors.has('check_from') }"
                               type="number"
-                              name="check_from"
                               class="input-container"></b-form-input>
                 <has-error :form="form" field="name"/>
             </b-form-fieldset>
@@ -44,7 +44,6 @@
                               autocomplete="off"
                               :class="{ 'is-invalid': form.errors.has('check_to') }"
                               type="number"
-                              name="check_to"
                               class="input-container"
                               :min="form.check_from"></b-form-input>
                 <has-error :form="form" field="name"/>

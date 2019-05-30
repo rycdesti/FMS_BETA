@@ -229,6 +229,7 @@
                         </td>
                     </tr>
                     </tbody>
+
                     <tfoot>
                     <tr>
                         <td class="text-right">Total</td>

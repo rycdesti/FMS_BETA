@@ -31,6 +31,15 @@
                             <div class="pt-1" slot="header">
                                 <b-button
                                         v-b-tooltip.hover
+                                        title="Back to Recurring Payment List"
+                                        @click="$router.back()"
+                                        variant="outline-primary"
+                                >
+                                    <i class="fa fa-arrow-left"/>
+                                </b-button>
+
+                                <b-button
+                                        v-b-tooltip.hover
                                         v-b-modal.form_modal
                                         title="Add New Record"
                                         variant="outline-primary"
