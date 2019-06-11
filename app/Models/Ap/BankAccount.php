@@ -77,4 +77,12 @@ class BankAccount extends BaseModel
     {
         return $this->hasMany(Voucher::class);
     }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function recurringPayments()
+    {
+        return $this->hasMany(RecurringPayment::class);
+    }
 }

@@ -22,6 +22,24 @@
 
             <!-- start: title -->
             <!--label="Title"-->
+            <b-form-fieldset
+                    label="Bank"
+                    description="Please select bank.">
+                <b-form-select v-model="form.bank_account_id"
+                               :options="bank_opt"
+                               :class="{ 'is-invalid': form.errors.has('bank_account_id') }"
+                               id="bank_account_id"
+                               class="input-container">
+                    <template slot="first">
+                        <option value selected disabled>-- Please select an option --</option>
+                    </template>
+                </b-form-select>
+                <has-error :form="form" field="name"/>
+            </b-form-fieldset>
+            <!-- end: title -->
+
+            <!-- start: title -->
+            <!--label="Title"-->
             <b-form-fieldset>
                 <b-form-checkbox v-model="form.is_duration"
                                  class="input-container"
@@ -271,6 +289,7 @@
                         A: {month: '', day: ''}
                     }
                 }),
+                bank_opt: [{}],
                 supplier_opt: [{}],
                 frequency_opt: [{}],
                 week_opt: [{}],
@@ -288,7 +307,8 @@
             axios.all([
                 axios.get('/api/ap/utils/get_supplier'),
                 axios.get('/api/ap/utils/get_frequency'),
-            ]).then(axios.spread(function (supplier, frequency) {
+                axios.get('/api/ap/utils/get_banks'),
+            ]).then(axios.spread(function (supplier, frequency, bank) {
                 component.supplier_opt = supplier.data;
                 component.frequency_opt = frequency.data.frequency;
                 component.week_opt = frequency.data.week;
@@ -296,6 +316,7 @@
                 component.quarter_opt = frequency.data.quarter;
                 component.semester_opt = frequency.data.semester;
                 component.month_opt = frequency.data.month;
+                component.bank_opt = bank.data;
             }));
 
             this.$root.$on('edit', (id) => {

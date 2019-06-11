@@ -76,7 +76,8 @@
                                 description="Please enter check date.">
                             <b-datepicker v-model="form.voucher.check_date"
                                           :class="{ 'is-invalid': form.errors.has('voucher.check_date') }"
-                                          placeholder="Click to select...">
+                                          placeholder="Click to select..."
+                                          disabled>
                             </b-datepicker>
                             <has-error :form="form" field="name"/>
                         </b-form-fieldset>
@@ -328,18 +329,19 @@
                                 date: date,
                                 recurring_payment_id: response.data.id,
                                 status: '',
-                                bank_account_id: '',
+                                bank_account_id: response.data.bank_account_id,
                                 check_id: '',
-                                check_date: '',
+                                check_date: new Date(),
                                 document_type: '',
                                 document_no: '',
                                 amount: response.data.amount,
                                 explanation: '',
                             };
+                            component.getVoucherChecks(component.form.voucher.bank_account_id + '&' + component.form.voucher.check_id, false);
                         } else {
                             component.form.voucher.old_check_id = component.form.voucher.check_id;
                             component.form.recurring_payment_distributions = component.form.voucher.voucher_distributions;
-                            component.getVoucherChecks(component.form.voucher.bank_account_id + '&' + component.form.voucher.check_id);
+                            component.getVoucherChecks(component.form.voucher.bank_account_id + '&' + component.form.voucher.check_id, true);
                         }
                         component.$root.$emit('bv::show::modal', 'form_modal');
                         component.computeTotal();
@@ -355,15 +357,19 @@
                 axios.get(`/api/ap/utils/get_checks/${$('#bank_account_id').val()}`)
                     .then(function (response) {
                         component.check_opt = response.data;
+                        component.form.voucher.check_id = response.data[0].value;
                     })
             },
-            getVoucherChecks(bank_account_id) {
+            getVoucherChecks(bank_account_id, check_exists) {
                 const component = this;
 
                 axios.get(`/api/ap/utils/get_voucher_checks/${bank_account_id}`)
                     .then(function (response) {
                         component.check_opt = response.data;
-                    })
+                        if(!check_exists) {
+                            component.form.voucher.check_id = response.data[0].value;
+                        }
+                    });
             },
             addDistribution() {
                 this.form.recurring_payment_distributions.push({

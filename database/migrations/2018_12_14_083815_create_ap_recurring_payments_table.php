@@ -16,6 +16,7 @@ class CreateAprecurringPaymentsTable extends Migration {
 		{
             $table->bigInteger('id', true);
 			$table->bigInteger('supplier_id');
+            $table->bigInteger('bank_account_id');
 			$table->string('document_no', 30)->nullable();
 			$table->date('duration_from')->nullable();
 			$table->date('duration_to')->nullable();
@@ -34,6 +35,10 @@ class CreateAprecurringPaymentsTable extends Migration {
                 ->references('id')
                 ->on('requisition.suppliers')
                 ->onDelete('cascade');
+
+            $table->foreign('bank_account_id')
+                ->references('id')
+                ->on('ap.bank_accounts');
 		});
 	}
 

@@ -9,15 +9,15 @@
 <body>
 <table cellspacing="0" width="100%">
     <tr>
-        <td rowspan="2" width="10%" style="padding-bottom: 35px;">
+        <td rowspan="2" width="10%" style="padding-bottom: 15px;">
             <img src="{{ public_path() . '/images/tip_logo.png' }}" width="80" height="80"/>
         </td>
-        <td rowspan="2" width="60%" style="text-align: center">
-            <div style="font-size:15pt; font-weight: bold;">TECHNOLOGICAL INSTITUTE OF THE PHILIPPINES</div>
-            <div style="font-size: 12pt;">MANILA</div>
-            <div style="font-size: 14pt; font-weight: bold">CHECK VOUCHER</div>
+        <td rowspan="2" width="60%" style="text-align: center; padding-bottom: 15px;">
+            <div style="font-size:14pt; font-weight: bold;">TECHNOLOGICAL INSTITUTE OF THE PHILIPPINES, INC.</div>
+            <div style="font-size: 11pt;">MANILA</div>
+            <div style="font-size: 13pt; font-weight: bold">CHECK VOUCHER</div>
         </td>
-        <td style="padding-bottom: 25px;"></td>
+        <td style="padding-bottom: 15px;"></td>
     </tr>
 
     <tr>
@@ -37,10 +37,6 @@
                 <tr>
                     <td>Check Voucher No.</td>
                     <td style="text-align: right;"><u><b>{{ $monthlyPayment->voucher->voucher_no }}</b></u></td>
-                </tr>
-                <tr>
-                    <td>Posted on Ledger No.</td>
-                    <td style="text-align: right;"></td>
                 </tr>
             </table>
         </td>
@@ -111,7 +107,7 @@
     <tr>
         <td width="55%" style="border-top: 1px solid; padding-top: 10px; vertical-align: top;">
             RECEIVED from the TECHNOLOGICAL INSTITUTE OF THE
-            <br>PHILIPPINES the sum of PESOS
+            <br>PHILIPPINES, INC. the sum of PESOS
             <u><b><i>{{ $monthlyPaymentController->convertNumberToWords($monthlyPayment->voucher->amount) }}</i></b></u>
             in payment to the above mentioned name.
         </td>

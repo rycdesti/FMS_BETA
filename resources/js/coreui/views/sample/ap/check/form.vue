@@ -11,8 +11,7 @@
                 <b-form-select v-model="form.bank_account_id"
                                :options="bank_opt"
                                class="input-container mb-2"
-                               :class="{ 'is-invalid': form.errors.has('bank_account_id') }"
-                               @change="filter">
+                               :class="{ 'is-invalid': form.errors.has('bank_account_id') }">
                     <template slot="first">
                         <option value selected disabled>-- Please select an option --</option>
                     </template>

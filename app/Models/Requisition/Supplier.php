@@ -2,6 +2,7 @@
 
 namespace App\Models\Requisition;
 
+use App\Models\Ap\CheckPaymentRequest;
 use App\Models\Ap\RecurringPayment;
 use App\Models\BaseModel;
 
@@ -61,6 +62,13 @@ class Supplier extends BaseModel
      */
     public function supplierContacts() {
         return $this->hasMany(SupplierContact::class);
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function checkPaymentRequests() {
+        return $this->hasMany(CheckPaymentRequest::class);
     }
 
     /**

@@ -26,6 +26,9 @@ Route::group(['prefix' => '/ap'], function () {
     // monthly payment
     Route::resource('/monthly-payment', 'Ap\MonthlyPaymentController');
 
+    // check payment request
+    Route::resource('/check-payment-request', 'Ap\CheckPaymentRequestController');
+
     // utils
     Route::group(['prefix' => '/utils'], function () {
         Route::get('/get_bank_account/{bank_account}', 'Ap\CheckController@get_bank_account');
@@ -41,5 +44,7 @@ Route::group(['prefix' => '/ap'], function () {
         Route::get('/get_checks/{bank_account}', 'Ap\MonthlyPaymentController@get_checks');
         Route::get('/get_voucher_checks/{bank_account}', 'Ap\MonthlyPaymentController@get_voucher_checks');
         Route::get('/get_document_type', 'Ap\MonthlyPaymentController@get_document_type');
+
+        Route::get('/get_payment_terms', 'Ap\CheckPaymentRequestController@get_payment_terms');
     });
 });

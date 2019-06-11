@@ -2,6 +2,7 @@
 
 namespace App\Models\Requisition;
 
+use App\Models\Ap\CheckPaymentRequest;
 use App\Models\BaseModel;
 
 /**
@@ -37,4 +38,10 @@ class PaymentTerm extends BaseModel
      */
     protected $fillable = ['payment_term_name', 'percentage', 'disabled', 'date_disabled', 'disabled_by', 'logs', 'last_modified', 'created_at', 'updated_at'];
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function checkPaymentRequests() {
+        return $this->hasMany(CheckPaymentRequest::class);
+    }
 }

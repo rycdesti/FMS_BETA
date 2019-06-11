@@ -5,6 +5,7 @@ import Check from '@/views/sample/ap/check'
 import RecurringPayment from '@/views/sample/ap/recurring_payment'
 import RecurringPaymentDistribution from '@/views/sample/ap/recurring_payment_distribution'
 import MonthlyPayment from '@/views/sample/ap/monthly_payment'
+import CheckPaymentRequest from '@/views/sample/ap/check_payment_request'
 
 export default {
     path: 'ap',
@@ -16,6 +17,11 @@ export default {
         },
     },
     children: [
+        {
+            path: 'check-payment-request',
+            name: 'CheckPaymentRequest',
+            component: CheckPaymentRequest,
+        },
         {
             path: 'monthly-payment',
             name: 'MonthlyPayment',

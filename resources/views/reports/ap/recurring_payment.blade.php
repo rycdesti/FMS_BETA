@@ -31,14 +31,14 @@
             </td>
             <td>
                 @if($is_duration == 'Y')
-                    <span>From: {{ date('F d, Y', strtotime($duration_from)) }}</span><br>
+                    <span>From: {{ date('F d, Y', strtotime($duration_from)) }}</span><br>nm
                     <span>To: {{ date('F d, Y', strtotime($duration_from)) }}</span>
                 @else
                     <span>Continuous</span>
                 @endif
             </td>
             <td>
-                @php($recurringPaymentDates = $recurringPayment->recurringPayment)
+                @php($recurringPaymentDates = $recurringPayment->recurringPaymentDates)
                 @foreach($recurringPaymentDates as $recurringPaymentDate)
                     @php(extract($recurringPaymentDate->toArray()))
 

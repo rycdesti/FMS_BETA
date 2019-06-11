@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Ap;
 use App\Http\Controllers\Controller;
 use App\Models\Ap\BankAccount;
 use App\Models\Ap\Check;
+use App\Models\Ap\Voucher;
 use Barryvdh\Snappy\Facades\SnappyPdf;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
@@ -132,7 +133,7 @@ class CheckController extends Controller
      */
     public function show($id)
     {
-       //
+        //
     }
 
     /**
@@ -165,13 +166,28 @@ class CheckController extends Controller
         $request['last_modified'] = 'Last modified by: Test';
         $data = $request->all();
 
+
         $result = $check->update($data);
         if ($result) {
+
+            $result_voucher = false;
+            $voucher = Voucher::where('voucher_no', $check->voucher_no)->first();
+            if ($voucher) {
+                $result_voucher = $voucher->update(['status' => 'V']);
+            }
+
             /**
              * check for failure of event tag when insert try to rollback (DB rollback)
              * try to check if there is other way to insert multiple record
              */
-            return response()->json(['success' => true, 'message' => 'The check was voided successfully!']);
+            if($result_voucher) {
+                return response()->json(['success' => true, 'message' => 'The check was voided successfully!']);
+            } else {
+                $request['voided'] = 'N';
+                $request['remarks'] = null;
+                $data = $request->all();
+                $check->update($data);
+            }
         }
         return response()->json(['success' => false, 'message' => 'Something went wrong, Please try again.'], 500);
     }
@@ -220,12 +236,12 @@ class CheckController extends Controller
             $status_filter = request()->status_filter;
             $checks = Check::where(['bank_account_id' => $sequence_[0], 'check_from' => $sequence_[1], 'check_to' => $sequence_[2]]);
 
-            if($status_filter == 'I') {
+            if ($status_filter == 'I') {
                 $checks = $checks->whereNotNull('voucher_no')->get();;
-            } else if($status_filter == 'N') {
+            } else if ($status_filter == 'N') {
                 $checks = $checks->where('voucher_no', null)
                     ->where('voided', $status_filter)->get();;
-            } else if($status_filter == 'Y'){
+            } else if ($status_filter == 'Y') {
                 $checks = $checks->where('voided', $status_filter)->get();;
             } else {
                 $checks = $checks->get();
@@ -238,7 +254,7 @@ class CheckController extends Controller
                     return $status;
                 })
                 ->editColumn('actions', function (Check $check) {
-                    return $check->voided == 'N' && $check->voucher_no == null ? '<button id="btn-void-check" data-id="' . $check->id . '" type="button" class="btn btn-link">Void Check</button>' : '';
+                    return $check->voided == 'N' ? '<button id="btn-void-check" data-id="' . $check->id . '" type="button" class="btn btn-link">Void Check</button>' : '';
                 })
                 ->rawColumns(['status', 'actions'])
                 ->make(true);

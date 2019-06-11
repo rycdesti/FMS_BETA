@@ -40,63 +40,96 @@ export default {
         {
             name: 'Accounts Payable',
             url: '/ap',
-            icon: 'fa fa-circle',
+            color: 'font-weight-bold',
             children: [
                 {
-                    name: 'Monthly Payments',
-                    url: '/ap/monthly-payment',
+                    name: 'Transact',
+                    icon: 'fa fa-exchange',
+                    color: 'text-green font-weight-bold',
+                    children: [
+                        {
+                            name: 'Check Payment Request',
+                            url: '/ap/check-payment-request',
+                        },
+                        {
+                            name: 'Monthly Payments',
+                            url: '/ap/monthly-payment',
+                        },
+                        {
+                            name: 'Recurring Payments',
+                            url: '/ap/recurring-payment',
+                        },
+                    ],
                 },
                 {
-                    name: 'Recurring Payments',
-                    url: '/ap/recurring-payment',
-                },
-                {
-                    name: 'Banks',
-                    url: '/ap/bank',
-                },
-                {
-                    name: 'Checks',
-                    url: '/ap/check',
-                },
+                    name: 'Lookup',
+                    icon: 'fa fa-search',
+                    color: 'text-yellow font-weight-bold',
+                    children: [
+                        {
+                            name: 'Banks',
+                            url: '/ap/bank',
+                        },
+                        {
+                            name: 'Checks',
+                            url: '/ap/check',
+                        },
+                    ]
+                }
             ],
         },
         {
             name: 'Financial Management',
             url: '/financial',
-            icon: 'fa fa-circle',
+            color: 'font-weight-bold',
             children: [
                 {
-                    name: 'Account Category',
-                    url: '/financial/account-category',
-                },
-                {
-                    name: 'Chart of Accounts',
-                    url: '/financial/chart-of-account',
-                },
+                    name: 'Lookup',
+                    icon: 'fa fa-search',
+                    color: 'text-yellow font-weight-bold',
+                    children: [
+                        {
+                            name: 'Account Category',
+                            url: '/financial/account-category',
+                        },
+                        {
+                            name: 'Chart of Accounts',
+                            url: '/financial/chart-of-account',
+                        },
+                    ]
+                }
             ],
         },
         {
             name: 'Requisition Management',
             url: '/requisition',
-            icon: 'fa fa-circle',
+            color: 'font-weight-bold',
             children: [
                 {
-                    name: 'Currency',
-                    url: '/requisition/currency',
-                },
-                {
-                    name: 'Payment Term',
-                    url: '/requisition/payment-term',
-                },
-                {
-                    name: 'Supplier Classification',
-                    url: '/requisition/supplier-classification',
-                },
-                {
-                    name: 'Supplier',
-                    url: '/requisition/supplier',
-                },
+                    name: 'Lookup',
+                    icon: 'fa fa-search',
+                    color: 'text-yellow font-weight-bold',
+                    children: [
+                        {
+                            name: 'Currency',
+                            url: '/requisition/currency',
+                        },
+                        {
+                            name: 'Payment Term',
+                            url: '/requisition/payment-term',
+                        },
+                        {
+                            name: 'Supplier Classification',
+                            url: '/requisition/supplier-classification',
+                        },
+                        {
+                            name: 'Supplier',
+                            url: '/requisition/supplier',
+                        },
+                    ],
+                }
             ],
+
         },
         //   {
         //     name    : 'BaseModel',

@@ -1,5 +1,5 @@
 <template>
-  <div v-if="isExternalLink">
+  <div v-if="isExternalLink" class="font-xs">
     <a
       :href="url"
       :class="classList"
@@ -13,7 +13,7 @@
       </b-badge>
     </a>
   </div>
-  <div v-else>
+  <div v-else class="font-xs">
     <router-link
       :to="url"
       :class="classList"

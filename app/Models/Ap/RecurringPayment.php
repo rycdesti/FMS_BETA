@@ -24,6 +24,8 @@ use App\Models\Requisition\Supplier;
  * @property string $updated_at
  * @property Supplier $supplier
  * @property mixed voucher
+ * @property mixed recurringPaymentDates
+ * @property mixed bankAccount
  */
 class RecurringPayment extends BaseModel
 {
@@ -44,7 +46,7 @@ class RecurringPayment extends BaseModel
     /**
      * @var array
      */
-    protected $fillable = ['supplier_id', 'document_no', 'duration_from', 'duration_to', 'is_duration', 'frequency', 'remarks', 'amount', 'disabled', 'date_disabled', 'disabled_by', 'logs', 'last_modified', 'created_at', 'updated_at'];
+    protected $fillable = ['supplier_id', 'bank_account_id', 'document_no', 'duration_from', 'duration_to', 'is_duration', 'frequency', 'remarks', 'amount', 'disabled', 'date_disabled', 'disabled_by', 'logs', 'last_modified', 'created_at', 'updated_at'];
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
@@ -68,6 +70,14 @@ class RecurringPayment extends BaseModel
     public function supplier()
     {
         return $this->belongsTo(Supplier::class);
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function bankAccount()
+    {
+        return $this->belongsTo(BankAccount::class);
     }
 
     /**

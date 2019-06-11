@@ -27,7 +27,7 @@ RUN apt-get install --no-install-recommends --no-install-suggests -y \
 # Install PHP Plugin
 RUN docker-php-ext-install zip
 
-ENV TZ=Asia/Jakarta
+ENV TZ=Asia/Manila
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 # Install Composer

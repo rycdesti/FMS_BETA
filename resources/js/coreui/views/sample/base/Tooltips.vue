@@ -178,11 +178,11 @@
           </div>
           <div class="p-2">
             <b-btn @click="disabled = !disabled">
-              {{ disabled ? 'Enable' : 'Disable' }} Tooltip by prop
+              {{ disabled ? 'Active' : 'Inactive' }} Tooltip by prop
             </b-btn>
 
             <b-btn @click="disableByRef">
-              {{ disabled ? 'Enable' : 'Disable' }} Tooltip by $ref event
+              {{ disabled ? 'Active' : 'Inactive' }} Tooltip by $ref event
             </b-btn>
 
             <b-tooltip

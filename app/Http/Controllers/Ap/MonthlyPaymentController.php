@@ -8,7 +8,6 @@ use App\Models\Ap\RecurringPayment;
 use App\Models\Ap\Voucher;
 use App\Models\Ap\VoucherDistribution;
 use App\Models\Requisition\Supplier;
-use App\Models\Requisition\SupplierContact;
 use Barryvdh\Snappy\Facades\SnappyPdf;
 use DateInterval;
 use DatePeriod;
@@ -202,18 +201,35 @@ class MonthlyPaymentController extends Controller
         $recurring_payment_date = explode('&', $id)[1];
 
         $recurringPayment = RecurringPayment::where('id', $recurring_payment_id)
-            ->with('supplier')
-            ->with(['recurringPaymentDistributions' => function ($query) {
-                $query->select('recurring_payment_id', 'chart_of_account_id', 'typical_balance', 'amount');
-            }])->with(['voucher' => function ($query) use ($recurring_payment_date) {
-                $query->where('date', $recurring_payment_date);
-                $query->first();
-                $query->with(['voucherDistributions' => function ($query) {
-                    $query->with('chartOfAccount');
-                }]);
-                $query->with('bankAccount');
-                $query->with('check');
-            }])->first();
+            ->with([
+                'supplier',
+                'recurringPaymentDistributions' => function ($query) {
+                    $query->select('recurring_payment_id', 'chart_of_account_id', 'typical_balance', 'amount');
+                },
+                'voucher' => function ($query) use ($recurring_payment_date) {
+                    $query->where('date', $recurring_payment_date);
+                    $query->where('status', '!=', 'V');
+                    $query->first();
+                },
+                'voucher.voucherDistributions',
+                'voucher.voucherDistributions.chartOfAccount',
+                'voucher.bankAccount',
+                'voucher.check'
+            ])->first();
+
+//        $recurringPayment = RecurringPayment::where('id', $recurring_payment_id)
+//            ->with('supplier')
+//            ->with(['recurringPaymentDistributions' => function ($query) {
+//                $query->select('recurring_payment_id', 'chart_of_account_id', 'typical_balance', 'amount');
+//            }])->with(['voucher' => function ($query) use ($recurring_payment_date) {
+//                $query->where('date', $recurring_payment_date);
+//                $query->first();
+//                $query->with(['voucherDistributions' => function ($query) {
+//                    $query->with('chartOfAccount');
+//                }]);
+//                $query->with('bankAccount');
+//                $query->with('check');
+//            }])->first();
 
         return $recurringPayment;
     }
@@ -438,23 +454,26 @@ class MonthlyPaymentController extends Controller
                 $child_sub1->where('month', 0)
                     ->orWhere('month', $month);
             });
-        }])->where([
-            ['duration_from', '=', null],
-            ['duration_to', '=', null]
-        ])->orWhere(function ($sub1) use ($date_start, $date_end) {
-            $sub1->where([
-                ['duration_from', '>=', $date_start],
-                ['duration_to', '>=', $date_end]
-            ])->orWhere([
-                ['duration_from', '<=', $date_start],
-                ['duration_to', '<=', $date_end]
-            ])->orWhere([
-                ['duration_from', '>=', $date_start],
-                ['duration_to', '<=', $date_end]
-            ])->orWhere([
-                ['duration_from', '<=', $date_start],
-                ['duration_to', '>=', $date_end]
+        }])->where(function ($child_sub2) use ($date_start, $date_end) {
+            $child_sub2->where([
+                ['duration_from', '=', null],
+                ['duration_to', '=', null]
             ]);
+            $child_sub2->orWhere(function ($sub1) use ($date_start, $date_end) {
+                $sub1->where([
+                    ['duration_from', '>=', $date_start],
+                    ['duration_to', '>=', $date_end]
+                ])->orWhere([
+                    ['duration_from', '<=', $date_start],
+                    ['duration_to', '<=', $date_end]
+                ])->orWhere([
+                    ['duration_from', '>=', $date_start],
+                    ['duration_to', '<=', $date_end]
+                ])->orWhere([
+                    ['duration_from', '<=', $date_start],
+                    ['duration_to', '>=', $date_end]
+                ]);
+            });
         })->where('disabled', 'N')
             ->get();
 
@@ -489,6 +508,7 @@ class MonthlyPaymentController extends Controller
                     $object->remaining_days = ceil((strtotime($date) - time()) / 86400);
 
                     $voucher = Voucher::where('recurring_payment_id', $monthlyPayment->id)
+                        ->where('status', '!=', 'V')
                         ->where('date', $date)
                         ->first();
 
@@ -558,15 +578,15 @@ class MonthlyPaymentController extends Controller
     {
         $s_info = '<div class="mb-3">' . Supplier::find($monthlyPayment->supplier_id)->name . '</div>';
 
-        foreach (SupplierContact::where('supplier_id', $monthlyPayment->supplier_id)->get() as $value) {
-            $s_info .= '<div class="mb-3">';
-            $s_info .= '<div>Contact Person: ' . $value->contact_person . '</div>';
-            $s_info .= '<div>Phone Number 1: ' . $value->phone_number1 . '</div>';
-            $s_info .= $value->phone_number2 ? '<div>Phone Number 2: ' . $value->phone_number2 . '</div>' : '';
-            $s_info .= $value->phone_number3 ? '<div>Phone Number 3: ' . $value->phone_number3 . '</div>' : '';
-            $s_info .= $value->fax_number ? '<div>Fax Number: ' . $value->fax_number . '</div>' : '';
-            $s_info .= '</div>';
-        }
+//        foreach (SupplierContact::where('supplier_id', $monthlyPayment->supplier_id)->get() as $value) {
+//            $s_info .= '<div class="mb-3">';
+//            $s_info .= '<div>Contact Person: ' . $value->contact_person . '</div>';
+//            $s_info .= '<div>Phone Number 1: ' . $value->phone_number1 . '</div>';
+//            $s_info .= $value->phone_number2 ? '<div>Phone Number 2: ' . $value->phone_number2 . '</div>' : '';
+//            $s_info .= $value->phone_number3 ? '<div>Phone Number 3: ' . $value->phone_number3 . '</div>' : '';
+//            $s_info .= $value->fax_number ? '<div>Fax Number: ' . $value->fax_number . '</div>' : '';
+//            $s_info .= '</div>';
+//        }
 
         $s_info .= '<div>Frequency: ' . (new self)->get_frequency('frequency', $monthlyPayment->frequency);
         if ($monthlyPayment->frequency == 'Q') {
@@ -603,7 +623,7 @@ class MonthlyPaymentController extends Controller
         $bankList = array();
         foreach ($banks as $bank) {
             foreach ($bank->bankAccounts as $bankAccount) {
-                $bankList[$bankAccount->id] = $bank->bank_name . ' (' . $bank->bank_prefix . ') - ' . $bankAccount->acct_code;
+                $bankList[$bankAccount->id] = $bank->bank_name . ' (' . $bank->bank_prefix . ') - ' . $bankAccount->acct_no;
             }
         }
 
