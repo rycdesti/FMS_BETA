@@ -2,13 +2,12 @@
 
 namespace App\Http\Controllers\Ap;
 
-use App\Models\Ap\Bank;
-use Barryvdh\Snappy\Facades\SnappyPdf;
+use App\Models\System\Branch;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Yajra\DataTables\Facades\DataTables;
 
-class BankController extends Controller
+class BranchController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -20,38 +19,34 @@ class BankController extends Controller
     {
         if ($this->isRequestTypeDatatable(request())) {
             $status_filter = request()->status_filter;
-            $banks = Bank::get();
+            $branches = Branch::get();
 
             if ($status_filter) {
-                $banks = $banks->where('disabled', $status_filter);
+                $branches = $branches->where('disabled', $status_filter);
             }
 
-            return DataTables::of($banks)
-                ->editColumn('status', function (Bank $bank) {
-                    if ($bank->disabled == 'N') {
+            return DataTables::of($branches)
+                ->editColumn('status', function (Branch $branch) {
+                    if ($branch->disabled == 'N') {
                         return '<div><span class="badge-primary p-1">Enabled</span></div>';
                     } else {
                         return '<div><span class="badge-danger p-1">Disabled</span></div><br>
-                                <div>' . $bank->disabled_by . '</div>
-                                <div><i class="fa fa-clock-o pr-1"></i>' . $bank->date_disabled->diffForHumans() . '</div>';
+                                <div>' . $branch->disabled_by . '</div>
+                                <div><i class="fa fa-clock-o pr-1"></i>' . $branch->date_disabled->diffForHumans() . '</div>';
                     }
                 })
-                ->editColumn('logs', function (Bank $bank) {
-                    return '<div>' . $bank->logs . '</div>
-                            <div><i class="fa fa-clock-o pr-1"></i>' . $bank->created_at->diffForHumans() . '</div><br>' .
-                        ($bank->last_modified ? '<div>' . $bank->last_modified . '</div>
-                            <div><i class="fa fa-clock-o pr-1"></i>' . $bank->updated_at->diffForHumans() . '</div>' : '');
+                ->editColumn('logs', function (Branch $branch) {
+                    return '<div>' . $branch->logs . '</div>
+                            <div><i class="fa fa-clock-o pr-1"></i>' . $branch->created_at->diffForHumans() . '</div><br>' .
+                        ($branch->last_modified ? '<div>' . $branch->last_modified . '</div>
+                            <div><i class="fa fa-clock-o pr-1"></i>' . $branch->updated_at->diffForHumans() . '</div>' : '');
                 })
-                ->editColumn('actions', function (Bank $bank) {
+                ->editColumn('actions', function (Branch $branch) {
                     $actions = '';
-                    if (!$bank->bankAccounts->count()) {
-                        $actions .= '<button id="btn-edit" data-id="' . $bank->id . '" title="Edit Record" type="button" class="btn btn-outline-secondary"><i class="fa fa-edit"></i></button>
-                                    <button id="btn-delete" data-id="' . $bank->id . '" title="Delete Record" type="button" class="btn btn-outline-danger"><i class="fa fa-trash-o"></i></button><hr>';
-                    } else {
-                        $actions .= '<button id="btn-edit" data-id="' . $bank->id . '" title="Edit Record" type="button" class="btn btn-outline-secondary"><i class="fa fa-edit"></i></button><hr>';
-                    }
-                    $actions .= '<button id="btn-bank-account" data-id="' . $bank->id . '" type="button" class="btn btn-link">Manage Bank Accounts</button><br>
-                            <button id="btn-update-status" data-id="' . $bank->id . '" type="button" class="btn btn-link">' . ($bank->disabled == 'N' ? 'Disable' : 'Enable') . '</button>';
+                    $actions .= '<button id="btn-edit" data-id="' . $branch->id . '" title="Edit Record" type="button" class="btn btn-outline-secondary"><i class="fa fa-edit"></i></button>
+                                    <button id="btn-delete" data-id="' . $branch->id . '" title="Delete Record" type="button" class="btn btn-outline-danger"><i class="fa fa-trash-o"></i></button><hr>';
+
+                    $actions .= '<button id="btn-update-status" data-id="' . $branch->id . '" type="button" class="btn btn-link">' . ($branch->disabled == 'N' ? 'Disable' : 'Enable') . '</button>';
                     return $actions;
                 })
                 ->rawColumns(['status', 'logs', 'actions'])
@@ -78,36 +73,34 @@ class BankController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'bank_name' => 'required',
+            'branch_name' => 'required',
         ]);
 
         $filtered_words = array("OF", "THE", "AND");
         $special_char = array('(', ')', '!', '@', '#', '$', '%', '^', '&', '*');
 
-        $bank_initials = '';
-        $bank_name = str_replace($special_char, '', request('bank_name'));
-        $array_bank_name = explode(" ", strtoupper($bank_name));
+        $branch_code = '';
+        $branch_name = str_replace($special_char, '', request('branch_name'));
+        $array_branch_name = explode(" ", strtoupper($branch_name));
 
-        foreach ($array_bank_name as $key => $value) {
+        foreach ($array_branch_name as $key => $value) {
             if ($value) {
                 if (in_array($value, $filtered_words)) {
-                    unset($array_bank_name[$key]);
+                    unset($branch_code[$key]);
                 } else {
-                    if (strlen($bank_initials) < 5) {
-                        $bank_initials .= $array_bank_name[$key][0];
+                    if (strlen($branch_code) < 5) {
+                        $branch_code .= $array_branch_name[$key][0];
                     }
                 }
             }
         }
-        $bank_prefix = str_pad($bank_initials, 3, $bank_initials[0], STR_PAD_RIGHT);
-        $bank_code = substr($bank_prefix, 0, 3) . date('ymdHis');
 
-        $request['bank_code'] = $bank_code;
-        $request['bank_prefix'] = $bank_prefix;
+        $request['branch_name'] = ucwords(request('branch_name'));
+        $request['branch_code'] = $branch_code;
         $request['logs'] = 'Created by: Test';
         $data = $request->all();
 
-        $result = Bank::create($data);
+        $result = Branch::create($data);
         if ($result) {
             /**
              * check for failure of event tag when insert try to rollback (DB rollback)
@@ -126,7 +119,7 @@ class BankController extends Controller
      */
     public function show($id)
     {
-        $data = Bank::find($id);
+        $data = Branch::find($id);
 
         return $data;
     }
@@ -146,19 +139,19 @@ class BankController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request $request
-     * @param Bank $bank
+     * @param Branch $branch
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Bank $bank)
+    public function update(Request $request, Branch $branch)
     {
         $request->validate([
-            'bank_name' => 'required',
+            'branch_name' => 'required',
         ]);
 
         $request['last_modified'] = 'Last modified by: Test';
         $data = $request->all();
 
-        $result = $bank->update($data);
+        $result = $branch->update($data);
         if ($result) {
             /**
              * check for failure of event tag when insert try to rollback (DB rollback)
@@ -172,13 +165,13 @@ class BankController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param Bank $bank
+     * @param Branch $branch
      * @return \Illuminate\Http\Response
      * @throws \Exception
      */
-    public function destroy(Bank $bank)
+    public function destroy(Branch $branch)
     {
-        $result = $bank->delete();
+        $result = $branch->delete();
         if ($result) {
             return response()->json(['success' => true, 'message' => 'The record was deleted successfully!']);
         }
@@ -188,22 +181,22 @@ class BankController extends Controller
     /**
      * Update the status of specified resource from storage
      *
-     * @param Bank $bank
+     * @param Branch $branch
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
-    public function update_status(Bank $bank)
+    public function update_status(Branch $branch)
     {
-        $status = $bank->disabled == 'N' ? 'Y' : 'N';
+        $status = $branch->disabled == 'N' ? 'Y' : 'N';
 
         if ($status == 'Y') {
-            $result = $bank->update([
+            $result = $branch->update([
                 'disabled' => $status,
                 'date_disabled' => now(),
                 'disabled_by' => 'Disabled by: Test',
                 'last_modified' => 'Last modified by: Test',
             ]);
         } else {
-            $result = $bank->update([
+            $result = $branch->update([
                 'disabled' => $status,
                 'last_modified' => 'Last modified by: Test',
             ]);
@@ -214,17 +207,5 @@ class BankController extends Controller
             return response()->json(['success' => true, 'message' => 'The record was ' . $status . ' successfully!']);
         }
         return response()->json(['success' => false, 'message' => 'Something went wrong, Please try again.'], 500);
-    }
-
-    public function generatePDFReport()
-    {
-        $banks = Bank::all();
-
-        try {
-            $pdf = SnappyPdf::loadView('reports.ap.bank', compact('banks'));
-            return $pdf->stream('report_req_bank_' . date('Y_m_d_h_i_s', strtotime(now())) . '.pdf');
-        } catch (\Exception $e) {
-            dd($e->getMessage());
-        }
     }
 }

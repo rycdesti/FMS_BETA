@@ -1,4 +1,5 @@
 // Views - Components
+import Branch from '@/views/sample/ap/branch'
 import Bank from '@/views/sample/ap/bank'
 import BankAccount from '@/views/sample/ap/bank_account'
 import Check from '@/views/sample/ap/check'
@@ -18,25 +19,9 @@ export default {
     },
     children: [
         {
-            path: 'check-payment-request',
-            name: 'CheckPaymentRequest',
-            component: CheckPaymentRequest,
-        },
-        {
-            path: 'monthly-payment',
-            name: 'MonthlyPayment',
-            component: MonthlyPayment,
-        },
-        {
-            path: 'recurring-payment',
-            name: 'RecurringPayment',
-            component: RecurringPayment,
-        },
-        {
-            path: 'recurring-payment-distribution/:recurring_payment_id',
-            name: 'RecurringPaymentDistribution',
-            component: RecurringPaymentDistribution,
-            props: true,
+            path: 'branch',
+            name: 'Branch',
+            component: Branch,
         },
         {
             path: 'bank',
@@ -54,6 +39,27 @@ export default {
             name: 'Check',
             component: Check,
             props: true,
+        },
+        {
+            path: 'recurring-payment',
+            name: 'RecurringPayment',
+            component: RecurringPayment,
+        },
+        {
+            path: 'recurring-payment-distribution/:recurring_payment_id',
+            name: 'RecurringPaymentDistribution',
+            component: RecurringPaymentDistribution,
+            props: true,
+        },
+        {
+            path: 'monthly-payment',
+            name: 'MonthlyPayment',
+            component: MonthlyPayment,
+        },
+        {
+            path: 'check-payment-request',
+            name: 'CheckPaymentRequest',
+            component: CheckPaymentRequest,
         },
     ],
 }

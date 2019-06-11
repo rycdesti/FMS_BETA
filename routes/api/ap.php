@@ -3,6 +3,10 @@
 use Illuminate\Support\Facades\Route;
 
 Route::group(['prefix' => '/ap'], function () {
+    // branch
+    Route::resource('/branch', 'Ap\BranchController');
+    Route::patch('/branch/{branch}/update_status', 'Ap\BranchController@update_status');
+
     // bank
     Route::resource('/bank', 'Ap\BankController');
     Route::patch('/bank/{bank}/update_status', 'Ap\BankController@update_status');

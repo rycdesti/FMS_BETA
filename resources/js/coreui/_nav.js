@@ -55,10 +55,6 @@ export default {
                             name: 'Monthly Payments',
                             url: '/ap/monthly-payment',
                         },
-                        {
-                            name: 'Recurring Payments',
-                            url: '/ap/recurring-payment',
-                        },
                     ],
                 },
                 {
@@ -67,12 +63,24 @@ export default {
                     color: 'text-yellow font-weight-bold',
                     children: [
                         {
+                            name: 'Recurring Payments',
+                            url: '/ap/recurring-payment',
+                        },
+                        {
                             name: 'Banks',
                             url: '/ap/bank',
                         },
                         {
                             name: 'Checks',
                             url: '/ap/check',
+                        },
+                        {
+                            name: 'Branches',
+                            url: '/ap/branch',
+                        },
+                        {
+                            name: 'Withholding Tax',
+                            url: '/ap/withholding-tax',
                         },
                     ]
                 }
@@ -89,7 +97,7 @@ export default {
                     color: 'text-yellow font-weight-bold',
                     children: [
                         {
-                            name: 'Account Category',
+                            name: 'Account Categories',
                             url: '/financial/account-category',
                         },
                         {
@@ -111,19 +119,19 @@ export default {
                     color: 'text-yellow font-weight-bold',
                     children: [
                         {
-                            name: 'Currency',
+                            name: 'Currencies',
                             url: '/requisition/currency',
                         },
                         {
-                            name: 'Payment Term',
+                            name: 'Payment Terms',
                             url: '/requisition/payment-term',
                         },
                         {
-                            name: 'Supplier Classification',
+                            name: 'Supplier Classifications',
                             url: '/requisition/supplier-classification',
                         },
                         {
-                            name: 'Supplier',
+                            name: 'Suppliers',
                             url: '/requisition/supplier',
                         },
                     ],

@@ -74,7 +74,7 @@ class MonthlyPaymentController extends Controller
 
                         if ($monthlyPayment->voucher->status != 'A') {
                             $actions .= '<button id="btn-check-voucher" data-id="' . $monthlyPayment->recurring_payment_id . '&' . $monthlyPayment->date . '" type="button" class="btn btn-link">' . $voucher_label . '</button><br>';
-                            $actions .= '<button id="btn-delete-check-voucher" data-id="' . $monthlyPayment->recurring_payment_id . '&' . $monthlyPayment->date . '&' . $monthlyPayment->voucher->check_id . '" type="button" class="btn btn-link">Delete Check Voucher</button><br>';
+//                            $actions .= '<button id="btn-delete-check-voucher" data-id="' . $monthlyPayment->recurring_payment_id . '&' . $monthlyPayment->date . '&' . $monthlyPayment->voucher->check_id . '" type="button" class="btn btn-link">Delete Check Voucher</button><br>';
                         }
                         $actions .= '<button id="btn-print-check-voucher" data-id="' . $monthlyPayment->recurring_payment_id . '&' . $monthlyPayment->date . '" type="button" class="btn btn-link">Print Check Voucher</button>';
                     } else {
