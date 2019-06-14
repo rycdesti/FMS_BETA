@@ -79,7 +79,7 @@ export default {
                             url: '/ap/branch',
                         },
                         {
-                            name: 'Withholding Tax',
+                            name: 'Withholding Taxes',
                             url: '/ap/withholding-tax',
                         },
                     ]

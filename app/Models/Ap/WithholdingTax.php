@@ -1,14 +1,13 @@
 <?php
 
-namespace App\Models\System;
+namespace App\Models\Ap;
 
-use App\Models\Ap\BankAccount;
 use App\Models\BaseModel;
 
 /**
  * @property integer $id
- * @property string $branch_code
- * @property string $branch_name
+ * @property string $description
+ * @property integer $tax
  * @property string $disabled
  * @property string $date_disabled
  * @property string $disabled_by
@@ -16,16 +15,16 @@ use App\Models\BaseModel;
  * @property string $last_modified
  * @property string $created_at
  * @property string $updated_at
- * @property mixed bankAccounts
+ * @property mixed vouchers
  */
-class Branch extends BaseModel
+class WithholdingTax extends BaseModel
 {
     /**
      * The table associated with the model.
      * 
      * @var string
      */
-    protected $table = 'branches';
+    protected $table = 'ap.withholding_taxes';
 
     /**
      * The "type" of the auto-incrementing ID.
@@ -37,14 +36,13 @@ class Branch extends BaseModel
     /**
      * @var array
      */
-    protected $fillable = ['branch_code', 'branch_name', 'disabled', 'date_disabled', 'disabled_by', 'logs', 'last_modified', 'created_at', 'updated_at'];
-
+    protected $fillable = ['description', 'tax', 'disabled', 'date_disabled', 'disabled_by', 'logs', 'last_modified', 'created_at', 'updated_at'];
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function bankAccounts()
+    public function vouchers()
     {
-        return $this->hasMany(BankAccount::class);
+        return $this->hasMany(Voucher::class);
     }
 }

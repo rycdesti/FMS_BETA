@@ -18,6 +18,7 @@ class BankAccountSeeder extends Seeder
             'acct_no' => '9827389211',
             'acct_type' => 'C',
             'currency_id' => '1',
+            'branch_id' => '1',
             'logs' => 'Created by: Test'
         ]);
         \App\Models\Ap\BankAccount::create([
@@ -27,6 +28,7 @@ class BankAccountSeeder extends Seeder
             'acct_no' => '9827389211',
             'acct_type' => 'C',
             'currency_id' => '2',
+            'branch_id' => '2',
             'logs' => 'Created by: Test'
         ]);
         \App\Models\Ap\BankAccount::create([
@@ -36,6 +38,7 @@ class BankAccountSeeder extends Seeder
             'acct_no' => '9827389211',
             'acct_type' => 'S',
             'currency_id' => '3',
+            'branch_id' => '1',
             'logs' => 'Created by: Test'
         ]);
     }

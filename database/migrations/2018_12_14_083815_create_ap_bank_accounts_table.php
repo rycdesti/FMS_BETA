@@ -17,6 +17,7 @@ class CreateApbankAccountsTable extends Migration {
             $table->bigInteger('id', true);
 			$table->bigInteger('bank_id');
             $table->bigInteger('currency_id');
+            $table->bigInteger('branch_id');
 			$table->string('bank_address', 70);
 			$table->string('acct_code', 20);
 			$table->string('acct_no', 20);
@@ -37,6 +38,10 @@ class CreateApbankAccountsTable extends Migration {
             $table->foreign('currency_id')
                 ->references('id')
                 ->on('requisition.currencies');
+
+            $table->foreign('branch_id')
+                ->references('id')
+                ->on('dbo.branches');
 		});
 	}
 

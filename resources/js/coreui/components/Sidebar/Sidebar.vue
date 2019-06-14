@@ -39,21 +39,19 @@
                                     :url="item.url"
                                     :color="item.color"
                             >
-                                <template v-for="(childL1, index1) in item.children">
+                                <template v-for="(childL1) in item.children">
                                     <template>
-                                        <!-- Second level dropdown -->
+                                        <!-- Second level -->
                                         <sidebar-nav-title class="pl-4"
-                                                :key="index1"
-                                                :name="childL1.name"
-                                                :classes="childL1.class"
-                                                :wrapper="childL1.wrapper"
-                                                :icon="childL1.icon"
-                                                :color="childL1.color"/>
+                                                           :name="childL1.name"
+                                                           :classes="childL1.class"
+                                                           :wrapper="childL1.wrapper"
+                                                           :icon="childL1.icon"
+                                                           :color="childL1.color"/>
 
-                                        <!--Third level dropdown-->
+                                        <!--Third level dropdown -->
                                         <li
-                                                v-for="(childL2, index2) in childL1.children"
-                                                :key="index2"
+                                                v-for="(childL2) in childL1.children"
                                                 class="nav-item"
                                         >
                                             <sidebar-nav-link

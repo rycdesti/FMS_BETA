@@ -148,42 +148,47 @@ class MonthlyPaymentController extends Controller
         $voucher_data = $request['voucher'];
         $recurring_payment_distribution_data = $request['recurring_payment_distributions'];
 
-        $result = Voucher::create($voucher_data)->id;
-        if ($result) {
-            $created_at = now();
-            $updated_at = now();
+        $validate_check = Check::find($voucher_data['check_id'])->voucher_no;
+        if ($validate_check) {
+            return response()->json(['success' => false, 'message' => 'Check number already used. Please update and try again.'], 500);
+        } else {
+            $result = Voucher::create($voucher_data)->id;
+            if ($result) {
+                $created_at = now();
+                $updated_at = now();
 
-            $voucher_distribution_data = array();
-            foreach ($recurring_payment_distribution_data as $distribution_datum) {
-                if ($distribution_datum['chart_of_account_id'] &&
-                    $distribution_datum['typical_balance'] &&
-                    $distribution_datum['amount']) {
-                    $voucher_distribution_data[] = [
-                        'voucher_id' => $result,
-                        'chart_of_account_id' => $distribution_datum['chart_of_account_id'],
-                        'typical_balance' => $distribution_datum['typical_balance'],
-                        'amount' => $distribution_datum['amount'],
-                        'logs' => 'Created by: Test',
-                        'created_at' => $created_at,
-                        'updated_at' => $updated_at
-                    ];
+                $voucher_distribution_data = array();
+                foreach ($recurring_payment_distribution_data as $distribution_datum) {
+                    if ($distribution_datum['chart_of_account_id'] &&
+                        $distribution_datum['typical_balance'] &&
+                        $distribution_datum['amount']) {
+                        $voucher_distribution_data[] = [
+                            'voucher_id' => $result,
+                            'chart_of_account_id' => $distribution_datum['chart_of_account_id'],
+                            'typical_balance' => $distribution_datum['typical_balance'],
+                            'amount' => $distribution_datum['amount'],
+                            'logs' => 'Created by: Test',
+                            'created_at' => $created_at,
+                            'updated_at' => $updated_at
+                        ];
+                    }
                 }
-            }
 
-            $check_result = Check::find($voucher_data['check_id'])->update(['voucher_no' => $voucher_no]);
-            $voucher_distribution_result = VoucherDistribution::insert($voucher_distribution_data);
+                $check_result = Check::find($voucher_data['check_id'])->update(['voucher_no' => $voucher_no]);
+                $voucher_distribution_result = VoucherDistribution::insert($voucher_distribution_data);
 
-            if ($check_result && $voucher_distribution_result) {
-                /**
-                 * check for failure of event tag when insert try to rollback (DB rollback)
-                 * try to check if there is other way to insert multiple record
-                 */
-                return response()->json(['success' => true, 'message' => 'The record was added successfully!']);
-            } else {
-                Check::find($voucher_data['check_id'])->update('voucher_no', null);
-                VoucherDistribution::where(['voucher_id' => $result])->delete();
+                if ($check_result && $voucher_distribution_result) {
+                    /**
+                     * check for failure of event tag when insert try to rollback (DB rollback)
+                     * try to check if there is other way to insert multiple record
+                     */
+                    return response()->json(['success' => true, 'message' => 'The record was added successfully!']);
+                } else {
+                    Check::find($voucher_data['check_id'])->update('voucher_no', null);
+                    VoucherDistribution::where(['voucher_id' => $result])->delete();
 
-                return response()->json(['success' => false, 'message' => 'Something went wrong, Please try again.'], 500);
+                    return response()->json(['success' => false, 'message' => 'Something went wrong, Please try again.'], 500);
+                }
             }
         }
         return response()->json(['success' => false, 'message' => 'Something went wrong, Please try again.'], 500);

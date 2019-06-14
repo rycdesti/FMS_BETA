@@ -5,7 +5,7 @@ import Router from 'vue-router'
 import Full from '@/containers/Full'
 
 // Views
-import Dashboard from '@/views/sample/Dashboard'
+import Dashboard from '@/views/modules/Dashboard'
 
 // Views - Pages
 import Page404 from '@/views/pages/Page404'
@@ -14,7 +14,7 @@ import Login from '@/views/pages/Login'
 import Register from '@/views/pages/Register'
 
 // Sample route
-import sample from './sample'
+import sample from './modules'
 
 Vue.use(Router)
 

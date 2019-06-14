@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers\Ap;
 
-use App\Models\System\Branch;
+use App\Models\Ap\WithholdingTax;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Yajra\DataTables\Facades\DataTables;
 
-class BranchController extends Controller
+class WithholdingTaxController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -19,41 +19,43 @@ class BranchController extends Controller
     {
         if ($this->isRequestTypeDatatable(request())) {
             $status_filter = request()->status_filter;
-            $branches = Branch::get();
+            $withholdingTaxes = WithholdingTax::get();
 
             if ($status_filter) {
-                $branches = $branches->where('disabled', $status_filter);
+                $withholdingTaxes = $withholdingTaxes->where('disabled', $status_filter);
             }
 
-            return DataTables::of($branches)
-                ->editColumn('status', function (Branch $branch) {
-                    if ($branch->disabled == 'N') {
+            return DataTables::of($withholdingTaxes)
+                ->editColumn('tax', function (WithholdingTax $withholdingTax) {
+                    return '<div>' . $withholdingTax->tax . '%</div>';
+                })
+                ->editColumn('status', function (WithholdingTax $withholdingTax) {
+                    if ($withholdingTax->disabled == 'N') {
                         return '<div><span class="badge-primary p-1">Enabled</span></div>';
                     } else {
                         return '<div><span class="badge-danger p-1">Disabled</span></div><br>
-                                <div>' . $branch->disabled_by . '</div>
-                                <div><i class="fa fa-clock-o pr-1"></i>' . $branch->date_disabled->diffForHumans() . '</div>';
+                                <div>' . $withholdingTax->disabled_by . '</div>
+                                <div><i class="fa fa-clock-o pr-1"></i>' . $withholdingTax->date_disabled->diffForHumans() . '</div>';
                     }
                 })
-                ->editColumn('logs', function (Branch $branch) {
-                    return '<div>' . $branch->logs . '</div>
-                            <div><i class="fa fa-clock-o pr-1"></i>' . $branch->created_at->diffForHumans() . '</div><br>' .
-                        ($branch->last_modified ? '<div>' . $branch->last_modified . '</div>
-                            <div><i class="fa fa-clock-o pr-1"></i>' . $branch->updated_at->diffForHumans() . '</div>' : '');
+                ->editColumn('logs', function (WithholdingTax $withholdingTax) {
+                    return '<div>' . $withholdingTax->logs . '</div>
+                            <div><i class="fa fa-clock-o pr-1"></i>' . $withholdingTax->created_at->diffForHumans() . '</div><br>' .
+                        ($withholdingTax->last_modified ? '<div>' . $withholdingTax->last_modified . '</div>
+                            <div><i class="fa fa-clock-o pr-1"></i>' . $withholdingTax->updated_at->diffForHumans() . '</div>' : '');
                 })
-                ->editColumn('actions', function (Branch $branch) {
+                ->editColumn('actions', function (WithholdingTax $withholdingTax) {
                     $actions = '';
-                    if($branch->bankAccounts->count()) {
-                        $actions .= '<button id="btn-edit" data-id="' . $branch->id . '" title="Edit Record" type="button" class="btn btn-outline-secondary"><i class="fa fa-edit"></i></button><hr>';
+                    if (!$withholdingTax->vouchers->count()) {
+                        $actions .= '<button id="btn-edit" data-id="' . $withholdingTax->id . '" title="Edit Record" type="button" class="btn btn-outline-secondary"><i class="fa fa-edit"></i></button>
+                                    <button id="btn-delete" data-id="' . $withholdingTax->id . '" title="Delete Record" type="button" class="btn btn-outline-danger"><i class="fa fa-trash-o"></i></button><hr>';
                     } else {
-                        $actions .= '<button id="btn-edit" data-id="' . $branch->id . '" title="Edit Record" type="button" class="btn btn-outline-secondary"><i class="fa fa-edit"></i></button>';
-                        $actions .= '<button id="btn-delete" data-id="' . $branch->id . '" title="Delete Record" type="button" class="btn btn-outline-danger"><i class="fa fa-trash-o"></i></button><hr>';
+                        $actions .= '<button id="btn-edit" data-id="' . $withholdingTax->id . '" title="Edit Record" type="button" class="btn btn-outline-secondary"><i class="fa fa-edit"></i></button><hr>';
                     }
-
-                    $actions .= '<button id="btn-update-status" data-id="' . $branch->id . '" type="button" class="btn btn-link">' . ($branch->disabled == 'N' ? 'Disable' : 'Enable') . '</button>';
+                    $actions .= '<button id="btn-update-status" data-id="' . $withholdingTax->id . '" type="button" class="btn btn-link">' . ($withholdingTax->disabled == 'N' ? 'Disable' : 'Enable') . '</button>';
                     return $actions;
                 })
-                ->rawColumns(['status', 'logs', 'actions'])
+                ->rawColumns(['tax', 'status', 'logs', 'actions'])
                 ->make(true);
         }
     }
@@ -77,34 +79,14 @@ class BranchController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'branch_name' => 'required',
+            'description' => 'required',
+            'tax' => 'required',
         ]);
 
-        $filtered_words = array("OF", "THE", "AND");
-        $special_char = array('(', ')', '!', '@', '#', '$', '%', '^', '&', '*');
-
-        $branch_code = '';
-        $branch_name = str_replace($special_char, '', request('branch_name'));
-        $array_branch_name = explode(" ", strtoupper($branch_name));
-
-        foreach ($array_branch_name as $key => $value) {
-            if ($value) {
-                if (in_array($value, $filtered_words)) {
-                    unset($branch_code[$key]);
-                } else {
-                    if (strlen($branch_code) < 5) {
-                        $branch_code .= $array_branch_name[$key][0];
-                    }
-                }
-            }
-        }
-
-        $request['branch_name'] = ucwords(request('branch_name'));
-        $request['branch_code'] = $branch_code;
         $request['logs'] = 'Created by: Test';
         $data = $request->all();
 
-        $result = Branch::create($data);
+        $result = WithholdingTax::create($data);
         if ($result) {
             /**
              * check for failure of event tag when insert try to rollback (DB rollback)
@@ -123,7 +105,7 @@ class BranchController extends Controller
      */
     public function show($id)
     {
-        $data = Branch::find($id);
+        $data = WithholdingTax::find($id);
 
         return $data;
     }
@@ -143,19 +125,20 @@ class BranchController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request $request
-     * @param Branch $branch
+     * @param WithholdingTax $withholdingTax
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Branch $branch)
+    public function update(Request $request, WithholdingTax $withholdingTax)
     {
         $request->validate([
-            'branch_name' => 'required',
+            'description' => 'required',
+            'tax' => 'required',
         ]);
 
         $request['last_modified'] = 'Last modified by: Test';
         $data = $request->all();
 
-        $result = $branch->update($data);
+        $result = $withholdingTax->update($data);
         if ($result) {
             /**
              * check for failure of event tag when insert try to rollback (DB rollback)
@@ -169,13 +152,13 @@ class BranchController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param Branch $branch
+     * @param WithholdingTax $withholdingTax
      * @return \Illuminate\Http\Response
      * @throws \Exception
      */
-    public function destroy(Branch $branch)
+    public function destroy(WithholdingTax $withholdingTax)
     {
-        $result = $branch->delete();
+        $result = $withholdingTax->delete();
         if ($result) {
             return response()->json(['success' => true, 'message' => 'The record was deleted successfully!']);
         }
@@ -185,22 +168,22 @@ class BranchController extends Controller
     /**
      * Update the status of specified resource from storage
      *
-     * @param Branch $branch
+     * @param WithholdingTax $withholdingTax
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
-    public function update_status(Branch $branch)
+    public function update_status(WithholdingTax $withholdingTax)
     {
-        $status = $branch->disabled == 'N' ? 'Y' : 'N';
+        $status = $withholdingTax->disabled == 'N' ? 'Y' : 'N';
 
         if ($status == 'Y') {
-            $result = $branch->update([
+            $result = $withholdingTax->update([
                 'disabled' => $status,
                 'date_disabled' => now(),
                 'disabled_by' => 'Disabled by: Test',
                 'last_modified' => 'Last modified by: Test',
             ]);
         } else {
-            $result = $branch->update([
+            $result = $withholdingTax->update([
                 'disabled' => $status,
                 'last_modified' => 'Last modified by: Test',
             ]);
@@ -214,16 +197,17 @@ class BranchController extends Controller
     }
 
     /**
-     * Get all branches from resource storage
+     * Get all withholding taxes from resource storage
+     *
+     * @return mixed
      */
-    public function get_branches() {
-        $branches = Branch::where('disabled', '=', 'N')
-            ->orderBy('branch_name')
-            ->get([
-                'id as value',
-                'branch_name as text'
-            ]);
+    public function get_withholding_taxes()
+    {
+        $withholdingTaxes = WithholdingTax::where('disabled', '=', 'N')
+            ->orderBy('tax')
+            ->selectRaw('id as value, CONVERT(varchar(20), tax) + \'%\' as text')
+            ->get();
 
-        return $branches;
+        return $withholdingTaxes;
     }
 }

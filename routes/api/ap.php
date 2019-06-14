@@ -3,6 +3,10 @@
 use Illuminate\Support\Facades\Route;
 
 Route::group(['prefix' => '/ap'], function () {
+    // withholding tax
+    Route::resource('/withholding-tax', 'Ap\WithholdingTaxController');
+    Route::patch('/withholding-tax/{withholding_tax}/update_status', 'Ap\WithholdingTaxController@update_status');
+
     // branch
     Route::resource('/branch', 'Ap\BranchController');
     Route::patch('/branch/{branch}/update_status', 'Ap\BranchController@update_status');
@@ -50,5 +54,8 @@ Route::group(['prefix' => '/ap'], function () {
         Route::get('/get_document_type', 'Ap\MonthlyPaymentController@get_document_type');
 
         Route::get('/get_payment_terms', 'Ap\CheckPaymentRequestController@get_payment_terms');
+
+        Route::get('/get_branches', 'Ap\BranchController@get_branches');
+        Route::get('/get_withholding_taxes', 'Ap\WithholdingTaxController@get_withholding_taxes');
     });
 });

@@ -46,6 +46,7 @@ class BankAccountController extends Controller
             'acct_no' => 'required',
             'acct_type' => 'required',
             'currency_id' => 'required',
+            'branch_id' => 'required',
         ]);
 
         $request['logs'] = 'Created by: Test';
@@ -81,7 +82,8 @@ class BankAccountController extends Controller
 
             return DataTables::of($bankAccounts)
                 ->editColumn('account_info', function (BankAccount $bankAccount) {
-                    return '<div>Account Code: ' . $bankAccount->acct_code . '</div>
+                    return '<div>Branch: ' . $bankAccount->branch->branch_name . '</div><br>
+                            <div>Account Code: ' . $bankAccount->acct_code . '</div>
                             <div>Account Number: ' . $bankAccount->acct_no . '</div>
                             <div>Account Type: ' . $this->get_acct_type($bankAccount->acct_type) . '</div>
                             <div>Currency: ' . $bankAccount->currency->description . '</div>
@@ -104,11 +106,11 @@ class BankAccountController extends Controller
                 })
                 ->editColumn('actions', function (BankAccount $bankAccount) {
                     $actions = '';
-                    if (!$bankAccount->checks->count()) {
-                        $actions .= '<button id="btn-delete" data-id="' . $bankAccount->id . '" title="Delete Record" type="button" class="btn btn-outline-danger"><i class="fa fa-trash-o"></i></button><hr>';
-                    } else {
+                    if ($bankAccount->checks->count() && $bankAccount->acct_type == 'C') {
                         $actions .= '<button id="btn-edit" data-id="' . $bankAccount->id . '" title="Edit Record" type="button" class="btn btn-outline-secondary"><i class="fa fa-edit"></i></button><hr>';
-
+                    } else {
+                        $actions .= '<button id="btn-edit" data-id="' . $bankAccount->id . '" title="Edit Record" type="button" class="btn btn-outline-secondary"><i class="fa fa-edit"></i></button>';
+                        $actions .= '<button id="btn-delete" data-id="' . $bankAccount->id . '" title="Delete Record" type="button" class="btn btn-outline-danger"><i class="fa fa-trash-o"></i></button><hr>';
                     }
                     $actions .= '<button id="btn-beginning-bal" data-id="' . $bankAccount->id . '" type="button" class="btn btn-link">Beginning Balance</button><br>' .
 //                        ($bankAccount->acct_type == 'C' ? '<button id="btn-check-booklet" data-id="' . $bankAccount->id . '" type="button" class="btn btn-link">Manage Check Booklet</button><br>' : '') .

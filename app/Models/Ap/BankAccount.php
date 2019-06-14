@@ -4,6 +4,7 @@ namespace App\Models\Ap;
 
 use App\Models\BaseModel;
 use App\Models\Requisition\Currency;
+use App\Models\System\Branch;
 
 /**
  * @property integer $id
@@ -24,6 +25,7 @@ use App\Models\Requisition\Currency;
  * @property string $updated_at
  * @property Bank $bank
  * @property mixed checks
+ * @property mixed branch
  */
 class BankAccount extends BaseModel
 {
@@ -44,7 +46,7 @@ class BankAccount extends BaseModel
     /**
      * @var array
      */
-    protected $fillable = ['bank_id', 'bank_address', 'acct_code', 'acct_no', 'acct_type', 'currency_id', 'beginning_balance', 'as_of', 'disabled', 'date_disabled', 'disabled_by', 'logs', 'last_modified', 'created_at', 'updated_at'];
+    protected $fillable = ['bank_id', 'bank_address', 'acct_code', 'acct_no', 'acct_type', 'currency_id', 'branch_id', 'beginning_balance', 'as_of', 'disabled', 'date_disabled', 'disabled_by', 'logs', 'last_modified', 'created_at', 'updated_at'];
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
@@ -60,6 +62,14 @@ class BankAccount extends BaseModel
     public function currency()
     {
         return $this->belongsTo(Currency::class);
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function branch()
+    {
+        return $this->belongsTo(Branch::class);
     }
 
     /**

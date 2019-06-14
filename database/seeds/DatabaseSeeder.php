@@ -22,6 +22,7 @@ class DatabaseSeeder extends Seeder
         $this->call(SupplierContactSeeder::class);
 
         // ap
+        $this->call(BranchSeeder::class);
         $this->call(BankSeeder::class);
         $this->call(BankAccountSeeder::class);
         $this->call(CheckSeeder::class);

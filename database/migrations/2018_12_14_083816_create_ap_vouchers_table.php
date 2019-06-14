@@ -25,7 +25,7 @@ class CreateApvouchersTable extends Migration {
 			$table->bigInteger('check_id');
 			$table->date('check_date')->nullable();
 			$table->decimal('amount', 18)->nullable();
-			$table->char('tax_id', 1)->nullable();
+			$table->bigInteger('withholding_tax_id');
 			$table->char('status', 1)->nullable();
 			$table->string('prepared_by', 50)->nullable();
 			$table->string('checked_by', 50)->nullable();
@@ -50,6 +50,10 @@ class CreateApvouchersTable extends Migration {
             $table->foreign('check_id')
                 ->references('id')
                 ->on('ap.checks');
+
+            $table->foreign('withholding_tax_id')
+                ->references('id')
+                ->on('ap.withholding_taxes');
 		});
 	}
 

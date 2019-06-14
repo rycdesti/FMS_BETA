@@ -170,23 +170,24 @@ class CheckController extends Controller
         $result = $check->update($data);
         if ($result) {
 
-            $result_voucher = false;
             $voucher = Voucher::where('voucher_no', $check->voucher_no)->first();
             if ($voucher) {
                 $result_voucher = $voucher->update(['status' => 'V']);
-            }
 
-            /**
-             * check for failure of event tag when insert try to rollback (DB rollback)
-             * try to check if there is other way to insert multiple record
-             */
-            if($result_voucher) {
-                return response()->json(['success' => true, 'message' => 'The check was voided successfully!']);
+                /**
+                 * check for failure of event tag when insert try to rollback (DB rollback)
+                 * try to check if there is other way to insert multiple record
+                 */
+                if($result_voucher) {
+                    return response()->json(['success' => true, 'message' => 'The check was voided successfully!']);
+                } else {
+                    $request['voided'] = 'N';
+                    $request['remarks'] = null;
+                    $data = $request->all();
+                    $check->update($data);
+                }
             } else {
-                $request['voided'] = 'N';
-                $request['remarks'] = null;
-                $data = $request->all();
-                $check->update($data);
+                return response()->json(['success' => true, 'message' => 'The check was voided successfully!']);
             }
         }
         return response()->json(['success' => false, 'message' => 'Something went wrong, Please try again.'], 500);
