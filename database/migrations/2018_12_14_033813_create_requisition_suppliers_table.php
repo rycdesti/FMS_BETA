@@ -17,6 +17,7 @@ class CreateRequisitionsuppliersTable extends Migration {
 			$table->bigInteger('id', true);
             $table->bigInteger('supplier_classification_id');
             $table->bigInteger('currency_id')->nullable();
+            $table->string('tin',15);
 			$table->string('supplier_code', 15);
 			$table->string('name', 65);
 			$table->string('check_name', 65);

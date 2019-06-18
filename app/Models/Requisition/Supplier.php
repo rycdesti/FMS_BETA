@@ -10,6 +10,7 @@ use App\Models\BaseModel;
  * @property integer $id
  * @property integer $supplier_classification_id
  * @property integer $currency_id
+ * @property mixed tin
  * @property string $supplier_code
  * @property string $name
  * @property string $check_name
@@ -48,7 +49,7 @@ class Supplier extends BaseModel
     /**
      * @var array
      */
-    protected $fillable = ['supplier_classification_id', 'currency_id', 'supplier_code', 'name', 'check_name', 'address', 'city', 'state', 'zip_code', 'country', 'disabled', 'date_disabled', 'disabled_by', 'logs', 'last_modified', 'created_at', 'updated_at'];
+    protected $fillable = ['supplier_classification_id', 'currency_id', 'tin', 'supplier_code', 'name', 'check_name', 'address', 'city', 'state', 'zip_code', 'country', 'disabled', 'date_disabled', 'disabled_by', 'logs', 'last_modified', 'created_at', 'updated_at'];
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany

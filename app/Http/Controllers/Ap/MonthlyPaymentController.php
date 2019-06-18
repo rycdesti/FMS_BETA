@@ -37,6 +37,20 @@ class MonthlyPaymentController extends Controller
                 ->editColumn('supplier_info', function ($monthlyPayment) {
                     return $this->supplierInformation($monthlyPayment);
                 })
+                ->editColumn('voucher_info', function ($monthlyPayment) {
+                    $v_info = '';
+                    if ($monthlyPayment->voucher) {
+                        $check_info = Check::find($monthlyPayment->voucher->check_id);
+                        $v_info .= '<div class="mb-3">Voucher Number: ' . $monthlyPayment->voucher->voucher_no . '</div>';
+                        $v_info .= '<div>Bank Account: ' . $check_info->bankAccount->bank->bank_name . ' (' . $check_info->bankAccount->acct_no . ')' . '</div>';
+                        $v_info .= '<div>Check Number: ' . $check_info->check_no . '</div>';
+                        $v_info .= '<div class="mb-3">Check Date: ' . $monthlyPayment->voucher->check_date . '</div>';
+                        $v_info .= '<div>Explanation: ' . $monthlyPayment->voucher->explanation . '</div>';
+                    } else {
+                        $v_info .= 'N/A';
+                    }
+                    return $v_info;
+                })
                 ->editColumn('due_date', function ($monthlyPayment) {
                     $status = '';
                     if ($monthlyPayment->voucher) {
@@ -82,7 +96,7 @@ class MonthlyPaymentController extends Controller
                     }
                     return $actions;
                 })
-                ->rawColumns(['supplier_name', 'supplier_info', 'due_date', 'remaining_days', 'actions'])
+                ->rawColumns(['supplier_name', 'supplier_info', 'voucher_info', 'due_date', 'remaining_days', 'actions'])
                 ->make(true);
         }
     }
@@ -581,7 +595,10 @@ class MonthlyPaymentController extends Controller
      */
     public static function supplierInformation($monthlyPayment)
     {
-        $s_info = '<div class="mb-3">' . Supplier::find($monthlyPayment->supplier_id)->name . '</div>';
+        $supplier = Supplier::find($monthlyPayment->supplier_id);
+
+        $s_info = '<div>' . $supplier->name . '</div>';
+        $s_info .= '<div class="mb-3">TIN: ' . $supplier->tin . '</div>';
 
 //        foreach (SupplierContact::where('supplier_id', $monthlyPayment->supplier_id)->get() as $value) {
 //            $s_info .= '<div class="mb-3">';
@@ -608,7 +625,7 @@ class MonthlyPaymentController extends Controller
             '<div>From: ' . date('F d, Y', strtotime($monthlyPayment->duration_from)) .
             '</div><div>To: ' . date('F d, Y', strtotime($monthlyPayment->duration_to)) . '</div>' :
             '<div>Continuous</div>';
-        $s_info .= "<br></fieldset>";
+        $s_info .= '<br></fieldset>';
         return $s_info;
     }
 

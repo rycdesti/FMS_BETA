@@ -36,6 +36,21 @@
             <!-- start: title -->
             <!--label="Title"-->
             <b-form-fieldset
+                    label="Tax Identification Number"
+                    description="Please enter tax identification number.">
+                <b-form-input v-model="form.tin"
+                              autocomplete="off"
+                              :class="{ 'is-invalid': form.errors.has('tin') }"
+                              type="number"
+                              class="input-container"
+                              :maxlength="18"></b-form-input>
+                <has-error :form="form" field="name"/>
+            </b-form-fieldset>
+            <!-- end: title -->
+
+            <!-- start: title -->
+            <!--label="Title"-->
+            <b-form-fieldset
                     label="Supplier Classification"
                     description="Please select supplier classification.">
                 <b-form-select v-model="form.supplier_classification_id"
@@ -189,6 +204,7 @@
                     id: 0,
                     name: '',
                     check_name: '',
+                    tin: '',
                     supplier_classification_id: '',
                     currency_id: '',
                     address: '',

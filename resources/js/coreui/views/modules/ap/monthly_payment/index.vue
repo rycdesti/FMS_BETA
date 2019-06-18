@@ -132,6 +132,7 @@
                 table_id: 'tbl-monthly-payment',
                 table_columns: [
                     {data: 'supplier_info', bSortable: false, bSearchable: true},
+                    {data: 'voucher_info', bSortable: false, bSearchable: true},
                     {data: 'remarks', bSortable: false, bSearchable: false},
                     {data: 'due_date', bSortable: false, bSearchable: false},
                     {data: 'remaining_days', bSortable: false, bSearchable: false},
@@ -139,6 +140,7 @@
                 ],
                 table_headers: [
                     'Supplier Information',
+                    'Voucher Information',
                     'Remarks',
                     'Due Date',
                     'Remaining Days',

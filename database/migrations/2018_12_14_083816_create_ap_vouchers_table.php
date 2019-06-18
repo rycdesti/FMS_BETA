@@ -25,7 +25,7 @@ class CreateApvouchersTable extends Migration {
 			$table->bigInteger('check_id');
 			$table->date('check_date')->nullable();
 			$table->decimal('amount', 18)->nullable();
-			$table->bigInteger('withholding_tax_id');
+			$table->bigInteger('withholding_tax_id')->nullable();
 			$table->char('status', 1)->nullable();
 			$table->string('prepared_by', 50)->nullable();
 			$table->string('checked_by', 50)->nullable();

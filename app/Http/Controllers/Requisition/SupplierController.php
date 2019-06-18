@@ -30,7 +30,8 @@ class SupplierController extends Controller
 
             return DataTables::of($suppliers)
                 ->editColumn('supplier_information', function (Supplier $supplier) {
-                    return '<div>Supplier Code: ' . $supplier->supplier_code . '</div>
+                    return '<div>TIN: ' . $supplier->tin . '</div>
+                            <div>Supplier Code: ' . $supplier->supplier_code . '</div>
                             <div>Classification: ' . $supplier->supplierClassification->description . '</div>
                             <div>Address: ' . $supplier->address . ' ' . $supplier->city . ', ' . $supplier->state . ', ' . $supplier->country . '</div>
                             <div>Currency: ' . $supplier->currency->description . '</div>';
@@ -82,6 +83,7 @@ class SupplierController extends Controller
         $request->validate([
             'name' => 'required',
             'check_name' => 'required',
+            'tin' => 'required',
             'supplier_classification_id' => 'required',
             'currency_id' => 'required',
             'address' => 'required',

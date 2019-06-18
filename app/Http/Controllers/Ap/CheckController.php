@@ -251,7 +251,7 @@ class CheckController extends Controller
             return DataTables::of($checks)
                 ->editColumn('status', function (Check $check) {
                     $status = $check->voided == 'N' && $check->voucher_no == null ? '<span>Blank Check</span>' :
-                        $status = $check->voucher_no ? '<span>Issued Check</span>' : '<span>Voided Check</span>';
+                        $status = $check->voided == 'Y' && $check->voucher_no ? '<span>Voided Check</span>' : '<span>Issued Check</span>';
                     return $status;
                 })
                 ->editColumn('actions', function (Check $check) {

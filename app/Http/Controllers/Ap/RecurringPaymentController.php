@@ -34,6 +34,7 @@ class RecurringPaymentController extends Controller
                 })
                 ->editColumn('supplier_info', function (RecurringPayment $recurringPayment) {
                     $s_contact = '<div class="mb-3">Amount: ' . $recurringPayment->amount . '</div>';
+                    $s_contact .= '<div class="mb">TIN: ' . $recurringPayment->supplier->tin . '</div>';
 
                     foreach ($recurringPayment->supplier->supplierContacts as $value) {
                         $s_contact .= '<div class="mb-3">';
