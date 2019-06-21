@@ -25,95 +25,101 @@
 <body>
 
 <style>
+    .label {
+        vertical-align: top;
+    }
+
     table {
         font-size: 10pt;
     }
 
-    th {
+    textarea {
+        width: 100%;
         text-align: center;
-    }
-
-    td {
-        text-align: left;
     }
 </style>
 
-<table width="100%">
+<table width="100%" cellpadding="0" border="0">
+    <tr>
+        <td colspan="3" style="text-align: right; padding-bottom: 7px">TIPQ-FIN-1008</td>
+    </tr>
+    <tr>
+        <td colspan="3" style="text-align: center">
+            <span style="font-size: 1em;">TECHNOLOGICAL INSTITUTE OF THE PHILIPPINES</span>
+        </td>
+    </tr>
+
+    <tr>
+        <td colspan="3" style="text-align: center">
+            <span style="font-size: .83em;">QUEZON CITY</span>
+        </td>
+    </tr>
+
+    <tr>
+        <td colspan="3" style="text-align: center; padding-bottom: 15px">
+            <span style="text-decoration: underline; font-size: 1.17em; font-weight: bold;">REQUEST FOR CHECK PREPARATION FORM</span>
+        </td>
+    </tr>
+
+    <tr>
+        <td width="20%"></td>
+        <td width="45%" style="text-align: right">Date</td>
+        <td width="40%">
+            <textarea>April 10, 2019</textarea>
+        </td>
+    </tr>
+    <tr>
+        <td class="label" width="27%">PAYEE</td>
+        <td colspan="2">
+            <textarea>Allan D. Go</textarea>
+        </td>
+    </tr>
+    <tr>
+        <td class="label">PARTICULARS</td>
+        <td colspan="2">
+            <textarea style="line-height: 50px;">Mar. 01, 2019 PayApp and TIP WebSite Hosting</textarea>
+        </td>
+    </tr>
+    <tr>
+        <td class="label">Amount</td>
+        <td colspan="2">
+            <textarea>PHP 11,029.04</textarea>
+        </td>
+    </tr>
+    <tr>
+        <td class="label">Amount in words</td>
+        <td colspan="2">
+            <textarea>Eleven Thousand Twenty Nine Pesos and Four Cents</textarea>
+        </td>
+    </tr>
+    <tr>
+        <td class="label" style="padding-top: 20px;">Requested by</td>
+        <td colspan="2" width="100%" style="padding-top: 20px;">
+            <div style="border-bottom: 1px solid black; width: 100%; text-align: center">Allan D. Go</div>
+        </td>
+    </tr>
     <tr>
         <td></td>
+        <td colspan="2" style="text-align: center">Name in Print./Signature</td>
     </tr>
     <tr>
-        <th>
-            <h4>TECHNOLOGICAL INSTITUTE OF THE PHILIPPINES</h4>
-        </th>
-    </tr>
-    <tr>
-        <th>
-            <h5>QUEZON CITY</h5>
-        </th>
-    </tr>
-    <tr>
-        <th>
-            <h3 STYLE="text-underline: black">REQUEST FOR CHECK PREPARATION FORM</h3>
-        </th>
-    </tr>
-    <tr>
-        <td width="50%"></td>
-        <td width="10%">Date</td>
-        <td width="40%">Date</td>
-    </tr>
-    <tr>
-        <td>PAYEE</td>
-        <td>
-            <textarea>TESTTESTESTET</textarea>
+        <td class="label" style="padding-top: 20px;">Adm. Officer/s</td>
+        <td colspan="2" width="100%" style="padding-top: 20px;">
+            <div style="border-bottom: 1px solid black; width: 100%; text-align: center">Allan D. Go</div>
         </td>
     </tr>
     <tr>
-        <td>PARTICULARS</td>
-        <td>
-            <textarea>TESTTESTESTET</textarea>
-        </td>
+        <td></td>
+        <td colspan="2" style="text-align: center">Signature/s</td>
     </tr>
     <tr>
-        <td>Amount</td>
-        <td>
-            <textarea>TESTTESTESTET</textarea>
-        </td>
-    </tr>
-    <tr>
-        <td>Amount in words</td>
-        <td>
-            <textarea>TESTTESTESTET</textarea>
-        </td>
-    </tr>
-    <tr>
-        <td width="25%">Requested by</td>
-        <td width="75%">
-            <textarea>TESTTESTESTET</textarea>
-        </td>
-    </tr>
-    <tr>
-        <td width="25%"></td>
-        <td width="75%">Name in Print / Signature</td>
-    </tr>
-    <tr>
-        <td width="25%">Adm. Officer/s</td>
-        <td width="75%">
-            <textarea>TESTTESTESTET</textarea>
-        </td>
-    </tr>
-    <tr>
-        <td width="25%"></td>
-        <td width="75%">Name in Print / Signature</td>
-    </tr>
-    <tr>
-        <td width="10%">Approved</td>
-        <td width="50%"></td>
-    </tr>
-    <tr>
-        <td width="65%" style="text-align: right">Revision status/ Date:1/19 Feb. 2003</td>
+        <td class="label" style="padding-top: 20px">Approved</td>
+        <td colspan="2" style="padding-top: 20px; border-bottom: 1px solid black"></td>
     </tr>
 </table>
-
 </body>
+
+<footer style="text-align: right; margin-top: 50px;">
+    <span style="border: 1px solid; padding: 5px;">Revision Status/ Date:1/19 Feb: 2003</span>
+</footer>
 </html>
