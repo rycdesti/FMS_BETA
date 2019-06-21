@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Ap;
 
 use App\Models\Ap\CheckPaymentRequest;
 use App\Models\Requisition\PaymentTerm;
+use Barryvdh\Snappy\Facades\SnappyPdf;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Yajra\DataTables\Facades\DataTables;
@@ -168,5 +169,15 @@ class CheckPaymentRequestController extends Controller
             ]);
 
         return $paymentTerms;
+    }
+
+    public function generatePDFReport(){
+        try {
+            $pdf = SnappyPdf::loadView('reports.ap.check_preparation_request', array());
+            $pdf->setPaper('A6');
+            return $pdf->stream('report_chk_payment_req_' . date('Y_m_d_h_i_s', strtotime(now())) . '.pdf');
+        } catch (\Exception $e) {
+            dd($e->getMessage());
+        }
     }
 }
