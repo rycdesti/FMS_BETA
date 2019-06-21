@@ -6,11 +6,11 @@
             <!-- start: title -->
             <!--label="Title"-->
             <b-form-fieldset
-                    label="Supplier"
-                    description="Please select supplier.">
-                <b-form-select v-model="form.supplier_id"
-                               :options="supplier_opt"
-                               :class="{ 'is-invalid': form.errors.has('supplier_id') }"
+                    label="Pay To"
+                    description="Please select pay to.">
+                <b-form-select v-model="form.pay_to"
+                               :options="pay_to_opt"
+                               :class="{ 'is-invalid': form.errors.has('pay_to') }"
                                class="input-container">
                     <template slot="first">
                         <option value selected disabled>-- Please select an option --</option>
@@ -18,6 +18,42 @@
                 </b-form-select>
                 <has-error :form="form" field="name"/>
             </b-form-fieldset>
+            <!-- end: title -->
+
+            <!-- start: title -->
+            <!--label="Title"-->
+            <div v-if="form.pay_to === 'S'">
+                <b-form-fieldset
+                        label="Supplier"
+                        description="Please select supplier.">
+                    <b-form-select v-model="form.supplier_id"
+                                   :options="supplier_opt"
+                                   :class="{ 'is-invalid': form.errors.has('supplier_id') }"
+                                   class="input-container">
+                        <template slot="first">
+                            <option value selected disabled>-- Please select an option --</option>
+                        </template>
+                    </b-form-select>
+                    <has-error :form="form" field="name"/>
+                </b-form-fieldset>
+            </div>
+            <!-- end: title -->
+
+            <!-- start: title -->
+            <!--label="Title"-->
+            <div v-else-if="form.pay_to === 'O'">
+                <b-form-fieldset
+                        label="Others"
+                        description="Please specify the name.">
+                    <b-form-input v-model="form.supplier_name"
+                                  autocomplete="off"
+                                  :class="{ 'is-invalid': form.errors.has('supplier_name') }"
+                                  type="text"
+                                  class="input-container"
+                                  :maxlength="70"></b-form-input>
+                    <has-error :form="form" field="name"/>
+                </b-form-fieldset>
+            </div>
             <!-- end: title -->
 
             <!-- start: title -->
@@ -31,23 +67,6 @@
                               type="number"
                               class="input-container"
                               :maxlength="18"></b-form-input>
-                <has-error :form="form" field="name"/>
-            </b-form-fieldset>
-            <!-- end: title -->
-
-            <!-- start: title -->
-            <!--label="Title"-->
-            <b-form-fieldset
-                    label="Payment Term"
-                    description="Please select payment term.">
-                <b-form-select v-model="form.payment_term_id"
-                               :options="payment_term_opt"
-                               :class="{ 'is-invalid': form.errors.has('payment_term_id') }"
-                               class="input-container">
-                    <template slot="first">
-                        <option value selected disabled>-- Please select an option --</option>
-                    </template>
-                </b-form-select>
                 <has-error :form="form" field="name"/>
             </b-form-fieldset>
             <!-- end: title -->
@@ -94,13 +113,17 @@
             return {
                 form: new Form({
                     id: 0,
+                    pay_to: '',
                     supplier_id: '',
+                    supplier_name: '',
                     amount: '',
-                    payment_term_id: '',
                     particulars: '',
                 }),
+                pay_to_opt: {
+                    'S': 'Supplier',
+                    'O': 'Others'
+                },
                 supplier_opt: [{}],
-                payment_term_opt: [{}],
             }
         },
         created() {
@@ -114,10 +137,8 @@
 
             axios.all([
                 axios.get('/api/ap/utils/get_supplier'),
-                axios.get('/api/ap/utils/get_payment_terms'),
-            ]).then(axios.spread(function (supplier, payment_term) {
+            ]).then(axios.spread(function (supplier) {
                 component.supplier_opt = supplier.data;
-                component.payment_term_opt = payment_term.data;
             }));
 
             this.$root.$on('edit', (id) => {

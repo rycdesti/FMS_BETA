@@ -754,7 +754,9 @@ class MonthlyPaymentController extends Controller
 
         try {
             $pdf = SnappyPdf::loadView('reports.ap.check_voucher', compact(['monthlyPayment', 'debitDistribution', 'creditDistribution']));
-            return $pdf->setPaper('Letter')->setOption('margin-bottom', 0)->stream('report_req_check_voucher_' . date('Y_m_d_h_i_s', strtotime(now())) . '.pdf');
+            return $pdf->setPaper('letter')
+                ->setOption('margin-bottom', 0)
+                ->stream('report_req_check_voucher_' . date('Y_m_d_h_i_s', strtotime(now())) . '.pdf');
         } catch (\Exception $e) {
             dd($e->getMessage());
         }
