@@ -62,6 +62,10 @@
     bottom: 0;
   }
 
+  .fc-event {
+    cursor: pointer;
+  }
+
   .fade-enter-active, .fade-leave-active {
     transition: opacity .3s;
   }

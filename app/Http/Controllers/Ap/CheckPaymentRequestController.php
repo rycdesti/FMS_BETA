@@ -18,18 +18,27 @@ class CheckPaymentRequestController extends Controller
      */
     public function index()
     {
-        if($this->isRequestTypeDatatable(request())) {
+        if ($this->isRequestTypeDatatable(request())) {
             $checkPaymentRequests = CheckPaymentRequest::get();
 
             return DataTables::of($checkPaymentRequests)
-                ->editColumn('payment_request_details', function(CheckPaymentRequest $checkPaymentRequest) {
-                    return '';
+                ->editColumn('payment_request_details', function (CheckPaymentRequest $checkPaymentRequest) {
+                    $pr_details = '<div>Amount: ' . $checkPaymentRequest->amount . '</div>';
+                    $pr_details .= '<div>Request Date: ' . $checkPaymentRequest->request_date . '</div>';
+                    $pr_details .= '<div>Requested By: ' . $checkPaymentRequest->requested_by . '</div>';
+                    return $pr_details;
                 })
-                ->editColumn('supplier_info', function(CheckPaymentRequest $checkPaymentRequest) {
-                    return '';
+                ->editColumn('supplier_info', function (CheckPaymentRequest $checkPaymentRequest) {
+                    $s_info = '';
+                    if ($checkPaymentRequest->supplier_id) {
+                        $s_info .= '<div>Pay To: ' . $checkPaymentRequest->supplier->check_name . '</div>';
+                    } else {
+                        $s_info .= '<div>Pay To: ' . $checkPaymentRequest->supplier_name . '</div>';
+                    }
+                    return $s_info;
                 })
-                ->editColumn('particulars', function(CheckPaymentRequest $checkPaymentRequest) {
-                    return '';
+                ->editColumn('particulars', function (CheckPaymentRequest $checkPaymentRequest) {
+                    return $checkPaymentRequest->particulars;
                 })
                 ->editColumn('logs', function (CheckPaymentRequest $checkPaymentRequest) {
                     return '<div>' . $checkPaymentRequest->logs . '</div>
@@ -38,7 +47,8 @@ class CheckPaymentRequestController extends Controller
                             <div><i class="fa fa-clock-o pr-1"></i>' . $checkPaymentRequest->updated_at->diffForHumans() . '</div>' : '');
                 })
                 ->editColumn('actions', function (CheckPaymentRequest $checkPaymentRequest) {
-                    return '';
+                    $actions = '<button id="btn-print-check-payment" data-id="' . $checkPaymentRequest->id . '" type="button" class="btn btn-link">Print Check Payment</button>';
+                    return $actions;
                 })
                 ->rawColumns(['payment_request_details', 'supplier_info', 'particulars', 'logs', 'actions'])
                 ->make(true);
@@ -58,18 +68,50 @@ class CheckPaymentRequestController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
     {
-        var_dump($request->all());
+        $validate = [
+            'pay_to' => 'required',
+            'amount' => 'required',
+            'particulars' => 'required',
+        ];
+
+        if ($request['pay_to'] == 'S') {
+            $validate = array_merge($validate, [
+                'supplier_id' => 'required',
+            ]);
+        } else if ($request['pay_to'] == 'O') {
+            $validate = array_merge($validate, [
+                'supplier_name' => 'required',
+            ]);
+        }
+
+        $request->validate($validate);
+
+        $request['request_date'] = now();
+        $request['logs'] = 'Created by: Test';
+        $request['requested_by'] = 'Test';
+        $request['status'] = 'O';
+        $data = $request->all();
+
+        $result = CheckPaymentRequest::create($data);
+        if ($result) {
+            /**
+             * check for failure of event tag when insert try to rollback (DB rollback)
+             * try to check if there is other way to insert multiple record
+             */
+            return response()->json(['success' => true, 'message' => 'The record was added successfully!']);
+        }
+        return response()->json(['success' => false, 'message' => 'Something went wrong, Please try again.'], 500);
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param  int $id
      * @return \Illuminate\Http\Response
      */
     public function show($id)
@@ -80,7 +122,7 @@ class CheckPaymentRequestController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
+     * @param  int $id
      * @return \Illuminate\Http\Response
      */
     public function edit($id)
@@ -91,8 +133,8 @@ class CheckPaymentRequestController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param  \Illuminate\Http\Request $request
+     * @param  int $id
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
@@ -103,7 +145,7 @@ class CheckPaymentRequestController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param  int $id
      * @return \Illuminate\Http\Response
      */
     public function destroy($id)
@@ -116,7 +158,8 @@ class CheckPaymentRequestController extends Controller
      *
      * @return mixed
      */
-    public function get_payment_terms() {
+    public function get_payment_terms()
+    {
         $paymentTerms = PaymentTerm::where('disabled', '=', 'N')
             ->orderBy('payment_term_name')
             ->get([

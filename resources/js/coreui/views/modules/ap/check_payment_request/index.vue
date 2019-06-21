@@ -55,24 +55,6 @@
                                 </b-button>
                             </div>
 
-                            <div class="row">
-                                <div class="col-md-6"></div>
-                                <div class="col-md-6">
-                                    <div class="float-right form-inline">
-                                        <label class="mr-2">Status:</label>
-                                        <b-form-select v-model="table_filter_fields.status_filter"
-                                                       :options="status_opt"
-                                                       id="status_filter"
-                                                       class="input-container mb-2"
-                                                       @change="filter">
-                                            <template slot="first">
-                                                <option value="">Display all</option>
-                                            </template>
-                                        </b-form-select>
-                                    </div>
-                                </div>
-                            </div>
-
                             <datatable
                                     :id="table_id"
                                     :headers="table_headers"
@@ -114,14 +96,7 @@
                     'Actions'
                 ],
                 table_url: '',
-                table_filter_fields: {
-                    status_filter: ''
-                },
                 data: '',
-                status_opt: {
-                    'N': 'Enabled',
-                    'Y': 'Disabled'
-                }
             }
         },
         created() {
@@ -142,6 +117,10 @@
                 const id = $(this).data('id');
                 const status = $(this).text();
                 component.updateStatus(id, status);
+            });
+
+            $(document).on('click', '#btn-print-check-payment', function () {
+                component.generateCheckPaymentPDF($(this).data('id'));
             });
         },
         beforeDestroy() {
@@ -233,6 +212,11 @@
                 const url = '/api/reports/ap/check-payment-request';
                 window.open(url, '_blank')
             },
+
+            generateCheckPaymentPDF(id) {
+                const url = `/api/reports/ap/check-payment-request/${id}`;
+                window.open(url, '_blank')
+            }
         }
     }
 </script>
