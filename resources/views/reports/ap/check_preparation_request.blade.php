@@ -1,28 +1,7 @@
-{{--<html>--}}
-
-{{--<body>--}}
-{{--<table cellpadding="5" width="100%" border="1">--}}
-    {{--<tr>--}}
-        {{--<th>Bank Name</th>--}}
-        {{--<th>Bank Code</th>--}}
-        {{--<th>Status</th>--}}
-    {{--</tr>--}}
-
-    {{--@foreach($banks as $bank)--}}
-        {{--@php(extract($bank->toArray()))--}}
-
-        {{--<tr style="vertical-align: top">--}}
-            {{--<td>{{ $bank_name }}</td>--}}
-            {{--<td>{{ $bank_code }}</td>--}}
-            {{--<td width="15%">{!! $disabled == 'N' ? 'Enabled' : 'Disabled<br>'.$disabled_by.'<br>'.date('F d, Y', strtotime($date_disabled)) !!}</td>--}}
-        {{--</tr>--}}
-    {{--@endforeach--}}
-{{--</table>--}}
-{{--</body>--}}
-{{--</html>--}}
+@php($checkPaymentController = new \App\Http\Controllers\Ap\CheckPaymentRequestController())
 
 <html>
-<body>
+<body style="border: 1px solid black">
 
 <style>
     .label {
@@ -65,37 +44,35 @@
         <td width="20%"></td>
         <td width="45%" style="text-align: right">Date</td>
         <td width="40%">
-            <textarea>April 10, 2019</textarea>
+            <textarea>{{ $checkPaymentRequest->request_date }}</textarea>
         </td>
     </tr>
     <tr>
         <td class="label" width="27%">PAYEE</td>
         <td colspan="2">
-            <textarea>Allan D. Go</textarea>
+            <textarea>{{ $checkPaymentRequest->supplier_id ? $checkPaymentRequest->supplier->check_name : $checkPaymentRequest->supplier_name }}</textarea>
         </td>
     </tr>
     <tr>
         <td class="label">PARTICULARS</td>
-        <td colspan="2">
-            <textarea style="line-height: 50px;">Mar. 01, 2019 PayApp and TIP WebSite Hosting</textarea>
-        </td>
+        <td colspan="2" style="height: 120px; border: 1px solid; padding: 5px; vertical-align: top;">{{ $checkPaymentRequest->particulars }}</td>
     </tr>
     <tr>
         <td class="label">Amount</td>
         <td colspan="2">
-            <textarea>PHP 11,029.04</textarea>
+            <textarea>PHP {{ number_format($checkPaymentRequest->amount, 2) }}</textarea>
         </td>
     </tr>
     <tr>
         <td class="label">Amount in words</td>
         <td colspan="2">
-            <textarea>Eleven Thousand Twenty Nine Pesos and Four Cents</textarea>
+            <textarea>{{ $checkPaymentController->convertNumberToWords($checkPaymentRequest->amount) }}</textarea>
         </td>
     </tr>
     <tr>
         <td class="label" style="padding-top: 20px;">Requested by</td>
         <td colspan="2" width="100%" style="padding-top: 20px;">
-            <div style="border-bottom: 1px solid black; width: 100%; text-align: center">Allan D. Go</div>
+            <div style="border-bottom: 1px solid black; width: 100%; text-align: center">{{ $checkPaymentRequest->requested_by }}</div>
         </td>
     </tr>
     <tr>
@@ -105,7 +82,7 @@
     <tr>
         <td class="label" style="padding-top: 20px;">Adm. Officer/s</td>
         <td colspan="2" width="100%" style="padding-top: 20px;">
-            <div style="border-bottom: 1px solid black; width: 100%; text-align: center">Allan D. Go</div>
+            <div style="border-bottom: 1px solid black; width: 100%; text-align: center">{{ $checkPaymentRequest->requested_by }}</div>
         </td>
     </tr>
     <tr>
@@ -117,9 +94,9 @@
         <td colspan="2" style="padding-top: 20px; border-bottom: 1px solid black"></td>
     </tr>
 </table>
-</body>
 
-<footer style="text-align: right; margin-top: 50px;">
-    <span style="border: 1px solid; padding: 5px;">Revision Status/ Date:1/19 Feb: 2003</span>
-</footer>
+<div style="border: 1px solid black; float: right; position: absolute; bottom: 20px; right: 12px;">
+<span style="padding: 5px;">Revision Status/ Date:1/19 Feb: 2003</span>
+</div>
+</body>
 </html>
