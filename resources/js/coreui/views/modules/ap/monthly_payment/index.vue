@@ -1,8 +1,8 @@
 <template>
     <div class="wrapper">
         <div class="animated fadeIn">
-            <call_out_form/>
-
+          <call_out_form/>
+          <call_out_calendar_form :table_filter="this.table_filter_fields"/>
             <b-row>
                 <b-col cols="12">
                     <b-card
@@ -44,6 +44,16 @@
                                 >
                                     <i class="fa fa-file-excel-o"/>
                                 </b-button>
+
+                              <b-button
+                                v-b-tooltip.hover
+                                v-b-modal.calendar_form_modal
+                                id="btn-calendar"
+                                title="Calendar"
+                                variant="outline-primary"
+                              >
+                                <i class="fa fa-calendar"/>
+                              </b-button>
                             </div>
 
                             <div class="row">
@@ -121,11 +131,13 @@
 
 <script>
     import CallOutForm from '@/views/modules/ap/monthly_payment/form'
+    import CallOutCalendarForm from '@/views/modules/ap/monthly_payment/calendar_form'
 
     export default {
         name: 'MonthlyPayment',
         components: {
-            'call_out_form': CallOutForm,
+          'call_out_form': CallOutForm,
+          'call_out_calendar_form': CallOutCalendarForm,
         },
         data() {
             return {
@@ -169,6 +181,10 @@
         mounted() {
             const component = this;
 
+            $(document).on('click', '#btn-calendar', function () {
+              component.$root.$emit('calendar', '');
+            });
+
             $(document).on('click', '#btn-check-voucher', function () {
                 component.$root.$emit('edit', $(this).data('id'));
             });
@@ -188,8 +204,8 @@
         },
         beforeDestroy() {
             this.$root.$listener.destroy(
-                ['#btn-check-voucher', '#btn-print-check-voucher'],
-                ['edit'],
+                ['#btn-check-voucher', '#btn-print-check-voucher', '#btn-calendar'],
+                ['edit', 'calendar'],
                 this.$root
             );
         },

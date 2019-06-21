@@ -22,7 +22,7 @@ class MonthlyPaymentController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return array
      * @throws \Exception
      */
     public function index()
@@ -98,6 +98,14 @@ class MonthlyPaymentController extends Controller
                 })
                 ->rawColumns(['supplier_name', 'supplier_info', 'voucher_info', 'due_date', 'remaining_days', 'actions'])
                 ->make(true);
+        } else {
+            $frequency_filter = request()->frequency_filter;
+            $status_filter = request()->status_filter;
+            $date_filter = request()->date_filter;
+            $monthlyPayments = $this->monthlyPayments($date_filter, $status_filter, $frequency_filter);
+
+
+            return $monthlyPayments;
         }
     }
 
@@ -511,6 +519,7 @@ class MonthlyPaymentController extends Controller
                 foreach ($monthlyPayment->recurringPaymentDates as $recurringPaymentDate) {
                     $object = new stdClass();
                     $object->date = $date;
+                    $object->title = $monthlyPayment->supplier->name;
                     $object->recurring_payment_id = $monthlyPayment->id;
                     $object->supplier_id = $monthlyPayment->supplier_id;
                     $object->document_no = $monthlyPayment->document_no;
