@@ -171,7 +171,6 @@
                     'O': 'For Review',
                     'R': 'For Recommendation',
                     'F': 'For Approval',
-                    'A': 'Approved'
                 }
             }
         },

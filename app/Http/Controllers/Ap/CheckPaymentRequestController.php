@@ -23,20 +23,20 @@ class CheckPaymentRequestController extends Controller
             $checkPaymentRequests = CheckPaymentRequest::get();
 
             return DataTables::of($checkPaymentRequests)
-                ->editColumn('payment_request_details', function (CheckPaymentRequest $checkPaymentRequest) {
-                    $pr_details = '<div>Amount: ' . $checkPaymentRequest->amount . '</div>';
-                    $pr_details .= '<div>Request Date: ' . $checkPaymentRequest->request_date . '</div>';
-                    $pr_details .= '<div>Requested By: ' . $checkPaymentRequest->requested_by . '</div>';
-                    return $pr_details;
-                })
                 ->editColumn('supplier_info', function (CheckPaymentRequest $checkPaymentRequest) {
                     $s_info = '';
                     if ($checkPaymentRequest->supplier_id) {
-                        $s_info .= '<div>Payee: ' . $checkPaymentRequest->supplier->check_name . '</div>';
+                        $s_info .= '<div>' . $checkPaymentRequest->supplier->check_name . '</div>';
                     } else {
-                        $s_info .= '<div>Payee: ' . $checkPaymentRequest->supplier_name . '</div>';
+                        $s_info .= '<div>' . $checkPaymentRequest->supplier_name . '</div>';
                     }
                     return $s_info;
+                })
+                ->editColumn('payment_request_details', function (CheckPaymentRequest $checkPaymentRequest) {
+                    $pr_details = '<div>Amount: ' . number_format($checkPaymentRequest->amount,2) . '</div>';
+                    $pr_details .= '<div>Request Date: ' . $checkPaymentRequest->request_date . '</div>';
+                    $pr_details .= '<div>Requested By: ' . $checkPaymentRequest->requested_by . '</div>';
+                    return $pr_details;
                 })
                 ->editColumn('particulars', function (CheckPaymentRequest $checkPaymentRequest) {
                     return $checkPaymentRequest->particulars;
@@ -51,7 +51,7 @@ class CheckPaymentRequestController extends Controller
                     $actions = '<button id="btn-print-check-payment" data-id="' . $checkPaymentRequest->id . '" type="button" class="btn btn-link">Print Check Payment</button>';
                     return $actions;
                 })
-                ->rawColumns(['payment_request_details', 'supplier_info', 'particulars', 'logs', 'actions'])
+                ->rawColumns(['supplier_info', 'payment_request_details', 'particulars', 'logs', 'actions'])
                 ->make(true);
         }
     }
@@ -92,6 +92,7 @@ class CheckPaymentRequestController extends Controller
 
         $request->validate($validate);
 
+        $request['particulars'] = nl2br($request['particulars']);
         $request['request_date'] = now();
         $request['logs'] = 'Created by: Test';
         $request['requested_by'] = 'Test';
@@ -171,7 +172,8 @@ class CheckPaymentRequestController extends Controller
         return $paymentTerms;
     }
 
-    public function generatePDFReport(){
+    public function generatePDFReport()
+    {
         try {
             $pdf = SnappyPdf::loadView('reports.ap.check_preparation_request', array());
             $pdf->setPaper('A6');
@@ -181,7 +183,8 @@ class CheckPaymentRequestController extends Controller
         }
     }
 
-    public function generateCheckPaymentPDF($id) {
+    public function generateCheckPaymentPDF($id)
+    {
         $checkPaymentRequest = CheckPaymentRequest::find($id);
 
         try {

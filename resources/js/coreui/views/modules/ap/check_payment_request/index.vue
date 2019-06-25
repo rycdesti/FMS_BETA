@@ -82,15 +82,15 @@
             return {
                 table_id: 'tbl-check-payment-request',
                 table_columns: [
+                    {data: 'supplier_info'},
                     {data: 'payment_request_details', bSortable: false, bSearchable: true},
-                    {data: 'supplier_info', bSortable: false, bSearchable: true},
                     {data: 'particulars', bSortable: false, bSearchable: false},
                     {data: 'logs', bSortable: false, bSearchable: false},
                     {data: 'actions', bSortable: false, bSearchable: false}
                 ],
                 table_headers: [
+                    'Payee',
                     'Payment Request Details',
-                    'Supplier Information',
                     'Particulars',
                     'Logs',
                     'Actions'

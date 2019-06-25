@@ -82,11 +82,9 @@ class MonthlyPaymentController extends Controller
                             $voucher_label = 'Review Check Voucher';
                         } else if ($monthlyPayment->voucher->status == 'R') {
                             $voucher_label = 'Recommend Check Voucher';
-                        } else if ($monthlyPayment->voucher->status == 'F') {
-                            $voucher_label = 'Approve Check Voucher';
                         }
 
-                        if ($monthlyPayment->voucher->status != 'A') {
+                        if ($monthlyPayment->voucher->status != 'F') {
                             $actions .= '<button id="btn-check-voucher" data-id="' . $monthlyPayment->recurring_payment_id . '&' . $monthlyPayment->date . '" type="button" class="btn btn-link">' . $voucher_label . '</button><br>';
 //                            $actions .= '<button id="btn-delete-check-voucher" data-id="' . $monthlyPayment->recurring_payment_id . '&' . $monthlyPayment->date . '&' . $monthlyPayment->voucher->check_id . '" type="button" class="btn btn-link">Delete Check Voucher</button><br>';
                         }
@@ -107,6 +105,10 @@ class MonthlyPaymentController extends Controller
 
             return $monthlyPayments;
         }
+    }
+
+    public function index_review() {
+        var_dump('hehe');
     }
 
     /**
@@ -321,9 +323,6 @@ class MonthlyPaymentController extends Controller
         } else if ($voucher_status == 'R') {
             $voucher_array['status'] = 'F';
             $voucher_array['recommended_by'] = 'Test';
-        } else if ($voucher_status == 'F') {
-            $voucher_array['status'] = 'A';
-            $voucher_array['approved_by'] = 'Test';
         }
 
         $request->request->set('voucher', $voucher_array);
