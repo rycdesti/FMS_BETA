@@ -31,7 +31,6 @@ class CreateRequisitionPurchaseOrder extends Migration
             $table->double('amount' , 18 ,2)->nullable();
             $table->string('logs',70);
             $table->string('last_modified',70)->nullable();
-
             $table->timestamps();
 
             $table->foreign('supplier_id')
@@ -52,6 +51,6 @@ class CreateRequisitionPurchaseOrder extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('requisition.purchase_order');
+        Schema::drop('requisition.purchase_order');
     }
 }

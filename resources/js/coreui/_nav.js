@@ -52,12 +52,20 @@ export default {
                             url: '/ap/check-payment-request',
                         },
                         {
+                            name: 'Bank Deposit',
+                            url: '/ap/bank-deposit',
+                        },
+                        {
                             name: 'Monthly Payments',
                             url: '/ap/monthly-payment',
                         },
                         {
-                            name: 'Bank Deposit',
-                            url: '/ap/bank-deposit',
+                            name: 'Review Monthly Payments',
+                            url: '/ap/monthly-payment?status=O',
+                        },
+                        {
+                            name: 'Recommend Monthly Payments',
+                            url: '/ap/monthly-payment?status=R',
                         },
                     ],
                 },

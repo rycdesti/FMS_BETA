@@ -12,13 +12,13 @@ class BankDepositSeeder extends Seeder
     public function run()
     {
         \App\Models\Ap\BankDeposit::create([
-            'bank_account_id' => \App\Models\Ap\BankAccount::first(),
-            'date_deposit' => date('Y-m-d', now()),
-            'time_deposit' => date('H:i:s', now()),
-            'ref_no' => rand(1000, 5000),
+            'bank_account_id' => 1,
+            'date_deposit' => date('Y-m-d', strtotime(now())),
+            'time_deposit' => date('H:i:s', strtotime(now())),
+            'ref_no' => 'REF' . rand(1000, 5000),
             'cash_deposit' => mt_rand(1000, 500000),
             'logs' => 'Created by: Test',
-            'last_modified' => date('Y-m-d', now()),
+            'last_modified' => date('Y-m-d', strtotime(now())),
         ]);
     }
 }
