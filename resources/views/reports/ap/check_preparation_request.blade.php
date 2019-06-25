@@ -1,5 +1,9 @@
 @php($checkPaymentController = new \App\Http\Controllers\Ap\CheckPaymentRequestController())
 
+<head>
+    <title>Check Payment Request</title>
+</head>
+
 <html>
 <body style="border: 1px solid black">
 
@@ -55,7 +59,7 @@
     </tr>
     <tr>
         <td class="label">PARTICULARS</td>
-        <td colspan="2" style="height: 120px; border: 1px solid; padding: 5px; vertical-align: top;">{{ $checkPaymentRequest->particulars }}</td>
+        <td colspan="2" style="height: 120px; border: 1px solid; padding: 5px; vertical-align: top;">{!! $checkPaymentRequest->particulars !!} </td>
     </tr>
     <tr>
         <td class="label">Amount</td>
