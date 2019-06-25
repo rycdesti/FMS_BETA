@@ -84,7 +84,7 @@
         <td colspan="2" style="text-align: center">Name in Print./Signature</td>
     </tr>
     <tr>
-        <td class="label" style="padding-top: 20px;">Adm. Officer/s</td>
+        <td class="label" style="padding-top: 20px;0">Adm. Officer/s</td>mo
         <td colspan="2" width="100%" style="padding-top: 20px;">
             <div style="border-bottom: 1px solid black; width: 100%; text-align: center">{{ $checkPaymentRequest->requested_by }}</div>
         </td>
