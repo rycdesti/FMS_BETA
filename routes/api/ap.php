@@ -37,6 +37,9 @@ Route::group(['prefix' => '/ap'], function () {
     // check payment request
     Route::resource('/check-payment-request', 'Ap\CheckPaymentRequestController');
 
+    // bank deposit
+    Route::resource('/bank-deposit', 'Ap\BankDepositController');
+
     // utils
     Route::group(['prefix' => '/utils'], function () {
         Route::get('/get_bank_account/{bank_account}', 'Ap\CheckController@get_bank_account');

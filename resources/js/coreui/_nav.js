@@ -55,6 +55,10 @@ export default {
                             name: 'Monthly Payments',
                             url: '/ap/monthly-payment',
                         },
+                        {
+                            name: 'Bank Deposit',
+                            url: '/ap/bank-deposit',
+                        },
                     ],
                 },
                 {

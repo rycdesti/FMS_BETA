@@ -94,4 +94,9 @@ class Voucher extends BaseModel
     {
         return $this->belongsTo(WithholdingTax::class);
     }
+
+    public function scopeTestSum($query)
+    {
+        return $query->sum('voucherDistributions.amount');
+    }
 }

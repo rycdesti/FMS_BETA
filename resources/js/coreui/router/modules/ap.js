@@ -8,6 +8,7 @@ import RecurringPayment from '@/views/modules/ap/recurring_payment'
 import RecurringPaymentDistribution from '@/views/modules/ap/recurring_payment_distribution'
 import MonthlyPayment from '@/views/modules/ap/monthly_payment'
 import CheckPaymentRequest from '@/views/modules/ap/check_payment_request'
+import BankDeposit from '@/views/modules/ap/bank_deposit'
 
 export default {
     path: 'ap',
@@ -66,6 +67,11 @@ export default {
             path: 'check-payment-request',
             name: 'CheckPaymentRequest',
             component: CheckPaymentRequest,
+        },
+        {
+          path: 'bank-deposit',
+          name: 'BankDeposit',
+          component: BankDeposit,
         },
     ],
 }
