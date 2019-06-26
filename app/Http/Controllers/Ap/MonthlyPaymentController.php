@@ -60,7 +60,7 @@ class MonthlyPaymentController extends Controller
                         $v_info .= '<div>Explanation: ' . $monthlyPayment->voucher->explanation . '</div>';
                     } else {
                         $v_info .= 'N/A';
-                    }Ro
+                    }
                     return $v_info;
                 })
                 ->editColumn('due_date', function ($monthlyPayment) {
