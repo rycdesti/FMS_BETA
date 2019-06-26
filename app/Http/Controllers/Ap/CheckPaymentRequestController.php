@@ -84,10 +84,12 @@ class CheckPaymentRequestController extends Controller
             $validate = array_merge($validate, [
                 'supplier_id' => 'required',
             ]);
+            $request['supplier_name'] = null;
         } else if ($request['pay_to'] == 'O') {
             $validate = array_merge($validate, [
                 'supplier_name' => 'required',
             ]);
+            $request['supplier_id'] = null;
         }
 
         $request->validate($validate);

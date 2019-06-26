@@ -30,8 +30,20 @@ class MonthlyPaymentController extends Controller
         if ($this->isRequestTypeDatatable(request())) {
             $frequency_filter = request()->frequency_filter;
             $status_filter = request()->status_filter;
-            $date_filter = request()->date_filter;
-            $monthlyPayments = $this->monthlyPayments($date_filter, $status_filter, $frequency_filter);
+            $period_from_filter = request()->period_from_filter;
+            $period_to_filter = request()->period_to_filter;
+            if ($period_from_filter) {
+                $period_from_filter = date('Y-m-d', strtotime($period_from_filter));
+            } else {
+                $period_from_filter = date('Y-m-01');
+            }
+
+            if ($period_to_filter) {
+                $period_to_filter = date('Y-m-d', strtotime($period_to_filter));
+            } else {
+                $period_to_filter = date('Y-m-t');
+            }
+            $monthlyPayments = $this->monthlyPayments($period_from_filter, $period_to_filter, $status_filter, $frequency_filter);
 
             return DataTables::of($monthlyPayments)
                 ->editColumn('supplier_info', function ($monthlyPayment) {
@@ -48,7 +60,7 @@ class MonthlyPaymentController extends Controller
                         $v_info .= '<div>Explanation: ' . $monthlyPayment->voucher->explanation . '</div>';
                     } else {
                         $v_info .= 'N/A';
-                    }
+                    }Ro
                     return $v_info;
                 })
                 ->editColumn('due_date', function ($monthlyPayment) {
@@ -99,8 +111,20 @@ class MonthlyPaymentController extends Controller
         } else {
             $frequency_filter = request()->frequency_filter;
             $status_filter = request()->status_filter;
-            $date_filter = request()->date_filter;
-            $monthlyPayments = $this->monthlyPayments($date_filter, $status_filter, $frequency_filter);
+            $period_from_filter = request()->period_from_filter;
+            $period_to_filter = request()->period_to_filter;
+            if ($period_from_filter) {
+                $period_from_filter = date('Y-m-d', strtotime($period_from_filter));
+            } else {
+                $period_from_filter = date('Y-m-01');
+            }
+
+            if ($period_to_filter) {
+                $period_to_filter = date('Y-m-d', strtotime($period_to_filter));
+            } else {
+                $period_to_filter = date('Y-m-t');
+            }
+            $monthlyPayments = $this->monthlyPayments($period_from_filter, $period_to_filter, $status_filter, $frequency_filter);
 
 
             return $monthlyPayments;
@@ -458,49 +482,30 @@ class MonthlyPaymentController extends Controller
     /**
      * Retrieve list of monthly payments from resource storage
      *
-     * @param $date_filter
+     * @param $period_from_filter
+     * @param $period_to_filter
      * @param $status_filter
      * @param $frequency_filter
      * @return array
      * @throws \Exception
      */
-    public function monthlyPayments($date_filter, $status_filter, $frequency_filter)
+    public function monthlyPayments($period_from_filter, $period_to_filter, $status_filter, $frequency_filter)
     {
-        $date_start = date('Y-m-01', strtotime($date_filter));
-        $date_end = date('Y-m-t', strtotime($date_filter));
+        $date_start = $period_from_filter;
+        $date_end = $period_to_filter;
         $date_end_object = new DateTime($date_end);
-        $date_end_object->modify('+1 days');
-        $month = date('n', strtotime($date_filter));
+        $month_from = date('n', strtotime($period_from_filter));
+        $month_to = date('n', strtotime($period_to_filter));
 
         $date = new DatePeriod(
             new DateTime($date_start), new DateInterval('P1D'), $date_end_object);
 
-        $monthlyPayments = RecurringPayment::with(['recurringPaymentDates' => function ($child) use ($month, $date_start, $date_end) {
-            $child->where(function ($child_sub1) use ($month) {
-                $child_sub1->where('month', 0)
-                    ->orWhere('month', $month);
+        $monthlyPayments = RecurringPayment::with(['recurringPaymentDates' => function ($child) use ($month_from, $month_to, $date_start, $date_end) {
+            $child->where(function ($child_sub1) use ($month_from, $month_to) {
+                $child_sub1->whereBetween('month', [$month_from, $month_to])
+                    ->orWhere('month', 0);
             });
-        }])->where(function ($child_sub2) use ($date_start, $date_end) {
-            $child_sub2->where([
-                ['duration_from', '=', null],
-                ['duration_to', '=', null]
-            ]);
-            $child_sub2->orWhere(function ($sub1) use ($date_start, $date_end) {
-                $sub1->where([
-                    ['duration_from', '>=', $date_start],
-                    ['duration_to', '>=', $date_end]
-                ])->orWhere([
-                    ['duration_from', '<=', $date_start],
-                    ['duration_to', '<=', $date_end]
-                ])->orWhere([
-                    ['duration_from', '>=', $date_start],
-                    ['duration_to', '<=', $date_end]
-                ])->orWhere([
-                    ['duration_from', '<=', $date_start],
-                    ['duration_to', '>=', $date_end]
-                ]);
-            });
-        })->where('disabled', 'N')
+        }])->where('disabled', 'N')
             ->get();
 
         if ($frequency_filter) {
@@ -726,7 +731,7 @@ class MonthlyPaymentController extends Controller
 
     public function generatePDFReport()
     {
-        $monthlyPayments = $this->monthlyPayments(request()->date_filter, '', '');
+        $monthlyPayments = $this->monthlyPayments(request()->period_from_filter, request()->period_to_filter, '', '');
 
         try {
             $pdf = SnappyPdf::loadView('reports.ap.monthly_payment', compact('monthlyPayments'));

@@ -61,11 +61,11 @@ export default {
                         },
                         {
                             name: 'Review Monthly Payments',
-                            url: '/ap/monthly-payment?status=O',
+                            url: '/ap/monthly-payment-review',
                         },
                         {
                             name: 'Recommend Monthly Payments',
-                            url: '/ap/monthly-payment?status=R',
+                            url: '/ap/monthly-payment-recommend',
                         },
                     ],
                 },

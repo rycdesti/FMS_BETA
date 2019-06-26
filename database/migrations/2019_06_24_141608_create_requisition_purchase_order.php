@@ -15,7 +15,8 @@ class CreateRequisitionPurchaseOrder extends Migration
     {
         Schema::create('requisition.purchase_order', function (Blueprint $table) {
             $table->bigInteger('id', true);
-            $table->string('campus' , 1);
+            $table->string('campus' , 5);
+            $table->bigInteger('branch_id');
             $table->string('ponumber' , 20);
             $table->dateTime('podate');
             $table->longText('ponotes');

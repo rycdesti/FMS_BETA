@@ -96,14 +96,26 @@
                                 <div class="col-md-6"></div>
                                 <div class="col-md-6">
                                     <div class="float-right form-inline">
-                                        <label class="mr-2">Month and Year:</label>
-                                        <b-datepicker v-model="table_filter_fields.date_filter"
+                                        <label class="mr-2">Period from:</label>
+                                        <b-datepicker v-model="table_filter_fields.period_from_filter"
                                                       class="mb-2"
-                                                      format="MMM yyyy"
-                                                      minimum-view="month"
-                                                      @closed="filter"
-                                        >
-                                        </b-datepicker>
+                                                      format="MMM dd yyyy"
+                                                      minimum-view="day"
+                                                      @closed="filter"></b-datepicker>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6"></div>
+                                <div class="col-md-6">
+                                    <div class="float-right form-inline">
+                                        <label class="mr-2">Period to:</label>
+                                        <b-datepicker v-model="table_filter_fields.period_to_filter"
+                                                      class="mb-2"
+                                                      format="MMM dd yyyy"
+                                                      minimum-view="day"
+                                                      @closed="filter"></b-datepicker>
                                     </div>
                                 </div>
                             </div>
@@ -130,8 +142,8 @@
 </style>
 
 <script>
-    import CallOutForm from '@/views/modules/ap/monthly_payment/form'
-    import CallOutCalendarForm from '@/views/modules/ap/monthly_payment/calendar_form'
+    import CallOutForm from '@/views/modules/ap/monthly_payment/default/form'
+    import CallOutCalendarForm from '@/views/modules/ap/monthly_payment/default/calendar_form'
 
     export default {
         name: 'MonthlyPayment',
@@ -162,7 +174,8 @@
                 table_filter_fields: {
                     frequency_filter: '',
                     status_filter: '',
-                    date_filter: new Date().getFullYear() + '-' + (new Date().getMonth() + 1),
+                    period_from_filter: moment(new Date(new Date().getFullYear(), new Date().getMonth(), 1)).format('YYYY-MM-DD'),
+                    period_to_filter: moment(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0)).format('YYYY-MM-DD'),
                 },
                 data: '',
                 frequency_opt : [{}],
@@ -212,9 +225,14 @@
             filter() {
                 this.table_filter_fields.frequency_filter = $('#frequency_filter').val();
                 this.table_filter_fields.status_filter = $('#status_filter').val();
-                if (this.table_filter_fields.date_filter instanceof Date) {
-                    this.table_filter_fields.date_filter = this.table_filter_fields.date_filter.getFullYear() + '-' +
-                        (this.table_filter_fields.date_filter.getMonth() + 1);
+                if (this.table_filter_fields.period_from_filter instanceof Date) {
+                    this.table_filter_fields.period_from_filter = this.table_filter_fields.period_from_filter.getFullYear() + '-' +
+                        (this.table_filter_fields.period_from_filter.getMonth() + 1) + '-' + this.table_filter_fields.period_from_filter.getDate();
+                }
+
+                if (this.table_filter_fields.period_to_filter instanceof Date) {
+                    this.table_filter_fields.period_to_filter = this.table_filter_fields.period_to_filter.getFullYear() + '-' +
+                        (this.table_filter_fields.period_to_filter.getMonth() + 1) + '-' + this.table_filter_fields.period_to_filter.getDate();
                 }
                 const table = $('#tbl-monthly-payment');
                 table.DataTable().draw(false);

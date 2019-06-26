@@ -6,7 +6,9 @@ import BankAccount from '@/views/modules/ap/bank_account'
 import Check from '@/views/modules/ap/check'
 import RecurringPayment from '@/views/modules/ap/recurring_payment'
 import RecurringPaymentDistribution from '@/views/modules/ap/recurring_payment_distribution'
-import MonthlyPayment from '@/views/modules/ap/monthly_payment'
+import MonthlyPayment from '@/views/modules/ap/monthly_payment/default'
+import MonthlyPaymentReview from '@/views/modules/ap/monthly_payment/review'
+import MonthlyPaymentRecommend from '@/views/modules/ap/monthly_payment/recommend'
 import CheckPaymentRequest from '@/views/modules/ap/check_payment_request'
 import BankDeposit from '@/views/modules/ap/bank_deposit'
 
@@ -62,6 +64,16 @@ export default {
             path: 'monthly-payment',
             name: 'MonthlyPayment',
             component: MonthlyPayment,
+        },
+        {
+            path: 'monthly-payment-review',
+            name: 'MonthlyPaymentReview',
+            component: MonthlyPaymentReview,
+        },
+        {
+            path: 'monthly-payment-recommend',
+            name: 'MonthlyPaymentRecommend',
+            component: MonthlyPaymentRecommend,
         },
         {
             path: 'check-payment-request',

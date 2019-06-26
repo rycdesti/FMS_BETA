@@ -10,7 +10,7 @@
                             footer-tag="footer"
                     >
                         <div slot="header">
-                            <i class="fa fa-align-justify"/> <strong>List of Bank Deposits</strong>
+                            <i class="fa fa-align-justify"/> <strong>List of Monthly Payments</strong>
                             <div class="card-actions">
                                 <a
                                         href="https://bootstrap-vue.js.org/docs/components/breadcrumb"
@@ -56,68 +56,56 @@
                               </b-button>
                             </div>
 
-                            <!--<div class="row">-->
-                                <!--<div class="col-md-6"></div>-->
-                                <!--<div class="col-md-6">-->
-                                    <!--<div class="float-right form-inline">-->
-                                        <!--<label class="mr-2">Frequency:</label>-->
-                                        <!--<b-form-select v-model="table_filter_fields.frequency_filter"-->
-                                                       <!--:options="frequency_opt"-->
-                                                       <!--id="frequency_filter"-->
-                                                       <!--class="input-container mb-2"-->
-                                                       <!--@change="filter">-->
-                                            <!--<template slot="first">-->
-                                                <!--<option value="">Display all</option>-->
-                                            <!--</template>-->
-                                        <!--</b-form-select>-->
-                                    <!--</div>-->
-                                <!--</div>-->
-                            <!--</div>-->
-
-                            <!--<div class="row">-->
-                                <!--<div class="col-md-6"></div>-->
-                                <!--<div class="col-md-6">-->
-                                    <!--<div class="float-right form-inline">-->
-                                        <!--<label class="mr-2">Status:</label>-->
-                                        <!--<b-form-select v-model="table_filter_fields.status_filter"-->
-                                                       <!--:options="status_opt"-->
-                                                       <!--id="status_filter"-->
-                                                       <!--class="input-container mb-2"-->
-                                                       <!--@change="filter">-->
-                                            <!--<template slot="first">-->
-                                                <!--<option value="">Display all</option>-->
-                                            <!--</template>-->
-                                        <!--</b-form-select>-->
-                                    <!--</div>-->
-                                <!--</div>-->
-                            <!--</div>-->
-
                             <div class="row">
                                 <div class="col-md-6"></div>
                                 <div class="col-md-6">
                                     <div class="float-right form-inline">
-                                        <label class="mr-2">From:</label>
-                                        <b-datepicker v-model="table_filter_fields.period_from_filter"
-                                                      class="mb-2"
-                                                      format="MMM dd yyyy"
-                                                      minimum-view="day"
-                                                      @closed="filter"></b-datepicker>
+                                        <label class="mr-2">Frequency:</label>
+                                        <b-form-select v-model="table_filter_fields.frequency_filter"
+                                                       :options="frequency_opt"
+                                                       id="frequency_filter"
+                                                       class="input-container mb-2"
+                                                       @change="filter">
+                                            <template slot="first">
+                                                <option value="">Display all</option>
+                                            </template>
+                                        </b-form-select>
                                     </div>
                                 </div>
                             </div>
 
                             <div class="row">
-                              <div class="col-md-6"></div>
-                              <div class="col-md-6">
-                                <div class="float-right form-inline">
-                                  <label class="mr-2">To:</label>
-                                  <b-datepicker v-model="table_filter_fields.period_to_filter"
-                                                class="mb-2"
-                                                format="MMM dd yyyy"
-                                                minimum-view="day"
-                                                @closed="filter"></b-datepicker>
+                                <div class="col-md-6"></div>
+                                <div class="col-md-6">
+                                    <div class="float-right form-inline">
+                                        <label class="mr-2">Status:</label>
+                                        <b-form-select v-model="table_filter_fields.status_filter"
+                                                       :options="status_opt"
+                                                       id="status_filter"
+                                                       class="input-container mb-2"
+                                                       @change="filter">
+                                            <template slot="first">
+                                                <option value="">Display all</option>
+                                            </template>
+                                        </b-form-select>
+                                    </div>
                                 </div>
-                              </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6"></div>
+                                <div class="col-md-6">
+                                    <div class="float-right form-inline">
+                                        <label class="mr-2">Month and Year:</label>
+                                        <b-datepicker v-model="table_filter_fields.date_filter"
+                                                      class="mb-2"
+                                                      format="MMM yyyy"
+                                                      minimum-view="month"
+                                                      @closed="filter"
+                                        >
+                                        </b-datepicker>
+                                    </div>
+                                </div>
                             </div>
 
                             <datatable
@@ -142,42 +130,48 @@
 </style>
 
 <script>
-    import CallOutForm from '@/views/modules/ap/monthly_payment/default/form'
-    import CallOutCalendarForm from '@/views/modules/ap/monthly_payment/default/calendar_form'
+    import CallOutForm from '@/views/modules/ap/monthly_payment/recommend/form'
+    import CallOutCalendarForm from '@/views/modules/ap/monthly_payment/recommend/calendar_form'
 
     export default {
-        name: 'BankDeposit',
+        name: 'MonthlyPaymentRecommend',
         components: {
           'call_out_form': CallOutForm,
           'call_out_calendar_form': CallOutCalendarForm,
         },
         data() {
             return {
-                table_id: 'tbl-bank-deposit',
+                table_id: 'tbl-monthly-payment',
                 table_columns: [
-                    {data: 'bank_account_id', bSortable: false, bSearchable: true},
-                    {data: 'date_deposit', bSortable: false, bSearchable: true},
-                    {data: 'time_deposit', bSortable: false, bSearchable: false},
-                    {data: 'ref_no', bSortable: false, bSearchable: false},
-                    {data: 'cash_deposit', bSortable: false, bSearchable: false},
-                    {data: 'logs', bSortable: false, bSearchable: false},
+                    {data: 'supplier_info', bSortable: false, bSearchable: true},
+                    {data: 'voucher_info', bSortable: false, bSearchable: true},
+                    {data: 'remarks', bSortable: false, bSearchable: false},
+                    {data: 'due_date', bSortable: false, bSearchable: false},
+                    {data: 'remaining_days', bSortable: false, bSearchable: false},
                     {data: 'actions', bSortable: false, bSearchable: false}
                 ],
                 table_headers: [
-                    'Bank',
-                    'Date Deposited',
-                    'Time Deposited',
-                    'Reference No',
-                    'Cash Deposited',
-                    'Logs',
+                    'Supplier Information',
+                    'Voucher Information',
+                    'Remarks',
+                    'Due Date',
+                    'Remaining Days',
                     'Actions'
                 ],
                 table_url: '',
                 table_filter_fields: {
-                    period_from_filter: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
-                    period_to_filter: new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0),
+                    frequency_filter: '',
+                    status_filter: '',
+                    date_filter: new Date().getFullYear() + '-' + (new Date().getMonth() + 1),
                 },
                 data: '',
+                frequency_opt : [{}],
+                status_opt: {
+                    'N': 'Not Requested',
+                    'O': 'For Review',
+                    'R': 'For Recommendation',
+                    'F': 'For Approval',
+                }
             }
         },
         created() {
@@ -216,21 +210,17 @@
         },
         methods: {
             filter() {
-                if (this.table_filter_fields.period_from_filter instanceof Date) {
-                    this.table_filter_fields.period_from_filter = this.table_filter_fields.period_from_filter.getFullYear() + '-' +
-                        (this.table_filter_fields.period_from_filter.getMonth() + 1) + '-' + this.table_filter_fields.period_from_filter.getDate();
+                this.table_filter_fields.frequency_filter = $('#frequency_filter').val();
+                this.table_filter_fields.status_filter = $('#status_filter').val();
+                if (this.table_filter_fields.date_filter instanceof Date) {
+                    this.table_filter_fields.date_filter = this.table_filter_fields.date_filter.getFullYear() + '-' +
+                        (this.table_filter_fields.date_filter.getMonth() + 1);
                 }
-
-                if (this.table_filter_fields.period_to_filter instanceof Date) {
-                    this.table_filter_fields.period_to_filter = this.table_filter_fields.period_to_filter.getFullYear() + '-' +
-                        (this.table_filter_fields.period_to_filter.getMonth() + 1) + '-' + this.table_filter_fields.period_to_filter.getDate();
-                }
-
-                const table = $('#tbl-bank-deposit');
+                const table = $('#tbl-monthly-payment');
                 table.DataTable().draw(false);
             },
             fetchData() {
-                this.table_url = '/api/ap/bank-deposit';
+                this.table_url = '/api/ap/monthly-payment';
             },
             async deleteData(id) {
                 const component = this;
@@ -247,7 +237,7 @@
                 });
 
                 if (result.value) {
-                    axios.delete(`/api/ap/bank-deposit/${id}`)
+                    axios.delete(`/api/ap/monthly-payment/${id}`)
                         .then(function (response) {
                             if (response.data.success) {
                                 component.$swal.fire(
@@ -255,7 +245,7 @@
                                     response.data.message,
                                     'success'
                                 ).then(() => {
-                                    const table = $('#tbl-bank-deposit');
+                                    const table = $('#tbl-monthly-payment');
                                     table.DataTable().draw(false);
                                 });
                             }
@@ -281,7 +271,7 @@
                 });
 
                 if (result.value) {
-                    axios.patch(`/api/ap/bank-deposit/${id}/update_status`)
+                    axios.patch(`/api/ap/monthly-payment/${id}/update_status`)
                         .then(function (response) {
                             if (response.data.success) {
                                 component.$swal.fire(
@@ -289,7 +279,7 @@
                                     response.data.message,
                                     'success'
                                 ).then(() => {
-                                    const table = $('#tbl-bank-deposit');
+                                    const table = $('#tbl-monthly-payment');
                                     table.DataTable().draw(false);
                                 });
                             }
@@ -302,7 +292,7 @@
             },
 
             generatePDFReport() {
-                const url = '/api/reports/ap/bank-deposit?date_filter=' + this.table_filter_fields.date_filter;
+                const url = '/api/reports/ap/monthly-payment?date_filter=' + this.table_filter_fields.date_filter;
                 window.open(url, '_blank')
             },
 
