@@ -101,8 +101,10 @@ class PaymentTermController extends Controller
         $payment_term_name = $request['payment_term_name'] . '@';
         $percentage = '';
         foreach ($request['percentage_breakdown'] as $breakdown) {
-            $payment_term_name .= $breakdown['percent_value'] . '%|';
-            $percentage .= $breakdown['percent_value'] . '^' . str_replace(' ', '_', trim($breakdown['percent_code'])) . ';';
+            if($breakdown['percent_value'] && $breakdown['percent_value']) {
+                $payment_term_name .= $breakdown['percent_value'] . '%|';
+                $percentage .= $breakdown['percent_value'] . '^' . str_replace(' ', '_', trim($breakdown['percent_code'])) . ';';
+            }
         }
 
         $request['payment_term_name'] = $payment_term_name;

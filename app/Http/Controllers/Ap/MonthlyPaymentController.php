@@ -106,7 +106,7 @@ class MonthlyPaymentController extends Controller
                     }
                     return $actions;
                 })
-                ->rawColumns(['supplier_name', 'supplier_info', 'voucher_info', 'due_date', 'remaining_days', 'actions'])
+                ->rawColumns(['supplier_info', 'voucher_info', 'due_date', 'remaining_days', 'actions'])
                 ->make(true);
         } else {
             $frequency_filter = request()->frequency_filter;
@@ -131,8 +131,103 @@ class MonthlyPaymentController extends Controller
         }
     }
 
-    public function index_review() {
-        var_dump('hehe');
+    /**
+     * Display a listing of the resource.
+     *
+     * @return array
+     * @throws \Exception
+     */
+    public function index_batch()
+    {
+        if ($this->isRequestTypeDatatable(request())) {
+            $frequency_filter = request()->frequency_filter;
+            $status_filter = request()->status_filter;
+            $period_from_filter = request()->period_from_filter;
+            $period_to_filter = request()->period_to_filter;
+            if ($period_from_filter) {
+                $period_from_filter = date('Y-m-d', strtotime($period_from_filter));
+            } else {
+                $period_from_filter = date('Y-m-01');
+            }
+
+            if ($period_to_filter) {
+                $period_to_filter = date('Y-m-d', strtotime($period_to_filter));
+            } else {
+                $period_to_filter = date('Y-m-t');
+            }
+            $monthlyPayments = $this->monthlyPayments($period_from_filter, $period_to_filter, $status_filter, $frequency_filter);
+
+            return DataTables::of($monthlyPayments)
+                ->editColumn('actions', function ($monthlyPayment) {
+                    $actions = '<div class="text-center"><input id="checkbox-item" data-id="' . $monthlyPayment->voucher->id . '" type="checkbox" style="transform: scale(1.5);"/></div>';
+                    return $actions;
+                })
+                ->editColumn('supplier_info', function ($monthlyPayment) {
+                    $supplier = Supplier::find($monthlyPayment->supplier_id);
+
+                    $s_info = '<div>Payee: ' . $supplier->name . '</div>';
+                    $s_info .= '<div class="mb-3">TIN: ' . $supplier->tin . '</div>';
+                    $s_info .= '<div>Remarks: ' . $monthlyPayment->remarks . '</div>';
+
+                    return $s_info;
+                })
+                ->editColumn('amount_date', function ($monthlyPayment) {
+                    $amount_date = '<div>Amount Due: ' . $monthlyPayment->amount . '</div>';
+                    $amount_date .= '<div>Date: ' . date('F d, Y', strtotime($monthlyPayment->date)) . '<br>' . date('l', strtotime($monthlyPayment->date)) . '</div>';
+                    return $amount_date;
+                })
+                ->editColumn('voucher_info', function ($monthlyPayment) {
+                    $v_info = '';
+                    if ($monthlyPayment->voucher) {
+                        $check_info = Check::find($monthlyPayment->voucher->check_id);
+                        $v_info .= '<div class="mb-3">Voucher Number: ' . $monthlyPayment->voucher->voucher_no . '</div>';
+                        $v_info .= '<div>Bank Account: ' . $check_info->bankAccount->bank->bank_name . ' (' . $check_info->bankAccount->acct_no . ')' . '</div>';
+                        $v_info .= '<div>Check Number: ' . $check_info->check_no . '</div>';
+                        $v_info .= '<div class="mb-3">Check Date: ' . $monthlyPayment->voucher->check_date . '</div>';
+                        $v_info .= '<div>Explanation: ' . $monthlyPayment->voucher->explanation . '</div>';
+                    } else {
+                        $v_info .= 'N/A';
+                    }
+                    return $v_info;
+                })
+                ->editColumn('distribution_info', function ($monthlyPayment) {
+                    $distribution_info = '';
+                    $debit_total = 0;
+                    $credit_total = 0;
+
+                    $distribution_info .= '<table border="1">';
+                    $distribution_info .= '    <tr>';
+                    $distribution_info .= '        <th class="bg-primary text-white">Particulars</th>';
+                    $distribution_info .= '        <th class="bg-primary text-white">Debit</th>';
+                    $distribution_info .= '        <th class="bg-primary text-white">Credit</th>';
+                    $distribution_info .= '    </tr>';
+                    foreach ($monthlyPayment->voucher->voucherDistributions as $voucherDistribution) {
+                        $distribution_info .= '    <tr>';
+                        $distribution_info .= '        <td>' . $voucherDistribution->chartOfAccount->description . '</td>';
+                        if ($voucherDistribution->typical_balance == 'D') {
+                            $distribution_info .= '        <td>' . number_format($voucherDistribution->amount, 2) . '</td>';
+                            $distribution_info .= '        <td></td>';
+                            $debit_total += $voucherDistribution->amount;
+                        } else {
+                            $distribution_info .= '        <td></td>';
+                            $distribution_info .= '        <td>' . number_format($voucherDistribution->amount, 2) . '</td>';
+                            $credit_total += $voucherDistribution->amount;
+                        }
+                        $distribution_info .= '    </tr>';
+                    }
+                    $distribution_info .= '    <tr>';
+                    $distribution_info .= '        <td class="bg-gray-100 font-weight-bold">Total</td>';
+                    $distribution_info .= '        <td class="bg-gray-100 font-weight-bold">' . number_format($debit_total, 2) . '</td>';
+                    $distribution_info .= '        <td class="bg-gray-100 font-weight-bold">' . number_format($credit_total, 2) . '</td>';
+                    $distribution_info .= '    </tr>';
+
+                    $distribution_info .= '</table>';
+
+                    return $distribution_info;
+                })
+                ->rawColumns(['actions', 'supplier_info', 'amount_date', 'voucher_info', 'distribution_info'])
+                ->make(true);
+        }
     }
 
     /**
@@ -387,8 +482,45 @@ class MonthlyPaymentController extends Controller
                  * check for failure of event tag when insert try to rollback (DB rollback)
                  * try to check if there is other way to insert multiple record
                  */
-                return response()->json(['success' => true, 'message' => 'The record was added successfully!']);
+                return response()->json(['success' => true, 'message' => 'The record was updated successfully!']);
             }
+        }
+        return response()->json(['success' => false, 'message' => 'Something went wrong, Please try again.'], 500);
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param $batch_id
+     * @param $status_filter
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function update_batch($batch_id, $status_filter)
+    {
+        $vouchers = explode(',', $batch_id);
+
+        $voucher_data = [
+            'last_modified' => 'Last modified by: Test'
+        ];
+        if($status_filter == 'O') {
+            $voucher_data = array_merge($voucher_data, [
+                'status' => 'R',
+                'checked_by' => 'Test'
+            ]);
+        } else if ($status_filter == 'R') {
+            $voucher_data = array_merge($voucher_data, [
+                'status' => 'F',
+                'recommended_by' => 'Test'
+            ]);
+        }
+
+        $result = Voucher::whereIn('id', $vouchers)->update($voucher_data);
+        if ($result) {
+            /**
+             * check for failure of event tag when insert try to rollback (DB rollback)
+             * try to check if there is other way to insert multiple record
+             */
+            return response()->json(['success' => true, 'message' => 'The record/s was updated successfully!']);
         }
         return response()->json(['success' => false, 'message' => 'Something went wrong, Please try again.'], 500);
     }
@@ -539,7 +671,10 @@ class MonthlyPaymentController extends Controller
                     $object->frequency_type = $recurringPaymentDate->frequency_type;
                     $object->remaining_days = ceil((strtotime($date) - time()) / 86400);
 
-                    $voucher = Voucher::where('recurring_payment_id', $monthlyPayment->id)
+                    $voucher = Voucher::with([
+                        'voucherDistributions',
+                        'voucherDistributions.chartOfAccount'
+                    ])->where('recurring_payment_id', $monthlyPayment->id)
                         ->where('status', '!=', 'V')
                         ->where('date', $date)
                         ->first();
@@ -610,7 +745,7 @@ class MonthlyPaymentController extends Controller
     {
         $supplier = Supplier::find($monthlyPayment->supplier_id);
 
-        $s_info = '<div>' . $supplier->name . '</div>';
+        $s_info = '<div>Payee: ' . $supplier->name . '</div>';
         $s_info .= '<div class="mb-3">TIN: ' . $supplier->tin . '</div>';
 
 //        foreach (SupplierContact::where('supplier_id', $monthlyPayment->supplier_id)->get() as $value) {
@@ -639,6 +774,7 @@ class MonthlyPaymentController extends Controller
             '</div><div>To: ' . date('F d, Y', strtotime($monthlyPayment->duration_to)) . '</div>' :
             '<div>Continuous</div>';
         $s_info .= '<br></fieldset>';
+
         return $s_info;
     }
 

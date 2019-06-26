@@ -191,7 +191,7 @@
                             this.formClose();
                             this.formReset();
 
-                            const table = $('#tbl-currency');
+                            const table = $('#tbl-payment-term');
                             table.DataTable().draw(true);
                         });
                     }

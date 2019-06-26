@@ -100,7 +100,7 @@
         },
         data() {
             return {
-                table_id: 'tbl-currency',
+                table_id: 'tbl-payment-term',
                 table_columns: [
                     {data: 'payment_term_name'},
                     {data: 'percentage'},
@@ -144,7 +144,7 @@
                 const status = $(this).text();
                 component.updateStatus(id, status)
 
-                // var table = $('#tbl-currency').DataTable();
+                // var table = $('#tbl-payment-term').DataTable();
                 // var node = table.row(`#row-${id}`).data();
             })
         },
@@ -162,7 +162,7 @@
         methods: {
             filter() {
                 this.table_filter_fields.status_filter = $('#status_filter').val();
-                const table = $('#tbl-currency');
+                const table = $('#tbl-payment-term');
                 table.DataTable().draw(false);
             },
             fetchData() {
@@ -191,7 +191,7 @@
                                     response.data.message,
                                     'success'
                                 ).then(() => {
-                                    const table = $('#tbl-currency');
+                                    const table = $('#tbl-payment-term');
                                     table.DataTable().draw(false)
                                 })
                             }
@@ -225,7 +225,7 @@
                                     response.data.message,
                                     'success'
                                 ).then(() => {
-                                    const table = $('#tbl-currency');
+                                    const table = $('#tbl-payment-term');
                                     table.DataTable().draw(false);
                                 })
                             }

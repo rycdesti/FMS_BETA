@@ -32,6 +32,8 @@ Route::group(['prefix' => '/ap'], function () {
     Route::resource('/recurring-payment-distribution', 'Ap\RecurringPaymentDistributionController');
 
     // monthly payment
+    Route::get('/monthly-payment/batch', 'Ap\MonthlyPaymentController@index_batch');
+    Route::patch('/monthly-payment/batch/{batch_id}/{status_filter}', 'Ap\MonthlyPaymentController@update_batch');
     Route::resource('/monthly-payment', 'Ap\MonthlyPaymentController');
 
     // check payment request
