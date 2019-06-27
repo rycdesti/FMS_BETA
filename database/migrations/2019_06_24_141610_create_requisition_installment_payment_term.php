@@ -17,12 +17,14 @@ class CreateRequisitionInstallmentPaymentTerm extends Migration
         Schema::create('requisition.installment_payment_terms', function (Blueprint $table) {
             $table->bigInteger('id', true);
             $table->bigInteger('purchase_order_id');
-            $table->string('ponumber,' , 20);
-            $table->string('payment_term_description,' , 250);
+            $table->string('ponumber' , 20);
+            $table->string('payment_term_description' , 250);
             $table->integer('percent' );
             $table->double('amount' , 18 ,2);
+            $table->string('status',1)->defualt('O');
             $table->string('logs',70);
             $table->string('last_modified',70)->nullable();
+
             $table->timestamps();
 
             $table->foreign('purchase_order_id')
