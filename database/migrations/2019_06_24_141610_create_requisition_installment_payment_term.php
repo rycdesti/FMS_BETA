@@ -21,7 +21,7 @@ class CreateRequisitionInstallmentPaymentTerm extends Migration
             $table->string('payment_term_description' , 250);
             $table->integer('percent' );
             $table->double('amount' , 18 ,2);
-            $table->string('status',1)->defualt('O');
+            $table->string('status',1)->default('O');
             $table->string('logs',70);
             $table->string('last_modified',70)->nullable();
 
@@ -29,8 +29,7 @@ class CreateRequisitionInstallmentPaymentTerm extends Migration
 
             $table->foreign('purchase_order_id')
                 ->references('id')
-                ->on('requisition.purchase_order')
-                ->onDelete('cascade');
+                ->on('requisition.purchase_order');
 
         });
     }
