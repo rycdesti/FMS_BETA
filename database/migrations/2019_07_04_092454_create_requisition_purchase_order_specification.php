@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateRequisitionInstallmentPaymentTerm extends Migration
+class CreateRequisitionPurchaseOrderSpecification extends Migration
 {
     /**
      * Run the migrations.
@@ -13,24 +13,15 @@ class CreateRequisitionInstallmentPaymentTerm extends Migration
      */
     public function up()
     {
-
-        Schema::create('requisition.installment_payment_terms', function (Blueprint $table) {
-            $table->bigInteger('id', true);
+        Schema::create('requisition.purchase_order_specification', function (Blueprint $table) {
+            $table->bigInteger('id',true);
             $table->bigInteger('purchase_order_id');
             $table->string('ponumber' , 20);
-            $table->string('payment_term_description' , 250);
-            $table->integer('percent' );
-            $table->double('amount' , 18 ,2);
+            $table->longText('description');
             $table->string('status',1)->default('O');
             $table->string('logs',70);
             $table->string('last_modified',70)->nullable();
-
             $table->timestamps();
-
-            $table->foreign('purchase_order_id')
-                ->references('id')
-                ->on('requisition.purchase_order');
-
         });
     }
 
@@ -41,6 +32,6 @@ class CreateRequisitionInstallmentPaymentTerm extends Migration
      */
     public function down()
     {
-        Schema::drop('requisition.installment_payment_terms');
+        Schema::dropIfExists('requisition.purchase_order_specification');
     }
 }
