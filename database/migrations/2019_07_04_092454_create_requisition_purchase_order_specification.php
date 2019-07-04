@@ -17,6 +17,7 @@ class CreateRequisitionPurchaseOrderSpecification extends Migration
             $table->bigInteger('id',true);
             $table->bigInteger('purchase_order_id');
             $table->string('ponumber' , 20);
+            $table->string('scope_of_work' , 100);
             $table->longText('description');
             $table->string('status',1)->default('O');
             $table->string('logs',70);
