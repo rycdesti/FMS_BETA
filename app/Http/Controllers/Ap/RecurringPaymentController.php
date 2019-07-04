@@ -132,6 +132,7 @@ class RecurringPaymentController extends Controller
     {
         $validate = [
             'supplier_id' => 'required',
+            'bank' => 'required',
             'bank_account_id' => 'required',
             'remarks' => 'required',
             'amount' => 'required',

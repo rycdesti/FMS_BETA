@@ -244,16 +244,22 @@ class BankAccountController extends Controller
     }
 
     /**
-     * Get bank from storage
+     * Get bank accounts from resource storage
      *
      * @param $id
      * @return mixed
      */
-    public function get_bank($id)
+    public function get_bank_accounts($id)
     {
-        $bank = Bank::find($id);
+        $bankAccounts = BankAccount::where('disabled', '=', 'N')
+            ->where('bank_id', '=', $id)
+            ->orderBy('acct_no')
+            ->get([
+                'id as value',
+                'acct_no as text'
+            ]);
 
-        return $bank;
+        return $bankAccounts;
     }
 
     /**

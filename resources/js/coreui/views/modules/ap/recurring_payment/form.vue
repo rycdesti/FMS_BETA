@@ -25,11 +25,30 @@
             <b-form-fieldset
                     label="Bank"
                     description="Please select bank.">
-                <b-form-select v-model="form.bank_account_id"
+                <b-form-select v-model="form.bank"
                                :options="bank_opt"
-                               :class="{ 'is-invalid': form.errors.has('bank_account_id') }"
-                               id="bank_account_id"
-                               class="input-container">
+                               id="form_bank_filter"
+                               class="input-container mb-2"
+                               @change="filterBankAccounts"
+                               :class="{ 'is-invalid': form.errors.has('bank') }">
+                    <template slot="first">
+                        <option value selected disabled>-- Please select an option --</option>
+                    </template>
+                </b-form-select>
+                <has-error :form="form" field="name"/>
+            </b-form-fieldset>
+            <!-- end: title -->
+
+            <!-- start: title -->
+            <!--label="Title"-->
+            <b-form-fieldset
+                    v-if="form.bank"
+                    label="Account Number"
+                    description="Please select account number.">
+                <b-form-select v-model="form.bank_account_id"
+                               :options="bank_account_opt"
+                               class="input-container mb-2"
+                               :class="{ 'is-invalid': form.errors.has('bank_account_id') }">
                     <template slot="first">
                         <option value selected disabled>-- Please select an option --</option>
                     </template>
@@ -273,6 +292,8 @@
                 selected: 1,
                 form: new Form({
                     id: 0,
+                    bank: '',
+                    bank_account_id: '',
                     supplier_id: '',
                     document_no: '',
                     is_duration: 'N',
@@ -290,6 +311,7 @@
                     }
                 }),
                 bank_opt: [{}],
+                bank_account_opt: [{}],
                 supplier_opt: [{}],
                 frequency_opt: [{}],
                 week_opt: [{}],
@@ -324,6 +346,15 @@
             });
         },
         methods: {
+            filterBankAccounts(){
+                const component = this;
+
+                this.form.bank = $('#form_bank_filter').val();
+                axios.get(`/api/ap/utils/get_bank_accounts/${this.form.bank}`)
+                    .then(function (response) {
+                        component.bank_account_opt = response.data;
+                    });
+            },
             fetchData(id) {
                 const component = this;
                 component.id = id;

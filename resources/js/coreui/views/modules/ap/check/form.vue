@@ -6,10 +6,30 @@
             <!-- start: title -->
             <!--label="Title"-->
             <b-form-fieldset
-                    label="Bank Account"
-                    description="Please select bank account.">
-                <b-form-select v-model="form.bank_account_id"
+                    label="Bank"
+                    description="Please select bank.">
+                <b-form-select v-model="form.bank"
                                :options="bank_opt"
+                               id="form_bank_filter"
+                               class="input-container mb-2"
+                               @change="filterBankAccounts"
+                               :class="{ 'is-invalid': form.errors.has('bank') }">
+                    <template slot="first">
+                        <option value selected disabled>-- Please select an option --</option>
+                    </template>
+                </b-form-select>
+                <has-error :form="form" field="name"/>
+            </b-form-fieldset>
+            <!-- end: title -->
+
+            <!-- start: title -->
+            <!--label="Title"-->
+            <b-form-fieldset
+                    v-if="form.bank"
+                    label="Account Number"
+                    description="Please select account number.">
+                <b-form-select v-model="form.bank_account_id"
+                               :options="bank_account_opt"
                                class="input-container mb-2"
                                :class="{ 'is-invalid': form.errors.has('bank_account_id') }">
                     <template slot="first">
@@ -73,11 +93,13 @@
         data() {
             return {
                 form: new Form({
+                    bank: '',
                     bank_account_id: '',
                     check_from: '',
                     check_to: '',
                 }),
                 bank_opt: [{}],
+                bank_account_opt: [{}],
             }
         },
         created() {
@@ -91,6 +113,15 @@
                 });
         },
         methods: {
+            filterBankAccounts(){
+                const component = this;
+
+                this.form.bank = $('#form_bank_filter').val();
+                axios.get(`/api/ap/utils/get_bank_accounts/${this.form.bank}`)
+                    .then(function (response) {
+                        component.bank_account_opt = response.data;
+                    });
+            },
             formSubmit: async function () {
                 let result = await this.$swal.fire({
                     title: 'Add New Record',

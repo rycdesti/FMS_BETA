@@ -79,6 +79,7 @@ class CheckController extends Controller
     public function store(Request $request)
     {
         $request->validate([
+            'bank' => 'required',
             'bank_account_id' => 'required',
             'check_from' => 'required',
             'check_to' => 'required'

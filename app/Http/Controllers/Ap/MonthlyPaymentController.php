@@ -262,7 +262,7 @@ class MonthlyPaymentController extends Controller
         ];
 
         $custom = [
-            'voucher.bank_account_id.required' => 'Bank is required.',
+            'voucher.bank_account_id.required' => 'Account number is required.',
             'voucher.check_id.required' => 'Check number is required.',
             'voucher.check_date.required' => 'Check date is required.',
             'voucher.document_type.required' => 'Document type is required.',
@@ -362,6 +362,8 @@ class MonthlyPaymentController extends Controller
                 'voucher.voucherDistributions',
                 'voucher.voucherDistributions.chartOfAccount',
                 'voucher.bankAccount',
+                'voucher.bankAccount.bank',
+                'bankAccount.bank',
                 'voucher.check'
             ])->first();
 
@@ -416,7 +418,7 @@ class MonthlyPaymentController extends Controller
         ];
 
         $custom = [
-            'voucher.bank_account_id.required' => 'Bank is required.',
+            'voucher.bank_account_id.required' => 'Account number is required.',
             'voucher.check_id.required' => 'Check number is required.',
             'voucher.check_date.required' => 'Check date is required.',
             'voucher.document_type.required' => 'Document type is required.',
@@ -776,29 +778,6 @@ class MonthlyPaymentController extends Controller
         $s_info .= '<br></fieldset>';
 
         return $s_info;
-    }
-
-    /**
-     * Get banks from resource storage
-     *
-     * @return array
-     */
-    public function get_banks()
-    {
-        $banks = Bank::with(['bankAccounts' => function ($child) {
-            $child->where('disabled', 'N')
-                ->where('acct_type', 'C');
-        }])->where('disabled', 'N')
-            ->get();
-
-        $bankList = array();
-        foreach ($banks as $bank) {
-            foreach ($bank->bankAccounts as $bankAccount) {
-                $bankList[$bankAccount->id] = $bank->bank_name . ' (' . $bank->bank_prefix . ') - ' . $bankAccount->acct_no;
-            }
-        }
-
-        return $bankList;
     }
 
     /**

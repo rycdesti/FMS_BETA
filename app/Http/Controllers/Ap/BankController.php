@@ -216,6 +216,37 @@ class BankController extends Controller
         return response()->json(['success' => false, 'message' => 'Something went wrong, Please try again.'], 500);
     }
 
+    /**
+     * Get banks from resource storage
+     *
+     * @return array
+     */
+    public function get_banks()
+    {
+        $banks = Bank::where('disabled', '=', 'N')
+            ->orderBy('bank_name')
+            ->get([
+                'id as value',
+                'bank_name as text'
+            ]);
+
+        return $banks;
+//        $banks = Bank::with(['bankAccounts' => function ($child) {
+//            $child->where('disabled', 'N')
+//                ->where('acct_type', 'C');
+//        }])->where('disabled', 'N')
+//            ->get();
+//
+//        $bankList = array();
+//        foreach ($banks as $bank) {
+//            foreach ($bank->bankAccounts as $bankAccount) {
+//                $bankList[$bankAccount->id] = $bank->bank_name . ' (' . $bank->bank_prefix . ') - ' . $bankAccount->acct_no;
+//            }
+//        }
+//
+//        return $bankList;
+    }
+
     public function generatePDFReport()
     {
         $banks = Bank::all();

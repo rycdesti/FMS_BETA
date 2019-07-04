@@ -38,7 +38,7 @@
                                     <i class="fa fa-plus"/>
                                 </b-button>
 
-                              <!--v-b-modal.form_modal2-->
+                                <!--v-b-modal.form_modal2-->
                                 <b-button
                                         v-b-tooltip.hover
                                         title="Generate PDF Report"
@@ -61,9 +61,27 @@
                                 <div class="col-md-6"></div>
                                 <div class="col-md-6">
                                     <div class="float-right form-inline">
-                                        <label class="mr-2">Bank Account:</label>
-                                        <b-form-select v-model="table_filter_fields.bank_account_filter"
+                                        <label class="mr-2">Bank:</label>
+                                        <b-form-select v-model="table_filter_fields.bank_filter"
                                                        :options="bank_opt"
+                                                       id="bank_filter"
+                                                       class="input-container mb-2"
+                                                       @change="filterBankAccounts">
+                                            <template slot="first">
+                                                <option value selected disabled>-- Please select an option --</option>
+                                            </template>
+                                        </b-form-select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div v-if="table_filter_fields.bank_filter" class="row">
+                                <div class="col-md-6"></div>
+                                <div class="col-md-6">
+                                    <div class="float-right form-inline">
+                                        <label class="mr-2">Account Number:</label>
+                                        <b-form-select v-model="table_filter_fields.bank_account_filter"
+                                                       :options="bank_account_opt"
                                                        id="bank_account_filter"
                                                        class="input-container mb-2"
                                                        @change="filter">
@@ -119,10 +137,12 @@
                 ],
                 table_url: '',
                 table_filter_fields: {
+                    bank_filter: 0,
                     bank_account_filter: 0,
                 },
                 data: '',
                 bank_opt: [{}],
+                bank_account_opt: [{}],
             }
         },
         created() {
@@ -156,6 +176,17 @@
                 this.table_filter_fields.bank_account_filter = $('#bank_account_filter').val();
                 const table = $('#tbl-check');
                 table.DataTable().draw(false);
+            },
+            filterBankAccounts(){
+                const component = this;
+
+                this.table_filter_fields.bank_filter = $('#bank_filter').val();
+                axios.get(`/api/ap/utils/get_bank_accounts/${this.table_filter_fields.bank_filter}`)
+                    .then(function (response) {
+                        $('#bank_account_filter').val(0);
+                        component.bank_account_opt = response.data;
+                        component.filter();
+                    });
             },
             fetchData() {
                 this.table_url = `/api/ap/check`;
@@ -229,9 +260,9 @@
                 }
             },
 
-            generatePDFReport () {
-              const url = `/api/reports/ap/check/${this.bank_account_id}`
-              window.open(url, '_blank')
+            generatePDFReport() {
+                const url = `/api/reports/ap/check/${this.bank_account_id}`
+                window.open(url, '_blank')
             },
         }
     }

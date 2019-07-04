@@ -34,8 +34,27 @@
                 <b-form-fieldset
                         label="Bank"
                         description="Please select bank.">
-                    <b-form-select v-model="form.voucher.bank_account_id"
+                    <b-form-select v-model="form.voucher.bank_account.bank.id"
                                    :options="bank_opt"
+                                   :class="{ 'is-invalid': form.errors.has('voucher.bank_account.bank.id') }"
+                                   id="bank_id"
+                                   class="input-container"
+                                   @change="getBankAccounts">
+                        <template slot="first">
+                            <option value selected disabled>-- Please select an option --</option>
+                        </template>
+                    </b-form-select>
+                    <has-error :form="form" field="name"/>
+                </b-form-fieldset>
+                <!-- end: title -->
+
+                <!-- start: title -->
+                <!--label="Title"-->
+                <b-form-fieldset
+                        label="Account Number"
+                        description="Please select account number.">
+                    <b-form-select v-model="form.voucher.bank_account_id"
+                                   :options="bank_account_opt"
                                    :class="{ 'is-invalid': form.errors.has('voucher.bank_account_id') }"
                                    id="bank_account_id"
                                    class="input-container"
@@ -299,13 +318,20 @@
                         document_no: '',
                         amount: '',
                         explanation: '',
-                        voucher_distributions: [{}]
+                        voucher_distributions: [{}],
+                        bank_account: {
+                            id: '',
+                            bank: {
+                                id: '',
+                            },
+                        },
                     },
                     recurring_payment_distributions: [{}],
                     debit_total: 0.0,
                     credit_total: 0.0,
                 }),
                 bank_opt: [{}],
+                bank_account_opt: [{}],
                 check_opt: [{}],
                 withholding_tax_opt: [{}],
                 document_type_opt: [{}],
@@ -354,6 +380,11 @@
                                 document_no: '',
                                 amount: response.data.amount,
                                 explanation: '',
+                                bank_account: {
+                                    bank: {
+                                        id: response.data.bank_account.bank.id,
+                                    }
+                                }
                             };
                             component.getVoucherChecks(component.form.voucher.bank_account_id + '&' + component.form.voucher.check_id, false);
                         } else {
@@ -361,6 +392,8 @@
                             component.form.recurring_payment_distributions = component.form.voucher.voucher_distributions;
                             component.getVoucherChecks(component.form.voucher.bank_account_id + '&' + component.form.voucher.check_id, true);
                         }
+                        component.getBank();
+                        component.getVoucherBankAccounts();
                         component.$root.$emit('bv::show::modal', 'form_modal');
                         component.computeTotal();
                     })
@@ -368,6 +401,30 @@
                     })
                     .finally(function () {
                     })
+            },
+            getBank() {
+                const component = this;
+
+                $('#bank_id').val(component.form.voucher.bank_account.bank.id);
+            },
+            getBankAccounts() {
+                const component = this;
+
+                axios.get(`/api/ap/utils/get_bank_accounts/${$('#bank_id').val()}`)
+                    .then(function (response) {
+                        component.bank_account_opt = response.data;
+                        component.form.voucher.bank_account_id = '';
+                        component.form.voucher.check_id = '';
+                        component.check_opt = [{}];
+                    });
+            },
+            getVoucherBankAccounts() {
+                const component = this;
+
+                axios.get(`/api/ap/utils/get_bank_accounts/${$('#bank_id').val()}`)
+                    .then(function (response) {
+                        component.bank_account_opt = response.data;
+                    });
             },
             getChecks() {
                 const component = this;
@@ -384,7 +441,7 @@
                 axios.get(`/api/ap/utils/get_voucher_checks/${bank_account_id}`)
                     .then(function (response) {
                         component.check_opt = response.data;
-                        if(!check_exists) {
+                        if (!check_exists) {
                             component.form.voucher.check_id = response.data[0].value;
                         }
                     });
