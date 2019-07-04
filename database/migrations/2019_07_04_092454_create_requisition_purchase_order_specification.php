@@ -23,6 +23,10 @@ class CreateRequisitionPurchaseOrderSpecification extends Migration
             $table->string('logs',70);
             $table->string('last_modified',70)->nullable();
             $table->timestamps();
+            $table->foreign('purchase_order_id')
+            ->references('id')
+            ->on('requisition.purchase_order');
+
         });
     }
 
