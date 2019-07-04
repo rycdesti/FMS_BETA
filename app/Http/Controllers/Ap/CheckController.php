@@ -21,12 +21,18 @@ class CheckController extends Controller
     public function index()
     {
         if ($this->isRequestTypeDatatable(request())) {
+            $bank_filter = request()->bank_filter;
             $bank_account_filter = request()->bank_account_filter;
 
-            $checks = Check::select('bank_account_id', 'check_from', 'check_to', 'logs', 'created_at')
-                ->where('bank_account_id', '=', $bank_account_filter)
-                ->groupCheck()
-                ->get();
+            $checks = Check::select('bank_account_id', 'check_from', 'check_to', 'logs', 'created_at');
+            if ($bank_account_filter) {
+                $checks = $checks->where('bank_account_id', $bank_account_filter);
+            } else {
+                $bankAccounts = BankAccount::where('bank_id', $bank_filter)->pluck('id');
+                $checks = $checks->whereIn('bank_account_id', $bankAccounts);
+            }
+
+            $checks = $checks->groupCheck()->get();
             return DataTables::of($checks)
                 ->editColumn('acct_no', function (Check $check) {
                     return '<div>' . $check->bankAccount->acct_no . '</div>';
@@ -37,18 +43,18 @@ class CheckController extends Controller
                         ($check->last_modified ? '<div>' . $check->last_modified . '</div>
                             <div><i class="fa fa-clock-o pr-1"></i>' . $check->updated_at->diffForHumans() . '</div>' : '');
                 })
-                ->editColumn('actions', function (Check $check) use ($bank_account_filter) {
+                ->editColumn('actions', function (Check $check) {
                     $actions = '';
                     $validate_check = Check::whereHas('vouchers')->where([
-                        ['bank_account_id', '=', $bank_account_filter],
+                        ['bank_account_id', '=', $check->bank_account_id],
                         ['check_from', '=', $check->check_from],
                         ['check_to', '=', $check->check_to],
                     ])->first();
 
                     if (!isset($validate_check)) {
-                        $actions .= '<button id="btn-delete" data-id="' . $check->check_from . '-' . $check->check_to . '" title="Delete Record" type="button" class="btn btn-outline-danger"><i class="fa fa-trash-o"></i></button><hr>';
+                        $actions .= '<button id="btn-delete" data-id="' . $check->bank_account_id . '-' . $check->check_from . '-' . $check->check_to . '" title="Delete Record" type="button" class="btn btn-outline-danger"><i class="fa fa-trash-o"></i></button><hr>';
                     }
-                    $actions .= '<button id="btn-view-check" data-id="' . $check->check_from . '-' . $check->check_to . '" type="button" class="btn btn-link">View Check Booklet</button><br>';
+                    $actions .= '<button id="btn-view-check" data-id="' . $check->bank_account_id . '-' . $check->check_from . '-' . $check->check_to . '" type="button" class="btn btn-link">View Check Booklet</button><br>';
                     return $actions;
                 })
                 ->rawColumns(['acct_no', 'logs', 'actions'])
@@ -179,7 +185,7 @@ class CheckController extends Controller
                  * check for failure of event tag when insert try to rollback (DB rollback)
                  * try to check if there is other way to insert multiple record
                  */
-                if($result_voucher) {
+                if ($result_voucher) {
                     return response()->json(['success' => true, 'message' => 'The check was voided successfully!']);
                 } else {
                     $request['voided'] = 'N';

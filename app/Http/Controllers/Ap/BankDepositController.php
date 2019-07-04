@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Ap;
 
+use App\Models\Ap\BankAccount;
 use App\Models\Ap\BankDeposit;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -18,10 +19,20 @@ class BankDepositController extends Controller
     public function index()
     {
         if ($this->isRequestTypeDatatable(request())) {
+            $bank_filter = request()->bank_filter;
+            $bank_account_filter = request()->bank_account_filter;
             $period_from_filter = request()->period_from_filter;
             $period_to_filter = request()->period_to_filter;
 
             $bankDeposits = BankDeposit::get();
+            if ($bank_filter) {
+                if ($bank_account_filter) {
+                    $bankDeposits = $bankDeposits->where('bank_account_id', $bank_account_filter);
+                } else {
+                    $bankAccounts = BankAccount::where('bank_id', $bank_filter)->pluck('id');
+                    $bankDeposits = $bankDeposits->whereIn('bank_account_id', $bankAccounts);
+                }
+            }
             if ($period_from_filter) {
                 $period_from_filter = date('Y-m-d', strtotime($period_from_filter));
             } else {
@@ -35,8 +46,8 @@ class BankDepositController extends Controller
 
             $bankDeposits = $bankDeposits->whereBetween('date_deposit', [$period_from_filter, $period_to_filter]);
             return DataTables::of($bankDeposits)
-                ->editColumn('bank_details', function(BankDeposit $bankDeposit) {
-                    $b_details = '<div>Bank Name: '. $bankDeposit->bankAccount->bank->bank_name .'</div>';
+                ->editColumn('bank_details', function (BankDeposit $bankDeposit) {
+                    $b_details = '<div>Bank Name: ' . $bankDeposit->bankAccount->bank->bank_name . '</div>';
                     $b_details .= '<div>Bank Account No: ' . $bankDeposit->bankAccount->acct_no . '</div>';
                     return $b_details;
                 })
@@ -77,18 +88,49 @@ class BankDepositController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
     {
-        //
+        $validate = [
+            'bank_id' => 'required',
+            'bank_account_id' => 'required',
+            'date_deposit' => 'required',
+            'time_deposit' => 'required',
+            'ref_no' => 'required',
+            'total_deposit' => 'not_in:0,0.0,0.00',
+        ];
+
+        $custom = [
+            'bank_id.required' => 'Bank is required',
+            'bank_account_id.required' => 'Account number is required.',
+            'date_deposit.required' => 'Date deposit is required.',
+            'time_deposit.required' => 'Time deposit is required.',
+            'ref_no.required' => 'Reference number is required',
+            'total_deposit.not_in' => 'Total deposit should not be equal to zero (0).',
+        ];
+
+        $request->validate($validate, $custom);
+
+        $request['logs'] = 'Created by: Test';
+        $data = $request->all();
+
+        $result = BankDeposit::create($data)->id;
+        if ($result) {
+            /**
+             * check for failure of event tag when insert try to rollback (DB rollback)
+             * try to check if there is other way to insert multiple record
+             */
+            return response()->json(['success' => true, 'message' => 'The record was added successfully!']);
+        }
+        return response()->json(['success' => false, 'message' => 'Something went wrong, Please try again.'], 500);
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param  int $id
      * @return \Illuminate\Http\Response
      */
     public function show($id)
@@ -99,7 +141,7 @@ class BankDepositController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
+     * @param  int $id
      * @return \Illuminate\Http\Response
      */
     public function edit($id)
@@ -110,8 +152,8 @@ class BankDepositController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param  \Illuminate\Http\Request $request
+     * @param  int $id
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
@@ -122,7 +164,7 @@ class BankDepositController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param  int $id
      * @return \Illuminate\Http\Response
      */
     public function destroy($id)

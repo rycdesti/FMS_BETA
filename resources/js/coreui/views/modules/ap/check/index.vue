@@ -1,8 +1,8 @@
 <template>
     <div class="wrapper">
         <div class="animated fadeIn">
-            <call_out_form :bank_account_id="table_filter_fields.bank_account_filter"/>
-            <call_out_form2 :bank_account_id="table_filter_fields.bank_account_filter"/>
+            <call_out_form />
+            <call_out_form2 />
 
             <b-row>
                 <b-col cols="12">
@@ -86,7 +86,7 @@
                                                        class="input-container mb-2"
                                                        @change="filter">
                                             <template slot="first">
-                                                <option value selected disabled>-- Please select an option --</option>
+                                                <option value="">Display all</option>
                                             </template>
                                         </b-form-select>
                                     </div>
@@ -137,8 +137,8 @@
                 ],
                 table_url: '',
                 table_filter_fields: {
-                    bank_filter: 0,
-                    bank_account_filter: 0,
+                    bank_filter: '',
+                    bank_account_filter: '',
                 },
                 data: '',
                 bank_opt: [{}],
@@ -173,6 +173,7 @@
         },
         methods: {
             filter() {
+                this.table_filter_fields.bank_filter = $('#bank_filter').val();
                 this.table_filter_fields.bank_account_filter = $('#bank_account_filter').val();
                 const table = $('#tbl-check');
                 table.DataTable().draw(false);
@@ -180,10 +181,10 @@
             filterBankAccounts(){
                 const component = this;
 
-                this.table_filter_fields.bank_filter = $('#bank_filter').val();
-                axios.get(`/api/ap/utils/get_bank_accounts/${this.table_filter_fields.bank_filter}`)
+                axios.get(`/api/ap/utils/get_bank_accounts/${$('#bank_filter').val()}`)
                     .then(function (response) {
-                        $('#bank_account_filter').val(0);
+                        $('#bank_account_filter').val('');
+                        component.table_filter_fields.bank_account_filter = '';
                         component.bank_account_opt = response.data;
                         component.filter();
                     });

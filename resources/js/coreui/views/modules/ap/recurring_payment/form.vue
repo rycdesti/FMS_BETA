@@ -25,12 +25,12 @@
             <b-form-fieldset
                     label="Bank"
                     description="Please select bank.">
-                <b-form-select v-model="form.bank"
+                <b-form-select v-model="form.bank_id"
                                :options="bank_opt"
                                id="form_bank_filter"
                                class="input-container mb-2"
                                @change="filterBankAccounts"
-                               :class="{ 'is-invalid': form.errors.has('bank') }">
+                               :class="{ 'is-invalid': form.errors.has('bank_id') }">
                     <template slot="first">
                         <option value selected disabled>-- Please select an option --</option>
                     </template>
@@ -42,7 +42,7 @@
             <!-- start: title -->
             <!--label="Title"-->
             <b-form-fieldset
-                    v-if="form.bank"
+                    v-if="form.bank_id"
                     label="Account Number"
                     description="Please select account number.">
                 <b-form-select v-model="form.bank_account_id"
@@ -292,7 +292,7 @@
                 selected: 1,
                 form: new Form({
                     id: 0,
-                    bank: '',
+                    bank_id: '',
                     bank_account_id: '',
                     supplier_id: '',
                     document_no: '',
@@ -349,8 +349,8 @@
             filterBankAccounts(){
                 const component = this;
 
-                this.form.bank = $('#form_bank_filter').val();
-                axios.get(`/api/ap/utils/get_bank_accounts/${this.form.bank}`)
+                this.form.bank_id = $('#form_bank_filter').val();
+                axios.get(`/api/ap/utils/get_bank_accounts/${this.form.bank_id}`)
                     .then(function (response) {
                         component.bank_account_opt = response.data;
                     });

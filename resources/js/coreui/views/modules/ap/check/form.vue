@@ -68,6 +68,7 @@
                 <has-error :form="form" field="name"/>
             </b-form-fieldset>
             <!-- end: title -->
+
             <alert-errors :form="form" message="There were some problems with your input."/>
 
             <div class="mt-4">

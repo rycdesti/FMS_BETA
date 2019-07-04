@@ -60,6 +60,42 @@
                                 <div class="col-md-6"></div>
                                 <div class="col-md-6">
                                     <div class="float-right form-inline">
+                                        <label class="mr-2">Bank:</label>
+                                        <b-form-select v-model="table_filter_fields.bank_filter"
+                                                       :options="bank_opt"
+                                                       id="bank_filter"
+                                                       class="input-container mb-2"
+                                                       @change="filterBankAccounts">
+                                            <template slot="first">
+                                                <option value="">Display all</option>
+                                            </template>
+                                        </b-form-select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div v-if="table_filter_fields.bank_filter" class="row">
+                                <div class="col-md-6"></div>
+                                <div class="col-md-6">
+                                    <div class="float-right form-inline">
+                                        <label class="mr-2">Account Number:</label>
+                                        <b-form-select v-model="table_filter_fields.bank_account_filter"
+                                                       :options="bank_account_opt"
+                                                       id="bank_account_filter"
+                                                       class="input-container mb-2"
+                                                       @change="filter">
+                                            <template slot="first">
+                                                <option value="">Display all</option>
+                                            </template>
+                                        </b-form-select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6"></div>
+                                <div class="col-md-6">
+                                    <div class="float-right form-inline">
                                         <label class="mr-2">Period from:</label>
                                         <b-datepicker v-model="table_filter_fields.period_from_filter"
                                                       class="mb-2"
@@ -111,11 +147,11 @@
             return {
                 table_id: 'tbl-bank-deposit',
                 table_columns: [
-                    {data: 'bank_details', bSortable: false, bSearchable: true},
-                    {data: 'date_deposit', bSortable: false, bSearchable: true},
-                    {data: 'time_deposit', bSortable: false, bSearchable: false},
-                    {data: 'ref_no', bSortable: false, bSearchable: false},
-                    {data: 'cash_deposit', bSortable: false, bSearchable: false},
+                    {data: 'bank_details', bSortable: true, bSearchable: true},
+                    {data: 'date_deposit', bSortable: true, bSearchable: true},
+                    {data: 'time_deposit', bSortable: true, bSearchable: false},
+                    {data: 'ref_no', bSortable: true, bSearchable: false},
+                    {data: 'cash_deposit', bSortable: true, bSearchable: false},
                     {data: 'logs', bSortable: false, bSearchable: false},
                     {data: 'actions', bSortable: false, bSearchable: false}
                 ],
@@ -130,10 +166,14 @@
                 ],
                 table_url: '',
                 table_filter_fields: {
+                    bank_filter: '',
+                    bank_account_filter: '',
                     period_from_filter: moment(new Date(new Date().getFullYear(), new Date().getMonth(), 1)).format('YYYY-MM-DD'),
                     period_to_filter: moment(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0)).format('YYYY-MM-DD'),
                 },
                 data: '',
+                bank_opt: [{}],
+                bank_account_opt: [{}],
             }
         },
         created() {
@@ -154,8 +194,12 @@
                 const id = $(this).data('id');
                 const status = $(this).text();
                 component.updateStatus(id, status);
-
             });
+
+            axios.get('/api/ap/utils/get_banks')
+                .then(function (response) {
+                    component.bank_opt = response.data;
+                });
         },
         beforeDestroy() {
             this.$root.$listener.destroy(
@@ -166,6 +210,8 @@
         },
         methods: {
             filter() {
+                this.table_filter_fields.bank_filter = $('#bank_filter').val();
+                this.table_filter_fields.bank_account_filter = $('#bank_account_filter').val();
                 if (this.table_filter_fields.period_from_filter instanceof Date) {
                     this.table_filter_fields.period_from_filter = this.table_filter_fields.period_from_filter.getFullYear() + '-' +
                         (this.table_filter_fields.period_from_filter.getMonth() + 1) + '-' + this.table_filter_fields.period_from_filter.getDate();
@@ -175,8 +221,20 @@
                     this.table_filter_fields.period_to_filter = this.table_filter_fields.period_to_filter.getFullYear() + '-' +
                         (this.table_filter_fields.period_to_filter.getMonth() + 1) + '-' + this.table_filter_fields.period_to_filter.getDate();
                 }
+                console.log(this.table_filter_fields.bank_account_filter);
                 const table = $('#tbl-bank-deposit');
                 table.DataTable().draw(false);
+            },
+            filterBankAccounts(){
+                const component = this;
+
+                axios.get(`/api/ap/utils/get_bank_accounts/${$('#bank_filter').val()}`)
+                    .then(function (response) {
+                        $('#bank_account_filter').val('');
+                        component.table_filter_fields.bank_account_filter = '';
+                        component.bank_account_opt = response.data;
+                        component.filter();
+                    });
             },
             fetchData() {
                 this.table_url = '/api/ap/bank-deposit';

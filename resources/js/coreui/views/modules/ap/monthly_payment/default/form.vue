@@ -210,7 +210,8 @@
                         <td width="50%">
                             <b-form-select v-model="distribution.chart_of_account_id"
                                            :options="chart_account_opt"
-                                           class="input-container">
+                                           class="input-container"
+                                           required>
                                 <template slot="first">
                                     <option value selected disabled>-- Please select an option --</option>
                                 </template>
@@ -386,6 +387,7 @@
                                     }
                                 }
                             };
+                            component.addDistribution();
                             component.getVoucherChecks(component.form.voucher.bank_account_id + '&' + component.form.voucher.check_id, false);
                         } else {
                             component.form.voucher.old_check_id = component.form.voucher.check_id;

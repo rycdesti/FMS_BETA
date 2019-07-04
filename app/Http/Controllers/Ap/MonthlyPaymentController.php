@@ -54,7 +54,8 @@ class MonthlyPaymentController extends Controller
                     if ($monthlyPayment->voucher) {
                         $check_info = Check::find($monthlyPayment->voucher->check_id);
                         $v_info .= '<div class="mb-3">Voucher Number: ' . $monthlyPayment->voucher->voucher_no . '</div>';
-                        $v_info .= '<div>Bank Account: ' . $check_info->bankAccount->bank->bank_name . ' (' . $check_info->bankAccount->acct_no . ')' . '</div>';
+                        $v_info .= '<div>Bank: ' . $check_info->bankAccount->bank->bank_name . '</div>';
+                        $v_info .= '<div class="mb-3">Account Number: '  . $check_info->bankAccount->acct_no . '</div>';
                         $v_info .= '<div>Check Number: ' . $check_info->check_no . '</div>';
                         $v_info .= '<div class="mb-3">Check Date: ' . $monthlyPayment->voucher->check_date . '</div>';
                         $v_info .= '<div>Explanation: ' . $monthlyPayment->voucher->explanation . '</div>';
@@ -181,7 +182,8 @@ class MonthlyPaymentController extends Controller
                     if ($monthlyPayment->voucher) {
                         $check_info = Check::find($monthlyPayment->voucher->check_id);
                         $v_info .= '<div class="mb-3">Voucher Number: ' . $monthlyPayment->voucher->voucher_no . '</div>';
-                        $v_info .= '<div>Bank Account: ' . $check_info->bankAccount->bank->bank_name . ' (' . $check_info->bankAccount->acct_no . ')' . '</div>';
+                        $v_info .= '<div>Bank: ' . $check_info->bankAccount->bank->bank_name . '</div>';
+                        $v_info .= '<div class="mb-3">Account Number: '  . $check_info->bankAccount->acct_no . '</div>';
                         $v_info .= '<div>Check Number: ' . $check_info->check_no . '</div>';
                         $v_info .= '<div class="mb-3">Check Date: ' . $monthlyPayment->voucher->check_date . '</div>';
                         $v_info .= '<div>Explanation: ' . $monthlyPayment->voucher->explanation . '</div>';
@@ -271,7 +273,7 @@ class MonthlyPaymentController extends Controller
             'debit_total.in' => 'Total debit should tally with total credit.',
             'voucher.amount.lte' => 'Total distribution amount does not satisfy the amount needed to be paid.',
             'recurring_payment_distributions.*.chart_of_account_id.required_with' => 'Account number is required.',
-            'recurring_payment_distributions.*.amount.required_with' => 'Debit/Credit is required.',
+            'recurring_payment_distributions.*.amount.required_with' => 'Distribution Debit/Credit is required.',
         ];
 
         $curr_date = date('Y-m', time());

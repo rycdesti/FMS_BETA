@@ -41,7 +41,6 @@
         name: "form",
         props: [
             'data',
-            'bank_account_id',
         ],
         data() {
             return {
@@ -101,7 +100,7 @@
                 component.$root.$emit('bv::show::modal', 'form_modal2');
                 const table = $('#tbl-check-list').DataTable();
 
-                component.form_url = `/api/ap/check/${this.bank_account_id}-${sequence}/get_check_list`;
+                component.form_url = `/api/ap/check/${sequence}/get_check_list`;
                 table.ajax.url(this.form_url);
                 component.is_open = true;
                 table.draw(true);

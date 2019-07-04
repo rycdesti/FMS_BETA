@@ -45,7 +45,8 @@ class RecurringPaymentController extends Controller
                         $s_contact .= $value['fax_number'] ? '<div>Fax Number: ' . $value['fax_number'] . '</div>' : '';
                         $s_contact .= '</div>';
                     }
-                    $s_contact .= '<div class="mt-3">Bank Details: ' . $recurringPayment->bankAccount->bank->bank_name . ' (' . $recurringPayment->bankAccount->acct_no . ')' . '</div>';
+                    $s_contact .= '<div>Bank: ' . $recurringPayment->bankAccount->bank->bank_name . '</div>';
+                    $s_contact .= '<div class="mb-3">Account Number: '  . $recurringPayment->bankAccount->acct_no . '</div>';
 
                     return $s_contact;
                 })
@@ -132,7 +133,7 @@ class RecurringPaymentController extends Controller
     {
         $validate = [
             'supplier_id' => 'required',
-            'bank' => 'required',
+            'bank_id' => 'required',
             'bank_account_id' => 'required',
             'remarks' => 'required',
             'amount' => 'required',
