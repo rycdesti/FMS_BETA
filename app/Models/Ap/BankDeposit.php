@@ -16,6 +16,7 @@ use App\Models\BaseModel;
  * @property string $created_at
  * @property string $updated_at
  * @property BankAccount $bankAccount
+ * @property mixed checkDeposits
  */
 class BankDeposit extends BaseModel
 {

@@ -182,18 +182,8 @@
         mounted() {
             const component = this;
 
-            $(document).on('click', '#btn-edit', function () {
-                component.$root.$emit('edit', $(this).data('id'));
-            });
-
-            $(document).on('click', '#btn-delete', function () {
-                component.deleteData($(this).data('id'));
-            });
-
-            $(document).on('click', '#btn-update-status', function () {
-                const id = $(this).data('id');
-                const status = $(this).text();
-                component.updateStatus(id, status);
+            $(document).on('click', '#btn-check-deposit', function () {
+                component.$root.$emit('check_deposit', $(this).data('id'));
             });
 
             axios.get('/api/ap/utils/get_banks')
@@ -203,8 +193,8 @@
         },
         beforeDestroy() {
             this.$root.$listener.destroy(
-                ['#btn-edit', '#btn-delete', '#btn-update-status'],
-                ['edit'],
+                ['#btn-check-deposit'],
+                ['check_deposit'],
                 this.$root
             );
         },

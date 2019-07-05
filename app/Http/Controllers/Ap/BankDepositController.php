@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Ap;
 
 use App\Models\Ap\BankAccount;
 use App\Models\Ap\BankDeposit;
+use App\Models\Ap\CheckDeposit;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Yajra\DataTables\Facades\DataTables;
@@ -68,6 +69,9 @@ class BankDepositController extends Controller
                 })
                 ->editColumn('actions', function (BankDeposit $bankDeposit) {
                     $actions = '';
+                    if ($bankDeposit->checkDeposits->count()) {
+                        $actions .= '<button id="btn-check-deposit" data-id="' . $bankDeposit->id . '" type="button" class="btn btn-link">View Check Deposit</button>';
+                    }
                     return $actions;
                 })
                 ->rawColumns(['bank_details', 'date_deposit', 'time_deposit', 'cash_deposit', 'logs', 'actions'])
@@ -113,11 +117,43 @@ class BankDepositController extends Controller
 
         $request->validate($validate, $custom);
 
-        $request['logs'] = 'Created by: Test';
+        $logs = 'Created by: Test';
+        $request['logs'] = $logs;
+        $check_deposits = $request['check_deposit'];
         $data = $request->all();
 
         $result = BankDeposit::create($data)->id;
-        if ($result) {
+        if ($result && $check_deposits) {
+            $created_at = now();
+            $updated_at = now();
+
+            $check_deposits_data = array();
+            foreach ($check_deposits as $check_deposit) {
+                $check_deposits_data[] = [
+                    'bank_deposit_id' => $result,
+                    'bank_id' => $check_deposit['bank_id'],
+                    'check_no' => $check_deposit['check_no'],
+                    'amount' => $check_deposit['amount'],
+                    'logs' => $logs,
+                    'created_at' => $created_at,
+                    'updated_at' => $updated_at
+                ];
+            }
+
+            $check_deposit_result = CheckDeposit::insert($check_deposits_data);
+            if ($check_deposit_result) {
+                /**
+                 * check for failure of event tag when insert try to rollback (DB rollback)
+                 * try to check if there is other way to insert multiple record
+                 */
+                return response()->json(['success' => true, 'message' => 'The record was added successfully!']);
+            } else {
+                BankDeposit::find($result)->delete();
+
+                return response()->json(['success' => false, 'message' => 'Something went wrong, Please try again.'], 500);
+            }
+
+        } else if ($result) {
             /**
              * check for failure of event tag when insert try to rollback (DB rollback)
              * try to check if there is other way to insert multiple record

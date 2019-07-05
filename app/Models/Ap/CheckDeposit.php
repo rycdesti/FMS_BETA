@@ -36,7 +36,7 @@ class CheckDeposit extends BaseModel
     /**
      * @var array
      */
-    protected $fillable = ['bank_deposit_id', 'bank_account_id', 'check_no', 'amount', 'logs', 'last_modified', 'created_at', 'updated_at'];
+    protected $fillable = ['bank_deposit_id', 'bank_id', 'check_no', 'amount', 'logs', 'last_modified', 'created_at', 'updated_at'];
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo

@@ -16,7 +16,7 @@ class CreateApCheckDepositsTable extends Migration
         Schema::create('ap.check_deposits', function (Blueprint $table) {
             $table->bigInteger('id', true);
             $table->bigInteger('bank_deposit_id');
-            $table->bigInteger('bank_account_id');
+            $table->bigInteger('bank_id');
             $table->string('check_no', 15);
             $table->double('amount');
             $table->string('logs', 60)->nullable();
@@ -27,9 +27,9 @@ class CreateApCheckDepositsTable extends Migration
                 ->references('id')
                 ->on('ap.bank_deposits');
 
-            $table->foreign('bank_account_id')
+            $table->foreign('bank_id')
                 ->references('id')
-                ->on('ap.bank_accounts');
+                ->on('ap.banks');
         });
     }
 
