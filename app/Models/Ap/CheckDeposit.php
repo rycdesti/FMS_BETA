@@ -15,7 +15,7 @@ use App\Models\BaseModel;
  * @property string $created_at
  * @property string $updated_at
  * @property BankDeposit $bankDeposit
- * @property BankAccount $bankAccount
+ * @property Bank $bank
  */
 class CheckDeposit extends BaseModel
 {
@@ -49,8 +49,8 @@ class CheckDeposit extends BaseModel
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function bankAccount()
+    public function bank()
     {
-        return $this->belongsTo(BankAccount::class);
+        return $this->belongsTo(Bank::class);
     }
 }

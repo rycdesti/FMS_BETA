@@ -2,7 +2,7 @@
     <div class="wrapper">
         <div class="animated fadeIn">
             <call_out_form />
-            <call_out_form2 />
+            <call_out_form_check_list />
 
             <b-row>
                 <b-col cols="12">
@@ -110,13 +110,13 @@
 
 <script>
     import CallOutForm from '@/views/modules/ap/check/form'
-    import CallOutForm2 from '@/views/modules/ap/check/form2'
+    import CallOutFormCheckList from '@/views/modules/ap/check/form_check_list'
 
     export default {
         name: 'Check',
         components: {
             'call_out_form': CallOutForm,
-            'call_out_form2': CallOutForm2,
+            'call_out_form_check_list': CallOutFormCheckList,
         },
         data() {
             return {

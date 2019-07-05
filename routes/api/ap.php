@@ -41,6 +41,7 @@ Route::group(['prefix' => '/ap'], function () {
 
     // bank deposit
     Route::resource('/bank-deposit', 'Ap\BankDepositController');
+    Route::get('/bank-deposit/{bank_deposit_id}/get_check_deposit', 'Ap\BankDepositController@get_check_deposit');
 
     // utils
     Route::group(['prefix' => '/utils'], function () {

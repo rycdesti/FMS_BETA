@@ -2,7 +2,7 @@
     <div class="wrapper">
         <div class="animated fadeIn">
           <call_out_form/>
-          <call_out_calendar_form :table_filter="this.table_filter_fields"/>
+          <call_out_form_calendar :table_filter="this.table_filter_fields"/>
             <b-row>
                 <b-col cols="12">
                     <b-card
@@ -143,13 +143,13 @@
 
 <script>
     import CallOutForm from '@/views/modules/ap/monthly_payment/default/form'
-    import CallOutCalendarForm from '@/views/modules/ap/monthly_payment/default/calendar_form'
+    import CallOutFormCalendar from '@/views/modules/ap/monthly_payment/default/form_calendar'
 
     export default {
         name: 'MonthlyPayment',
         components: {
           'call_out_form': CallOutForm,
-          'call_out_calendar_form': CallOutCalendarForm,
+          'call_out_form_calendar': CallOutFormCalendar,
         },
         data() {
             return {

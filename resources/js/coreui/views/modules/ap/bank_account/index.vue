@@ -2,7 +2,7 @@
     <div class="wrapper">
         <div class="animated fadeIn">
             <call_out_form :bank_id="this.bank_id"/>
-            <call_out_form2/>
+            <call_out_form_beginning_bal/>
 
             <b-row>
                 <b-col cols="12">
@@ -100,14 +100,14 @@
 
 <script>
     import CallOutForm from '@/views/modules/ap/bank_account/form'
-    import CallOutForm2 from '@/views/modules/ap/bank_account/form2'
+    import CallOutFormBeginningBal from '@/views/modules/ap/bank_account/form_beginning_bal'
 
     export default {
         name: 'BankAccount',
         props: ['bank_id'],
         components: {
             'call_out_form': CallOutForm,
-            'call_out_form2': CallOutForm2,
+            'call_out_form_beginning_bal': CallOutFormBeginningBal,
         },
         data() {
             return {

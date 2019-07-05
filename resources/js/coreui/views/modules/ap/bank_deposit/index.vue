@@ -2,6 +2,7 @@
     <div class="wrapper">
         <div class="animated fadeIn">
             <call_out_form/>
+            <call_out_form_check_deposit/>
 
             <b-row>
                 <b-col cols="12">
@@ -137,11 +138,13 @@
 
 <script>
     import CallOutForm from '@/views/modules/ap/bank_deposit/form'
+    import CallOutFormCheckDeposit from '@/views/modules/ap/bank_deposit/form_check_deposit'
 
     export default {
         name: 'Bank',
         components: {
             'call_out_form': CallOutForm,
+            'call_out_form_check_deposit': CallOutFormCheckDeposit,
         },
         data() {
             return {
@@ -183,7 +186,7 @@
             const component = this;
 
             $(document).on('click', '#btn-check-deposit', function () {
-                component.$root.$emit('check_deposit', $(this).data('id'));
+                component.$root.$emit('view_check_deposit', $(this).data('id'));
             });
 
             axios.get('/api/ap/utils/get_banks')
@@ -194,7 +197,7 @@
         beforeDestroy() {
             this.$root.$listener.destroy(
                 ['#btn-check-deposit'],
-                ['check_deposit'],
+                ['view_check_deposit'],
                 this.$root
             );
         },

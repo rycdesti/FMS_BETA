@@ -155,9 +155,6 @@
                 const form_modal2 = $('#form_modal2').find('.modal-title');
                 form_modal2.text('List of Checks');
             },
-            test() {
-                alert('hehe');
-            }
         }
     }
 </script>

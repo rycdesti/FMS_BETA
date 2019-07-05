@@ -7,6 +7,7 @@ use App\Models\Ap\BankDeposit;
 use App\Models\Ap\CheckDeposit;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Symfony\Component\VarDumper\Cloner\Data;
 use Yajra\DataTables\Facades\DataTables;
 
 class BankDepositController extends Controller
@@ -206,5 +207,32 @@ class BankDepositController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    /**
+     * Get list of check deposit from resource storage
+     *
+     * @param $bank_deposit_id
+     * @return DataTables
+     * @throws \Exception
+     */
+    public function get_check_deposit($bank_deposit_id)
+    {
+        if ($this->isRequestTypeDatatable(request())) {
+            $checkDeposits = CheckDeposit::where('bank_deposit_id', $bank_deposit_id)->get();
+
+            return DataTables::of($checkDeposits)
+                ->editColumn('bank', function (CheckDeposit $checkDeposits) {
+                    return $checkDeposits->bank->bank_name;
+                })
+                ->editColumn('check_no', function (CheckDeposit $checkDeposits) {
+                    return $checkDeposits->check_no;
+                })
+                ->editColumn('amount', function (CheckDeposit $checkDeposits) {
+                    return number_format($checkDeposits->amount, 2);
+                })
+                ->rawColumns(['bank', 'check_no', 'amount'])
+                ->make(true);
+        }
     }
 }
